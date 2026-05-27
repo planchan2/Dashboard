@@ -43,7 +43,6 @@
         .progress-container { width: 100%; background-color: #e2e8f0; border-radius: 99px; height: 10px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); }
         .progress-fill { height: 100%; border-radius: 99px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        /* วงกลมความคืบหน้า (ปรับสีเส้นหลังให้เห็นชัดบนพื้นขาว) */
         .circle-chart { width: 75px; height: 75px; transform: rotate(-90deg); }
         .circle-chart-bg { fill: none; stroke: rgba(0,0,0,0.05); stroke-width: 3; }
         .circle-chart-circle { fill: none; stroke-width: 3; stroke-linecap: round; transition: stroke-dasharray 1s ease; }
@@ -298,7 +297,6 @@
                 { title: "คงเหลือ", amount: formatNumber(data.totalRemaining), icon: "piggy-bank", theme: "from-amber-400 to-orange-500" }
             ];
 
-            // ปรับคู่สีในวงกลมสำหรับพื้นหลังขาว (ฟ้า, ชมพูเด่น, ม่วงเด่น)
             const bottomCards = [
                 { title: "ภาพรวมการใช้จ่าย งบประจำ", amount: formatNumber(regSpent), percent: regPercent, circleColor: "#0284c7" }, 
                 { title: "ภาพรวมการใช้จ่าย งบพัฒนาคุณภาพการศึกษา (CEO)", amount: formatNumber(ceoSpent), percent: ceoPercent, circleColor: "#ec4899" }, 
@@ -317,7 +315,6 @@
                 </div>
             `).join('');
 
-            // ปรับสไตล์ HTML ของ 3 กล่องล่าง เป็นสีขาวมีขอบ
             let htmlBottom = bottomCards.map(c => `
                 <div class="summary-card bg-white border border-slate-200 text-slate-800 flex items-center gap-5">
                     <div class="relative flex-shrink-0">
