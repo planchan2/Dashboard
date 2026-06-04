@@ -51,6 +51,23 @@
         @keyframes flashGreen { 0% { background-color: #d1fae5; } 100% { background-color: transparent; } }
 
         .row-hover:hover { background-color: #eff6ff !important; }
+
+        @media print {
+            @page { margin: 10mm; }
+            body { 
+                zoom: 0.65; 
+                background-color: #ffffff !important; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+            }
+            header { position: relative !important; }
+            #reload-btn { display: none !important; } 
+            .shadow-xl, .shadow-lg { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+            .py-10 { padding-top: 10px !important; padding-bottom: 10px !important; }
+            .mb-10 { margin-bottom: 15px !important; }
+            .mb-6 { margin-bottom: 15px !important; }
+            canvas { max-height: 400px !important; } 
+        }
     </style>
 </head>
 <body>
@@ -61,7 +78,7 @@
                 <img src="logo-photoroom.png" alt="โลโก้สำนักงาน" style="height: 80px; width: auto; border-radius: 12px; box-shadow: 0 5px 10px rgba(0,0,0,0.15);">
                 <div>
                     <h1 class="text-2xl font-extrabold text-white leading-tight tracking-normal mb-1">Dashboard ติดตามการใช้จ่ายงบประมาณ</h1>
-                    <p class="text-sm text-blue-100 font-medium opacity-90">แผนปฏิบัติการ ประจำปีงบประมาณ พ.ศ. 2569<br> กลุ่มนโยบายและแผน สำนักงานเขตพื้นที่การศึกษาประถมศึกษาจันทบุรี เขต 2 <br>จัดทำโดย นายณรงค์ฤทธิ์ ประจงใจ นักศึกษาฝึกงานสาขา เทคโนโลยีสารสนเทศ ปวส.2 วิทยาลัยเทคนิคจันทบุรี</p>
+                    <p class="text-sm text-blue-100 font-medium opacity-90">แผนปฏิบัติการ ประจำปีงบประมาณ พ.ศ. 2569<br> กลุ่มนโยบายและแผน สำนักงานเขตพื้นที่การศึกษาประถมศึกษาจันทบุรี เขต 2 <br>จัดทำโดย นายณรงค์ฤทธิ์ ประจงใจ นักศึกษาฝึกงาน ระดับ ปวส.2 สาขาเทคโนโลยีสารสนเทศ วิทยาลัยเทคนิคจันทบุรี</p>
                 </div>
             </div>
             
@@ -97,9 +114,9 @@
                 <div class="p-2.5 bg-indigo-500 rounded-lg text-white shadow-inner">
                     <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
                 </div>
-                แผนภูมิแสดงรายละเอียดแยกโครงการ
+                แผนภูมิแสดงรายละเอียดรายโครงการ
             </h2>
-            <div class="relative h-[380px] w-full">
+            <div class="relative h-[400px] w-full">
                 <canvas id="budgetChart"></canvas>
             </div>
         </div>
@@ -110,8 +127,8 @@
                     <div class="p-2.5 bg-blue-600 rounded-lg text-white shadow-inner">
                         <i data-lucide="list-tree" class="w-6 h-6"></i>
                     </div>
-                    รายละเอียดงบประจำ
-                    <span class="text-base font-normal text-slate-500 ml-2">(คลิกแถวเพื่อดูโครงการย่อย)</span>
+                    งบประจำ
+                    <span class="text-base font-normal text-slate-500 ml-2">(คลิกดูรายละเอียด)</span>
                 </h2>
             </div>
             <div class="overflow-x-auto">
@@ -122,7 +139,7 @@
                             <th class="text-left w-1/3">แผนงาน / โครงการ</th>
                             <th class="text-right">งบประมาณ</th>
                             <th class="text-right">จัดสรร</th>
-                            <th class="text-right">ตัดจ่าย</th>
+                            <th class="text-right">ใช้จ่าย</th>
                             <th class="text-right">คงเหลือ</th>
                             <th class="text-center w-44">ความคืบหน้า</th>
                             <th class="text-left w-36">ผู้รับผิดชอบ</th>
@@ -139,8 +156,8 @@
                     <div class="p-2.5 bg-indigo-600 rounded-lg text-white shadow-inner">
                         <i data-lucide="award" class="w-6 h-6"></i>
                     </div>
-                    รายละเอียดงบพัฒนาคุณภาพการศึกษา (CEO)
-                    <span class="text-base font-normal text-slate-500 ml-2">(คลิกแถวเพื่อดูโครงการย่อย)</span>
+                    งบพัฒนาคุณภาพการศึกษา (CEO)
+                    <span class="text-base font-normal text-slate-500 ml-2">(คลิกดูรายละเอียด)</span>
                 </h2>
             </div>
             <div class="overflow-x-auto">
@@ -151,7 +168,7 @@
                             <th class="text-left w-1/3">แผนงาน / โครงการ</th>
                             <th class="text-right">งบประมาณ</th>
                             <th class="text-right">จัดสรร</th>
-                            <th class="text-right">ตัดจ่าย</th>
+                            <th class="text-right">ใช้จ่าย</th>
                             <th class="text-right">คงเหลือ</th>
                             <th class="text-center w-44">ความคืบหน้า</th>
                             <th class="text-left w-36">ผู้รับผิดชอบ</th>
@@ -168,8 +185,8 @@
                     <div class="p-2.5 bg-sky-500 rounded-lg text-white shadow-inner">
                         <i data-lucide="users" class="w-6 h-6"></i>
                     </div>
-                    รายละเอียดตามแผนงาน/โครงการ
-                    <span class="text-base font-normal text-slate-500 ml-2">(คลิกแถวเพื่อดูโครงการย่อย)</span>
+                  แผนงาน/โครงการ
+                    <span class="text-base font-normal text-slate-500 ml-2">(คลิกดูรายละเอียด)</span>
                 </h2>
             </div>
             <div class="overflow-x-auto">
@@ -180,7 +197,7 @@
                             <th class="text-left w-1/3">แผนงาน / โครงการ</th>
                             <th class="text-right">งบประมาณ</th>
                             <th class="text-right">จัดสรร</th>
-                            <th class="text-right">ตัดจ่าย</th>
+                            <th class="text-right">ใช้จ่าย</th>
                             <th class="text-right">คงเหลือ</th>
                             <th class="text-center w-44">ความคืบหน้า</th>
                             <th class="text-left w-36">ผู้รับผิดชอบ</th>
@@ -278,36 +295,36 @@
         }
 
         function renderSummary(data) {
-            let regAllocated = 0, regSpent = 0;
-            regData.forEach(item => { regAllocated += item.allocated; regSpent += item.spent; });
-            let regPercent = regAllocated > 0 ? ((regSpent / regAllocated) * 100).toFixed(1) : "0.0";
+            let regBudget = 0, regSpent = 0;
+            regData.forEach(item => { regBudget += item.budget; regSpent += item.spent; });
+            let regPercent = regBudget > 0 ? ((regSpent / regBudget) * 100).toFixed(1) : "0.0";
 
-            let ceoAllocated = 0, ceoSpent = 0;
-            ceoData.forEach(item => { ceoAllocated += item.allocated; ceoSpent += item.spent; });
-            let ceoPercent = ceoAllocated > 0 ? ((ceoSpent / ceoAllocated) * 100).toFixed(1) : "0.0";
+            let ceoBudget = 0, ceoSpent = 0;
+            ceoData.forEach(item => { ceoBudget += item.budget; ceoSpent += item.spent; });
+            let ceoPercent = ceoBudget > 0 ? ((ceoSpent / ceoBudget) * 100).toFixed(1) : "0.0";
 
-            let groupAllocated = 0, groupSpent = 0;
-            groupData.forEach(item => { groupAllocated += item.allocated; groupSpent += item.spent; });
-            let groupPercent = groupAllocated > 0 ? ((groupSpent / groupAllocated) * 100).toFixed(1) : "0.0";
+            let groupBudget = 0, groupSpent = 0;
+            groupData.forEach(item => { groupBudget += item.budget; groupSpent += item.spent; });
+            let groupPercent = groupBudget > 0 ? ((groupSpent / groupBudget) * 100).toFixed(1) : "0.0";
 
             const topCards = [
-                { title: "งบประมาณทั้งหมด", amount: formatNumber(data.totalBudget), icon: "wallet", theme: "from-blue-600 to-blue-700" },
-                { title: "จัดสรรแล้ว", amount: formatNumber(data.totalAllocated), icon: "arrow-down-to-line", theme: "from-indigo-600 to-purple-700" },
-                { title: "ตัดจ่ายแล้ว", amount: formatNumber(data.totalSpent), icon: "trending-up", theme: "from-emerald-500 to-teal-600" },
-                { title: "คงเหลือ", amount: formatNumber(data.totalRemaining), icon: "piggy-bank", theme: "from-amber-400 to-orange-500" }
+                { title: "งบประมาณทั้งหมด", amount: formatNumber(data.totalBudget), icon: "icon1.png", theme: "from-blue-600 to-blue-700" },
+                { title: "จัดสรรแล้ว", amount: formatNumber(data.totalAllocated), icon: "icon2.png", theme: "from-indigo-600 to-purple-700" },
+                { title: "ใช้จ่ายแล้ว", amount: formatNumber(data.totalSpent), icon: "icon3.png", theme: "from-emerald-500 to-teal-600" },
+                { title: "คงเหลือ", amount: formatNumber(data.totalRemaining), icon: "icon4.png", theme: "from-amber-400 to-orange-500" }
             ];
 
             const bottomCards = [
-                { title: "ภาพรวมการใช้จ่าย งบประจำ", amount: formatNumber(regSpent), percent: regPercent, circleColor: "#0284c7" }, 
-                { title: "ภาพรวมการใช้จ่าย งบพัฒนาคุณภาพการศึกษา (CEO)", amount: formatNumber(ceoSpent), percent: ceoPercent, circleColor: "#ec4899" }, 
-                { title: "ภาพรวมการใช้จ่าย แผนงาน/โครงการ", amount: formatNumber(groupSpent), percent: groupPercent, circleColor: "#9333ea" } 
+                { title: "งบประจำ<br>", budget: formatNumber(regBudget), amount: formatNumber(regSpent), percent: regPercent, circleColor: "#0284c7" }, 
+                { title: "งบพัฒนาคุณภาพการศึกษา (CEO)", budget: formatNumber(ceoBudget), amount: formatNumber(ceoSpent), percent: ceoPercent, circleColor: "#ec4899" }, 
+                { title: "แผนงาน/โครงการ<br>", budget: formatNumber(groupBudget), amount: formatNumber(groupSpent), percent: groupPercent, circleColor: "#9333ea" } 
             ];
 
             let htmlTop = topCards.map(c => `
                 <div class="summary-card bg-gradient-to-br ${c.theme} text-white">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="p-2.5 bg-white/20 rounded-xl backdrop-blur-md border border-white/20 shadow-inner">
-                            <i data-lucide="${c.icon}" class="w-5 h-5 text-white opacity-90"></i>
+                        <div class="p-2 bg-white/20 rounded-xl border border-white/30 shadow-sm flex items-center justify-center">
+                            <img src="${c.icon}" class="w-10 h-10 object-contain" style="filter: brightness(0) invert(1);" alt="icon">
                         </div>
                     </div>
                     <p class="text-xs font-semibold text-white/80 mb-1.5 tracking-wider uppercase">${c.title}</p>
@@ -317,15 +334,15 @@
 
             let htmlBottom = bottomCards.map(c => `
                 <div class="summary-card bg-white border border-slate-200 text-slate-800 flex items-center gap-5">
-                    <div class="relative flex-shrink-0">
-                        <svg class="circle-chart" viewBox="0 0 33.8 33.8">
-                            <circle class="circle-chart-bg" cx="16.9" cy="16.9" r="15.9"></circle>
-                            <circle class="circle-chart-circle" cx="16.9" cy="16.9" r="15.9" stroke="${c.circleColor}" stroke-dasharray="${c.percent},100"></circle>
+                    <div class="relative flex-shrink-0 w-[75px] h-[75px]">
+                        <svg class="circle-chart w-full h-full" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                            <circle class="circle-chart-bg" cx="18" cy="18" r="15.9155" fill="none" stroke="rgba(0,0,0,0.05)" stroke-width="3"></circle>
+                            <circle class="circle-chart-circle" cx="18" cy="18" r="15.9155" fill="none" stroke="${c.circleColor}" stroke-width="3" stroke-linecap="round" stroke-dasharray="${c.percent},100" style="transition: stroke-dasharray 1s ease;"></circle>
                         </svg>
                         <div class="absolute inset-0 flex items-center justify-center text-sm font-bold text-slate-900">${c.percent}%</div>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-slate-500 mb-1.5 tracking-wider uppercase">${c.title}</p>
+                        <p class="text-[13px] font-semibold text-slate-500 mb-1.5 tracking-wider uppercase">${c.title} ${c.budget}</p>
                         <div class="text-2xl font-black leading-tight">${c.amount} <span class="text-sm font-normal text-slate-400">บาท</span></div>
                     </div>
                 </div>
@@ -342,10 +359,12 @@
                 budgetChartInstance.destroy();
             }
 
-            const labels = groupData.map((g, index) => index + 1);
-            
-            const allocatedData = groupData.map(g => g.allocated);
-            const spentData = groupData.map(g => g.spent);
+            const activeData = groupData.filter(g => g.budget > 0 || g.allocated > 0 || g.spent > 0);
+
+            const labels = activeData.map(g => g.no);
+            const budgetData = activeData.map(g => g.budget);
+            const allocatedData = activeData.map(g => g.allocated);
+            const spentData = activeData.map(g => g.spent);
 
             budgetChartInstance = new Chart(ctx, {
                 type: 'bar',
@@ -353,45 +372,75 @@
                     labels: labels,
                     datasets: [
                         {
-                            label: 'จัดสรรแล้ว (บาท)',
-                            data: allocatedData,
-                            backgroundColor: '#f97316', 
-                            borderRadius: 6,
-                            barPercentage: 0.7
+                            label: 'งบประมาณทั้งหมด (บาท)',
+                            data: budgetData,
+                            backgroundColor: '#e2e8f0', 
+                            grouped: false,
+                            barPercentage: 1.0, 
+                            categoryPercentage: 0.8,
+                            borderRadius: 4,
+                            order: 3
                         },
                         {
-                            label: 'ตัดจ่ายแล้ว (บาท)',
-                            data: spentData,
+                            label: 'จัดสรรแล้ว (บาท)',
+                            data: allocatedData,
                             backgroundColor: '#10b981', 
-                            borderRadius: 6,
-                            barPercentage: 0.7
+                            grouped: true, 
+                            barPercentage: 0.85, 
+                            categoryPercentage: 0.6,
+                            borderRadius: 4,
+                            order: 2 
+                        },
+                        {
+                            label: 'ใช้จ่ายแล้ว (บาท)',
+                            data: spentData,
+                            backgroundColor: '#475569', 
+                            grouped: true, 
+                            barPercentage: 0.85, 
+                            categoryPercentage: 0.6,
+                            borderRadius: 4,
+                            order: 1 
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
                     plugins: {
-                        legend: { position: 'top', labels: { font: { family: 'Sarabun', size: 14, weight: 600 }, color: '#334155' } },
+                        legend: { 
+                            position: 'top', 
+                            labels: { 
+                                font: { family: 'Sarabun', size: 14, weight: 600 }, 
+                                color: '#334155',
+                                usePointStyle: true,
+                                padding: 20
+                            } 
+                        },
                         tooltip: { 
                             titleFont: { family: 'Sarabun', size: 14 }, 
                             bodyFont: { family: 'Sarabun', size: 14 },
                             callbacks: {
                                 title: function(context) {
-                                    return groupData[context[0].dataIndex].name;
+                                    return activeData[context[0].dataIndex].name;
                                 }
                             }
                         }
                     },
                     scales: {
                         x: { 
+                            stacked: false,
                             title: { display: true, text: 'แผนงานลำดับที่', font: { family: 'Sarabun', size: 14, weight: 'bold' } },
                             ticks: { font: { family: 'Sarabun', size: 14, weight: 'bold' }, color: '#64748b' }, 
                             grid: { display: false } 
                         },
                         y: { 
+                            stacked: false,
                             ticks: { font: { family: 'Sarabun', size: 13 }, color: '#334155' }, 
-                            grid: { color: 'rgba(0,0,0,0.04)' } 
+                            grid: { color: 'rgba(0,0,0,0.05)', borderDash: [5, 5] } 
                         }
                     }
                 }
@@ -401,7 +450,7 @@
         function buildTableHtml(dataArray, type) {
             let html = '';
             dataArray.forEach((g, index) => {
-                const percent = g.allocated > 0 ? ((g.spent / g.allocated) * 100).toFixed(1) : 0;
+                const percent = g.budget > 0 ? ((g.spent / g.budget) * 100).toFixed(1) : 0;
                 const remaining = g.allocated - g.spent;
                 let barColor = getProgressColor(percent);
                 
@@ -447,7 +496,7 @@
 
                 if (g.isExpanded && hasSubs) {
                     g.subs.forEach(sub => {
-                        const subPercent = sub.allocated > 0 ? ((sub.spent / sub.allocated) * 100).toFixed(1) : 0;
+                        const subPercent = sub.budget > 0 ? ((sub.spent / sub.budget) * 100).toFixed(1) : 0;
                         const subRemaining = sub.allocated - sub.spent;
                         let subBarColor = getProgressColor(subPercent);
 
@@ -486,7 +535,41 @@
         function renderTables() {
             document.getElementById('reg-table').innerHTML = buildTableHtml(regData, 'reg');
             document.getElementById('ceo-table').innerHTML = buildTableHtml(ceoData, 'ceo');
-            document.getElementById('group-table').innerHTML = buildTableHtml(groupData, 'group');
+            
+            let groupHtml = buildTableHtml(groupData, 'group');
+
+            let tBudget = 0, tAlloc = 0, tSpent = 0;
+            groupData.forEach(g => { 
+                tBudget += g.budget; 
+                tAlloc += g.allocated; 
+                tSpent += g.spent; 
+            });
+            let tRem = tAlloc - tSpent;
+            let tPct = tBudget > 0 ? ((tSpent / tBudget) * 100).toFixed(1) : 0;
+            let barColor = getProgressColor(tPct);
+
+            if(groupData.length > 0) {
+                groupHtml += `
+                <tr class="bg-white font-bold text-slate-800">
+                    <td class="text-center py-5 border-t-2 border-slate-200">รวม</td>
+                    <td class="py-5 text-[16px] text-blue-950 border-t-2 border-slate-200">รวมทั้งสิ้น (18 แผนงาน)</td>
+                    <td class="text-right text-slate-600 py-5 border-t-2 border-slate-200">${formatNumber(tBudget)}</td>
+                    <td class="text-right text-indigo-700 py-5 border-t-2 border-slate-200">${formatNumber(tAlloc)}</td>
+                    <td class="text-right text-emerald-700 py-5 border-t-2 border-slate-200">${formatNumber(tSpent)}</td>
+                    <td class="text-right text-amber-600 py-5 border-t-2 border-slate-200">${formatNumber(tRem)}</td>
+                    <td class="py-5 border-t-2 border-slate-200">
+                        <div class="flex items-center gap-3">
+                            <span class="text-sm font-bold w-14 text-right ${tPct >= 80 ? 'text-emerald-600' : tPct >= 50 ? 'text-blue-600' : 'text-amber-600'}">${tPct}%</span>
+                            <div class="progress-container">
+                                <div class="progress-fill ${barColor} shadow-md" style="width: ${tPct}%"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="border-t-2 border-slate-200"></td>
+                </tr>`;
+            }
+
+            document.getElementById('group-table').innerHTML = groupHtml;
             lucide.createIcons(); 
         }
 
