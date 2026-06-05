@@ -314,7 +314,7 @@
 
             const bottomCards = [
                 { title: "งบประจำ ", budget: formatNumber(regBudget), amount: formatNumber(regSpent), percent: regPercent, circleColor: "#0284c7" }, 
-                { title: "งบพัฒนาคุณภาพการศึกษา (CEO) <br>", budget: formatNumber(ceoBudget), amount: formatNumber(ceoSpent), percent: ceoPercent, circleColor: "#ec4899" }, 
+                { title: "งบพัฒนาคุณภาพการศึกษา (CEO) ", budget: formatNumber(ceoBudget), amount: formatNumber(ceoSpent), percent: ceoPercent, circleColor: "#ec4899" }, 
                 { title: "แผนงาน/โครงการ ", budget: formatNumber(groupBudget), amount: formatNumber(groupSpent), percent: groupPercent, circleColor: "#9333ea" } 
             ];
 
@@ -376,8 +376,8 @@
                         {
                             label: 'งบประมาณทั้งหมด (บาท)',
                             data: budgetData,
-                            backgroundColor: '#E6E6FA', 
-                            borderColor: '#E6E6FA',     
+                            backgroundColor: '#e7e5e4', 
+                            borderColor: '#e7e5e4',     
                             borderWidth: 1,             
                             hoverBackgroundColor: '#cfd8dc',
                             grouped: false,
@@ -400,8 +400,8 @@
                         {
                             label: 'ใช้จ่ายแล้ว (บาท)',
                             data: spentData,
-                            backgroundColor: '#708090',
-                            hoverBackgroundColor: '#708090',
+                            backgroundColor: '#f59e0b',
+                            hoverBackgroundColor: '#f59e0b',
                             grouped: true, 
                             barPercentage: 0.85, 
                             categoryPercentage: 0.65,
@@ -598,51 +598,6 @@
                             <span class="text-sm font-bold w-12 text-right ${tPct >= 80 ? 'text-emerald-600' : tPct >= 50 ? 'text-blue-600' : 'text-amber-600'}">${tPct}%</span>
                             <div class="w-20 h-2 bg-slate-200 rounded-full overflow-hidden flex-shrink-0">
                                 <div class="h-full rounded-full ${barColor}" style="width: ${tPct}%"></div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="border-t-2 border-slate-200"></td>
-                </tr>`;
-            }
-
-            document.getElementById('group-table').innerHTML = groupHtml;
-            lucide.createIcons(); 
-        }
-
-        window.toggleCeoRow = function(index) { ceoData[index].isExpanded = !ceoData[index].isExpanded; renderTables(); }
-        window.toggleRegRow = function(index) { regData[index].isExpanded = !regData[index].isExpanded; renderTables(); }
-        window.toggleGroupRow = function(index) { groupData[index].isExpanded = !groupData[index].isExpanded; renderTables(); }
-
-        function renderTables() {
-            document.getElementById('reg-table').innerHTML = buildTableHtml(regData, 'reg');
-            document.getElementById('ceo-table').innerHTML = buildTableHtml(ceoData, 'ceo');
-            
-            let groupHtml = buildTableHtml(groupData, 'group');
-
-            let tBudget = 0, tAlloc = 0, tSpent = 0;
-            groupData.forEach(g => { 
-                tBudget += g.budget; 
-                tAlloc += g.allocated; 
-                tSpent += g.spent; 
-            });
-            let tRem = tAlloc - tSpent;
-            let tPct = tBudget > 0 ? ((tSpent / tBudget) * 100).toFixed(1) : 0;
-            let barColor = getProgressColor(tPct);
-
-            if(groupData.length > 0) {
-                groupHtml += `
-                <tr class="bg-white font-bold text-slate-800">
-                    <td class="text-center py-5 border-t-2 border-slate-200">รวม</td>
-                    <td class="py-5 text-[16px] text-blue-950 border-t-2 border-slate-200">รวมทั้งหมด (18 แผนงาน)</td>
-                    <td class="text-right text-slate-600 py-5 border-t-2 border-slate-200">${formatNumber(tBudget)}</td>
-                    <td class="text-right text-indigo-700 py-5 border-t-2 border-slate-200">${formatNumber(tAlloc)}</td>
-                    <td class="text-right text-emerald-700 py-5 border-t-2 border-slate-200">${formatNumber(tSpent)}</td>
-                    <td class="text-right text-amber-600 py-5 border-t-2 border-slate-200">${formatNumber(tRem)}</td>
-                    <td class="py-5 border-t-2 border-slate-200">
-                        <div class="flex items-center gap-3">
-                            <span class="text-sm font-bold w-14 text-right ${tPct >= 80 ? 'text-emerald-600' : tPct >= 50 ? 'text-blue-600' : 'text-amber-600'}">${tPct}%</span>
-                            <div class="progress-container">
-                                <div class="progress-fill ${barColor} shadow-md" style="width: ${tPct}%"></div>
                             </div>
                         </div>
                     </td>
