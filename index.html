@@ -106,13 +106,7 @@
     <main class="max-w-7xl mx-auto px-6 py-10">
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6" id="top-summary-cards"></div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10" id="bottom-summary-cards"></div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6" id="top-summary-cards"></div>
-
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" id="bottom-summary-cards"></div>
-
         <div class="bg-white rounded-[24px] shadow-lg border border-slate-100 mb-8 px-8 pt-8 pb-4">
             <h2 class="text-2xl font-bold text-blue-950 mb-5 flex items-center gap-4">
                 <div class="p-2.5 bg-gradient-to-br from-indigo-600 to-blue-700 rounded-xl shadow-[0_4px_10px_rgba(79,70,229,0.3)] flex items-center justify-center">
@@ -319,9 +313,9 @@
             ];
 
             const bottomCards = [
-                { title: "งบประจำ <br>", budget: formatNumber(regBudget), amount: formatNumber(regSpent), percent: regPercent, circleColor: "#0284c7" }, 
+                { title: "งบประจำ ", budget: formatNumber(regBudget), amount: formatNumber(regSpent), percent: regPercent, circleColor: "#0284c7" }, 
                 { title: "งบพัฒนาคุณภาพการศึกษา (CEO) <br>", budget: formatNumber(ceoBudget), amount: formatNumber(ceoSpent), percent: ceoPercent, circleColor: "#ec4899" }, 
-                { title: "แผนงาน/โครงการ <br>", budget: formatNumber(groupBudget), amount: formatNumber(groupSpent), percent: groupPercent, circleColor: "#9333ea" } 
+                { title: "แผนงาน/โครงการ ", budget: formatNumber(groupBudget), amount: formatNumber(groupSpent), percent: groupPercent, circleColor: "#9333ea" } 
             ];
 
             let htmlTop = topCards.map(c => `
@@ -336,8 +330,9 @@
                 </div>
             `).join('');
 
-            let htmlBottom = bottomCards.map(c => `  
-                <div class="summary-card bg-white border border-slate-200 text-slate-800 flex items-center gap-5">
+           let htmlBottom = bottomCards.map(c => `  
+                <div class="summary-card bg-white border border-slate-200 text-slate-800 flex items-center gap-4">
+                    
                     <div class="relative flex-shrink-0 w-[75px] h-[75px]">
                         <svg class="circle-chart w-full h-full" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
                             <circle class="circle-chart-bg" cx="18" cy="18" r="15.9155" fill="none" stroke="rgba(0,0,0,0.05)" stroke-width="3"></circle>
@@ -345,10 +340,13 @@
                         </svg>
                         <div class="absolute inset-0 flex items-center justify-center text-sm font-bold text-slate-900">${c.percent}%</div>
                     </div>
-                    <div>
-                        <p class="text-[13px] font-semibold text-slate-500 mb-1.5 tracking-wider uppercase">${c.title} ${c.budget}</p>
-                        <div class="text-2xl font-black leading-tight">${c.amount} <span class="text-sm font-normal text-slate-400">บาท</span></div>
+                    
+                    <div class="w-full"> 
+                        <p class="text-[13px] font-semibold text-slate-500 tracking-wider uppercase leading-tight mb-1">${c.title}</p>                   
+                        <p class="text-[12px] font-medium text-slate-400 leading-none mb-1"> ${c.budget}</p>                                          
+                        <div class="text-2xl font-black leading-tight mt-2">${c.amount} <span class="text-sm font-normal text-slate-400">บาท</span></div>
                     </div>
+                    
                 </div>
             `).join('');
 
