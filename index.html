@@ -107,6 +107,7 @@
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6" id="top-summary-cards"></div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" id="bottom-summary-cards"></div>
+        
         <div class="bg-white rounded-[24px] shadow-lg border border-slate-100 mb-8 px-8 pt-8 pb-4">
             <h2 class="text-2xl font-bold text-blue-950 mb-5 flex items-center gap-4">
                 <div class="p-2.5 bg-gradient-to-br from-indigo-600 to-blue-700 rounded-xl shadow-[0_4px_10px_rgba(79,70,229,0.3)] flex items-center justify-center">
@@ -116,6 +117,18 @@
             </h2>
             <div class="relative h-[400px] w-full">
                 <canvas id="budgetChart"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[24px] shadow-lg border border-slate-100 mb-10 px-8 pt-8 pb-4">
+            <h2 class="text-2xl font-bold text-blue-950 mb-5 flex items-center gap-4">
+                <div class="p-2.5 bg-gradient-to-br from-blue-800 to-indigo-900 rounded-xl shadow-[0_4px_10px_rgba(30,58,138,0.3)] flex items-center justify-center">
+                    <img src="icon9.png" class="w-8 h-8 object-contain" style="filter: brightness(0) invert(1);" alt="chart-icon">
+                </div>
+                Top 5 งบประจำ 
+            </h2>
+            <div class="relative h-[350px] w-full">
+                <canvas id="top5Chart"></canvas>
             </div>
         </div>
 
@@ -177,7 +190,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-[24px] shadow-lg overflow-hidden border border-slate-100">
+        <div class="bg-white rounded-[24px] shadow-lg overflow-hidden border border-slate-100 mb-10">
             <div class="px-8 py-7 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
                 <h2 class="text-2xl font-bold text-blue-950 flex items-center gap-3">
                     <div class="p-2.5 bg-sky-500 rounded-lg text-white shadow-inner">
@@ -216,6 +229,7 @@
         let groupData = [];
         let globalRawData = null;
         let budgetChartInstance = null; 
+        let top5ChartInstance = null; 
 
         function formatNumber(num) {
             if (!num || num === 0) return "-";
@@ -244,6 +258,7 @@
             renderSummary(data);
             renderTables();
             renderChart(); 
+            renderTop5Chart(); 
             
             const now = new Date();
             document.getElementById('report-date').textContent = now.toLocaleDateString('th-TH', { 
@@ -332,7 +347,6 @@
 
            let htmlBottom = bottomCards.map(c => `  
                 <div class="summary-card bg-white border border-slate-200 text-slate-800 flex items-center gap-4">
-                    
                     <div class="relative flex-shrink-0 w-[75px] h-[75px]">
                         <svg class="circle-chart w-full h-full" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
                             <circle class="circle-chart-bg" cx="18" cy="18" r="15.9155" fill="none" stroke="rgba(0,0,0,0.05)" stroke-width="3"></circle>
@@ -340,13 +354,11 @@
                         </svg>
                         <div class="absolute inset-0 flex items-center justify-center text-sm font-bold text-slate-900">${c.percent}%</div>
                     </div>
-                    
                     <div class="w-full"> 
-                        <p class="text-[13px] font-semibold text-slate-500 tracking-wider uppercase leading-tight mb-1">${c.title}</p>                   
+                        <p class="text-[13px] font-semibold text-slate-500 tracking-wider uppercase leading-tight mb-1">${c.title}</p>                  
                         <p class="text-[12px] font-medium text-slate-400 leading-none mb-1"> ${c.budget}</p>                                          
                         <div class="text-2xl font-black leading-tight mt-2">${c.amount} <span class="text-sm font-normal text-slate-400">บาท</span></div>
                     </div>
-                    
                 </div>
             `).join('');
 
@@ -400,8 +412,8 @@
                         {
                             label: 'ใช้จ่ายแล้ว (บาท)',
                             data: spentData,
-                            backgroundColor: '#f59e0b',
-                            hoverBackgroundColor: '#f59e0b',
+                            backgroundColor: '#039be5',
+                            hoverBackgroundColor: '#039be5',
                             grouped: true, 
                             barPercentage: 0.85, 
                             categoryPercentage: 0.65,
@@ -414,19 +426,14 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     interaction: {
-                        mode: 'index',
-                        intersect: false,
+                        mode: 'index', 
+                        axis: 'x', 
+                        intersect: false, 
                     },
                     plugins: {
                         legend: { 
                             position: 'top', 
-                            labels: { 
-                                font: { family: 'Sarabun', size: 13, weight: 600 }, 
-                                color: '#64748b',
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                                padding: 20
-                            } 
+                            labels: { font: { family: 'Sarabun', size: 13, weight: 600 }, color: '#64748b', usePointStyle: true, padding: 20 } 
                         },
                         tooltip: { 
                             backgroundColor: 'rgba(15, 23, 42, 0.95)',
@@ -438,7 +445,6 @@
                                 title: function(context) {
                                     return "แผนงาน: " + activeData[context[0].dataIndex].name;
                                 },
-                                
                                 label: function(context) {
                                     let label = context.dataset.label || '';
                                     let value = context.raw || 0;
@@ -459,31 +465,91 @@
                             stacked: false,
                             title: { display: true, text: 'ลำดับแผนงาน/โครงการ', font: { family: 'Sarabun', size: 13, weight: 'bold' }, color: '#94a3b8' },
                             ticks: { font: { family: 'Sarabun', size: 13, weight: 'bold' }, color: '#64748b' }, 
-                            grid: { display: false },
-                            border: { display: false }
+                            grid: { display: false }, border: { display: false }
                         },
                         y: { 
-                            stacked: false,
-                            beginAtZero: true,
-                            grace: '10%', 
-                            ticks: { 
-                                font: { family: 'Sarabun', size: 12 }, 
-                                color: '#94a3b8',
-                                callback: function(value) {
-                                    if (value >= 1000000) return (value / 1000000) + 'M';
-                                    if (value >= 1000) return (value / 1000) + 'k';
-                                    return value;
-                                }
-                            }, 
-                            grid: { color: '#f1f5f9', drawBorder: false }, 
-                            border: { display: false, dash: [4, 4] } 
+                            stacked: false, beginAtZero: true, grace: '10%', 
+                            ticks: { font: { family: 'Sarabun', size: 12 }, color: '#94a3b8', callback: function(value) { return value.toLocaleString('th-TH'); } }, 
+                            grid: { color: '#f1f5f9', drawBorder: false }, border: { display: false, dash: [4, 4] } 
                         }
                     }
                 }
             });
         }
+
+        function renderTop5Chart() {
+            const ctx = document.getElementById('top5Chart').getContext('2d');
+            if (top5ChartInstance) { top5ChartInstance.destroy(); }
+
+            let regProjectList = [];
+            if (regData.length > 0 && regData[0].subs) { regProjectList = regData[0].subs; }
+
+            const top5Data = [...regProjectList]
+                .filter(g => g.budget > 0)
+                .sort((a, b) => b.budget - a.budget)
+                .slice(0, 5);
+
+            const labels = top5Data.map(g => {
+                let name = g.name.replace(/^[\d\.\s]+/, '');
+                return name.length > 45 ? name.substring(0, 45) + '...' : name;
+            });
+            
+            const budgetData = top5Data.map(g => g.budget);
+            const allocatedData = top5Data.map(g => g.allocated);
+            const spentData = top5Data.map(g => g.spent);
+
+            top5ChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'งบประมาณทั้งหมด (บาท)', data: budgetData, backgroundColor: '#e7e5e4', hoverBackgroundColor: '#cfd8dc', grouped: false, barPercentage: 0.9, categoryPercentage: 0.85, borderRadius: 6, order: 3 },
+                        { label: 'จัดสรรแล้ว (บาท)', data: allocatedData, backgroundColor: '#ffeb3b', hoverBackgroundColor: '#ffeb3b', grouped: true, barPercentage: 0.8, categoryPercentage: 0.75, borderRadius: 5, order: 2 },
+                        { label: 'ใช้จ่ายแล้ว (บาท)', data: spentData, backgroundColor: '#03a9f4', hoverBackgroundColor: '#03a9f4', grouped: true, barPercentage: 0.8, categoryPercentage: 0.75, borderRadius: 5, order: 1 }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y', 
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index', 
+                        axis: 'y', 
+                        intersect: false, 
+                    },
+                    plugins: {
+                        legend: { position: 'top', labels: { font: { family: 'Sarabun', size: 13, weight: 600 }, color: '#64748b', usePointStyle: true, padding: 20 } },
+                        tooltip: { 
+                            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                            titleFont: { family: 'Sarabun', size: 14, weight: 'bold' }, bodyFont: { family: 'Sarabun', size: 13 }, padding: 12, cornerRadius: 8,
+                            callbacks: {
+                                title: function(context) {
+                                    let originalName = top5Data[context[0].dataIndex].name;
+                                    return originalName.replace(/^[\d\.\s]+/, '');
+                                },
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    let value = context.raw || 0;
+                                    let total = budgetData[context.dataIndex]; 
+                                    let formattedValue = value.toLocaleString('th-TH') + ' บาท';
+                                    if (context.datasetIndex > 0 && total > 0) {
+                                        let percent = ((value / total) * 100).toFixed(1);
+                                        return `${label}: ${formattedValue} (${percent}%)`;
+                                    }
+                                    return `${label}: ${formattedValue}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { stacked: false, beginAtZero: true, ticks: { font: { family: 'Sarabun', size: 12 }, color: '#94a3b8', callback: function(value) { return value.toLocaleString('th-TH'); } }, grid: { color: '#f1f5f9', drawBorder: false }, border: { display: false, dash: [4, 4] } },
+                        y: { stacked: false, ticks: { font: { family: 'Sarabun', size: 13, weight: 'bold' }, color: '#475569' }, grid: { display: false }, border: { display: false } }
+                    }
+                }
+            });
+        }
         
- function buildTableHtml(dataArray, type) {
+        function buildTableHtml(dataArray, type) {
             let html = '';
             dataArray.forEach((g, index) => {
                 const percent = g.budget > 0 ? ((g.spent / g.budget) * 100).toFixed(1) : 0;
