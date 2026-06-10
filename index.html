@@ -388,10 +388,10 @@
                         {
                             label: 'งบประมาณทั้งหมด (บาท)',
                             data: budgetData,
-                            backgroundColor: '#e7e5e4', 
-                            borderColor: '#e7e5e4',     
+                            backgroundColor: '#E0E0E0', 
+                            borderColor: '#E0E0E0',     
                             borderWidth: 1,             
-                            hoverBackgroundColor: '#cfd8dc',
+                            hoverBackgroundColor: '#DCDCDC',
                             grouped: false,
                             barPercentage: 1.0, 
                             categoryPercentage: 0.75,
@@ -401,8 +401,8 @@
                         {
                             label: 'จัดสรรแล้ว (บาท)',
                             data: allocatedData,
-                            backgroundColor: '#10b981',
-                            hoverBackgroundColor: '#10b981',
+                            backgroundColor: '#afbfff',
+                            hoverBackgroundColor: '#afbfff',
                             grouped: true, 
                             barPercentage: 0.85, 
                             categoryPercentage: 0.65,
@@ -412,8 +412,8 @@
                         {
                             label: 'ใช้จ่ายแล้ว (บาท)',
                             data: spentData,
-                            backgroundColor: '#039be5',
-                            hoverBackgroundColor: '#039be5',
+                            backgroundColor: '#2D41DB',
+                            hoverBackgroundColor: '#2D41DB',
                             grouped: true, 
                             barPercentage: 0.85, 
                             categoryPercentage: 0.65,
@@ -503,9 +503,9 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'งบประมาณทั้งหมด (บาท)', data: budgetData, backgroundColor: '#e7e5e4', hoverBackgroundColor: '#cfd8dc', grouped: false, barPercentage: 0.9, categoryPercentage: 0.85, borderRadius: 6, order: 3 },
-                        { label: 'จัดสรรแล้ว (บาท)', data: allocatedData, backgroundColor: '#ffeb3b', hoverBackgroundColor: '#ffeb3b', grouped: true, barPercentage: 0.8, categoryPercentage: 0.75, borderRadius: 5, order: 2 },
-                        { label: 'ใช้จ่ายแล้ว (บาท)', data: spentData, backgroundColor: '#03a9f4', hoverBackgroundColor: '#03a9f4', grouped: true, barPercentage: 0.8, categoryPercentage: 0.75, borderRadius: 5, order: 1 }
+                        { label: 'งบประมาณทั้งหมด (บาท)', data: budgetData, backgroundColor: '#DCDCDC', hoverBackgroundColor: '#DCDCDC', grouped: false, barPercentage: 0.9, categoryPercentage: 0.85, borderRadius: 6, order: 3 },
+                        { label: 'จัดสรรแล้ว (บาท)', data: allocatedData, backgroundColor: '#b3e5fc', hoverBackgroundColor: '#b3e5fc', grouped: true, barPercentage: 0.8, categoryPercentage: 0.75, borderRadius: 5, order: 2 },
+                        { label: 'ใช้จ่ายแล้ว (บาท)', data: spentData, backgroundColor: '#29b6f6', hoverBackgroundColor: '#29b6f6', grouped: true, barPercentage: 0.8, categoryPercentage: 0.75, borderRadius: 5, order: 1 }
                     ]
                 },
                 options: {
@@ -654,7 +654,7 @@
                 groupHtml += `
                 <tr class="bg-white font-bold text-slate-800">
                     <td class="text-center py-5 border-t-2 border-slate-200">รวม</td>
-                    <td class="py-5 text-[16px] text-blue-950 border-t-2 border-slate-200">รวมทั้งหมด (18 แผนงาน)</td>
+                    <td class="py-5 text-[16px] text-blue-950 border-t-2 border-slate-200">รวมทั้งหมด</td>
                     <td class="text-right text-slate-600 py-5 border-t-2 border-slate-200">${formatNumber(tBudget)}</td>
                     <td class="text-right text-indigo-700 py-5 border-t-2 border-slate-200">${formatNumber(tAlloc)}</td>
                     <td class="text-right text-emerald-700 py-5 border-t-2 border-slate-200">${formatNumber(tSpent)}</td>
