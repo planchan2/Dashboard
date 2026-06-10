@@ -388,8 +388,8 @@
                         {
                             label: 'งบประมาณทั้งหมด (บาท)',
                             data: budgetData,
-                            backgroundColor: '#E0E0E0', 
-                            borderColor: '#E0E0E0',     
+                            backgroundColor: '#E8E8E8', 
+                            borderColor: '#E8E8E8',     
                             borderWidth: 1,             
                             hoverBackgroundColor: '#DCDCDC',
                             grouped: false,
@@ -443,7 +443,7 @@
                             cornerRadius: 8,
                             callbacks: {
                                 title: function(context) {
-                                    return "แผนงาน: " + activeData[context[0].dataIndex].name;
+                                    return "โครงการ: " + activeData[context[0].dataIndex].name;
                                 },
                                 label: function(context) {
                                     let label = context.dataset.label || '';
@@ -503,7 +503,7 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'งบประมาณทั้งหมด (บาท)', data: budgetData, backgroundColor: '#DCDCDC', hoverBackgroundColor: '#DCDCDC', grouped: false, barPercentage: 0.9, categoryPercentage: 0.85, borderRadius: 6, order: 3 },
+                        { label: 'งบประมาณทั้งหมด (บาท)', data: budgetData, backgroundColor: '#E8E8E8', hoverBackgroundColor: '#E8E8E8', grouped: false, barPercentage: 0.9, categoryPercentage: 0.85, borderRadius: 6, order: 3 },
                         { label: 'จัดสรรแล้ว (บาท)', data: allocatedData, backgroundColor: '#b3e5fc', hoverBackgroundColor: '#b3e5fc', grouped: true, barPercentage: 0.8, categoryPercentage: 0.75, borderRadius: 5, order: 2 },
                         { label: 'ใช้จ่ายแล้ว (บาท)', data: spentData, backgroundColor: '#29b6f6', hoverBackgroundColor: '#29b6f6', grouped: true, barPercentage: 0.8, categoryPercentage: 0.75, borderRadius: 5, order: 1 }
                     ]
