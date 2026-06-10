@@ -73,31 +73,33 @@
 <body>
 
     <header class="bg-gradient-to-r from-blue-700 via-blue-800 to-indigo-800 shadow-xl sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 md:px-6 pt-4 md:pt-5 pb-2 md:pb-3 flex flex-wrap items-center justify-between gap-3 md:gap-5">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 pt-3 md:pt-5 pb-2 md:pb-3 flex flex-wrap items-center justify-between gap-3 md:gap-5">
             
-            <div class="flex items-start md:items-center gap-3 md:gap-5 max-w-full w-full md:w-auto">
-                <img src="logo-photoroom.png" alt="โลโก้สำนักงาน" class="h-12 md:h-[80px] w-auto rounded-lg md:rounded-xl shadow-md mt-1 md:mt-0 flex-shrink-0">
+            <div class="flex items-center gap-3 md:gap-5 max-w-full w-full md:w-auto">
+                <img src="logo-photoroom.png" alt="โลโก้สำนักงาน" class="h-10 md:h-[80px] w-auto rounded-lg md:rounded-xl shadow-md flex-shrink-0">
                 
                 <div class="flex-1 min-w-0">
-                    <h1 class="text-base md:text-2xl font-extrabold text-white leading-tight tracking-normal mb-1 truncate md:overflow-visible md:whitespace-normal">
+                    <h1 class="text-[15px] md:text-2xl font-extrabold text-white leading-tight tracking-normal mb-0.5 truncate md:overflow-visible md:whitespace-normal">
                         Dashboard ติดตามการใช้จ่ายงบประมาณ
                     </h1>
                     
-                    <p class="text-[11px] md:text-sm text-blue-100 font-medium opacity-90 leading-snug">
+                    <div class="text-[11px] md:text-sm text-blue-100 font-medium opacity-90 leading-snug">
                         แผนปฏิบัติการ ประจำปีงบประมาณ พ.ศ. 2569
-                        <span class="hidden md:inline"><br> กลุ่มนโยบายและแผน สำนักงานเขตพื้นที่การศึกษาประถมศึกษาจันทบุรี เขต 2 </span>
-                        <span class="hidden md:inline"><br>จัดทำโดย นายณรงค์ฤทธิ์ ประจงใจ นักศึกษาฝึกงาน ระดับ ปวส.2 สาขาเทคโนโลยีสารสนเทศ วิทยาลัยเทคนิคจันทบุรี</span>
-                    </p>
+                        <div class="hidden md:block mt-1">
+                            กลุ่มนโยบายและแผน สำนักงานเขตพื้นที่การศึกษาประถมศึกษาจันทบุรี เขต 2 <br>
+                            จัดทำโดย นายณรงค์ฤทธิ์ ประจงใจ นักศึกษาฝึกงาน ระดับ ปวส.2 สาขาเทคโนโลยีสารสนเทศ วิทยาลัยเทคนิคจันทบุรี
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div class="flex items-center justify-end w-full md:w-auto mt-2 md:mt-0 border-t border-white/20 md:border-t-0 pt-3 md:pt-0">
+            <div class="flex items-center justify-end w-full md:w-auto mt-1 md:mt-0 border-t border-white/20 md:border-t-0 pt-2 md:pt-0">
                 <div class="hidden md:block text-right mr-4">
                     <p class="text-xs text-blue-200/90 font-medium">อัปเดตข้อมูลล่าสุด</p>
                     <p class="text-sm font-semibold text-white tracking-wide" id="report-date">กำลังเชื่อมต่อ...</p>
                 </div>
-                <button id="reload-btn" class="flex items-center justify-center gap-2 bg-white hover:bg-blue-50 text-blue-900 px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl text-sm md:text-base font-bold transition-all duration-300 shadow-[0_4px_15px_rgba(255,255,255,0.4)] hover:shadow-[0_6px_20px_rgba(255,255,255,0.6)] active:scale-95 ml-auto md:ml-0">
-                    <i data-lucide="refresh-cw" class="w-4 h-4 md:w-5 md:h-5"></i>
+                <button id="reload-btn" class="flex items-center justify-center gap-1.5 md:gap-2 bg-white hover:bg-blue-50 text-blue-900 px-3 py-1.5 md:px-6 md:py-3 rounded-lg md:rounded-2xl text-xs md:text-base font-bold transition-all duration-300 shadow-[0_4px_15px_rgba(255,255,255,0.4)] hover:shadow-[0_6px_20px_rgba(255,255,255,0.6)] active:scale-95 ml-auto md:ml-0">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5 md:w-5 md:h-5"></i>
                     <span>อัปเดตข้อมูล</span>
                 </button>
             </div>
@@ -112,43 +114,43 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-6 py-10">
+    <main class="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-10">
         
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6" id="top-summary-cards"></div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" id="bottom-summary-cards"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6" id="top-summary-cards"></div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8" id="bottom-summary-cards"></div>
         
-        <div class="bg-white rounded-[24px] shadow-lg border border-slate-100 mb-8 px-8 pt-8 pb-4">
-            <h2 class="text-2xl font-bold text-blue-950 mb-5 flex items-center gap-4">
-                <div class="p-2.5 bg-gradient-to-br from-indigo-600 to-blue-700 rounded-xl shadow-[0_4px_10px_rgba(79,70,229,0.3)] flex items-center justify-center">
-                    <img src="icon5.png" class="w-8 h-8 object-contain" style="filter: brightness(0) invert(1);" alt="chart-icon">
+        <div class="bg-white rounded-[24px] shadow-lg border border-slate-100 mb-8 px-4 md:px-8 pt-6 md:pt-8 pb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-blue-950 mb-5 flex items-center gap-3 md:gap-4">
+                <div class="p-2 md:p-2.5 bg-gradient-to-br from-indigo-600 to-blue-700 rounded-xl shadow-[0_4px_10px_rgba(79,70,229,0.3)] flex items-center justify-center">
+                    <img src="icon5.png" class="w-6 h-6 md:w-8 md:h-8 object-contain" style="filter: brightness(0) invert(1);" alt="chart-icon">
                 </div>
                 แผนภูมิแสดงรายละเอียดรายโครงการ
             </h2>
-            <div class="relative h-[400px] w-full">
+            <div class="relative h-[250px] md:h-[400px] w-full">
                 <canvas id="budgetChart"></canvas>
             </div>
         </div>
 
-        <div class="bg-white rounded-[24px] shadow-lg border border-slate-100 mb-10 px-8 pt-8 pb-4">
-            <h2 class="text-2xl font-bold text-blue-950 mb-5 flex items-center gap-4">
-                <div class="p-2.5 bg-gradient-to-br from-blue-800 to-indigo-900 rounded-xl shadow-[0_4px_10px_rgba(30,58,138,0.3)] flex items-center justify-center">
-                    <img src="icon9.png" class="w-8 h-8 object-contain" style="filter: brightness(0) invert(1);" alt="chart-icon">
+        <div class="bg-white rounded-[24px] shadow-lg border border-slate-100 mb-10 px-4 md:px-8 pt-6 md:pt-8 pb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-blue-950 mb-5 flex items-center gap-3 md:gap-4">
+                <div class="p-2 md:p-2.5 bg-gradient-to-br from-blue-800 to-indigo-900 rounded-xl shadow-[0_4px_10px_rgba(30,58,138,0.3)] flex items-center justify-center">
+                    <img src="icon9.png" class="w-6 h-6 md:w-8 md:h-8 object-contain" style="filter: brightness(0) invert(1);" alt="chart-icon">
                 </div>
                 Top 5 งบประจำ 
             </h2>
-            <div class="relative h-[350px] w-full">
+            <div class="relative h-[250px] md:h-[350px] w-full">
                 <canvas id="top5Chart"></canvas>
             </div>
         </div>
 
-        <div class="bg-white rounded-[24px] shadow-lg overflow-hidden border border-slate-100 mb-10">
-            <div class="px-8 py-7 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
-                <h2 class="text-2xl font-bold text-blue-950 flex items-center gap-3">
-                    <div class="p-2.5 bg-blue-600 rounded-lg text-white shadow-inner">
-                        <img src="icon6.png" class="w-6 h-6 object-contain" style="filter: brightness(0) invert(1);" alt="icon">
+        <div class="bg-white rounded-[24px] shadow-lg overflow-hidden border border-slate-100 mb-8 md:mb-10">
+            <div class="px-4 md:px-8 py-5 md:py-7 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+                <h2 class="text-lg md:text-2xl font-bold text-blue-950 flex items-center gap-3">
+                    <div class="p-2 md:p-2.5 bg-blue-600 rounded-lg text-white shadow-inner">
+                        <img src="icon6.png" class="w-5 h-5 md:w-6 md:h-6 object-contain" style="filter: brightness(0) invert(1);" alt="icon">
                     </div>
                     งบประจำ
-                    <span class="text-base font-normal text-slate-500 ml-2">(คลิกดูรายละเอียด)</span>
+                    <span class="text-xs md:text-base font-normal text-slate-500 ml-1 md:ml-2">(คลิกดูรายละเอียด)</span>
                 </h2>
             </div>
             <div class="overflow-x-auto">
@@ -170,14 +172,14 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-[24px] shadow-lg overflow-hidden border border-slate-100 mb-10">
-            <div class="px-8 py-7 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
-                <h2 class="text-2xl font-bold text-blue-950 flex items-center gap-3">
-                    <div class="p-2.5 bg-indigo-600 rounded-lg text-white shadow-inner">
-                        <img src="icon7.png" class="w-6 h-6 object-contain" style="filter: brightness(0) invert(1);" alt="icon">
+        <div class="bg-white rounded-[24px] shadow-lg overflow-hidden border border-slate-100 mb-8 md:mb-10">
+            <div class="px-4 md:px-8 py-5 md:py-7 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+                <h2 class="text-lg md:text-2xl font-bold text-blue-950 flex items-center gap-3">
+                    <div class="p-2 md:p-2.5 bg-indigo-600 rounded-lg text-white shadow-inner">
+                        <img src="icon7.png" class="w-5 h-5 md:w-6 md:h-6 object-contain" style="filter: brightness(0) invert(1);" alt="icon">
                     </div>
                     งบพัฒนาคุณภาพการศึกษา (CEO)
-                    <span class="text-base font-normal text-slate-500 ml-2">(คลิกดูรายละเอียด)</span>
+                    <span class="text-xs md:text-base font-normal text-slate-500 ml-1 md:ml-2">(คลิกดูรายละเอียด)</span>
                 </h2>
             </div>
             <div class="overflow-x-auto">
@@ -200,13 +202,13 @@
         </div>
 
         <div class="bg-white rounded-[24px] shadow-lg overflow-hidden border border-slate-100 mb-10">
-            <div class="px-8 py-7 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
-                <h2 class="text-2xl font-bold text-blue-950 flex items-center gap-3">
-                    <div class="p-2.5 bg-sky-500 rounded-lg text-white shadow-inner">
-                        <img src="icon8.png" class="w-6 h-6 object-contain" style="filter: brightness(0) invert(1);" alt="icon">
+            <div class="px-4 md:px-8 py-5 md:py-7 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+                <h2 class="text-lg md:text-2xl font-bold text-blue-950 flex items-center gap-3">
+                    <div class="p-2 md:p-2.5 bg-sky-500 rounded-lg text-white shadow-inner">
+                        <img src="icon8.png" class="w-5 h-5 md:w-6 md:h-6 object-contain" style="filter: brightness(0) invert(1);" alt="icon">
                     </div>
                   แผนงาน/โครงการ
-                    <span class="text-base font-normal text-slate-500 ml-2">(คลิกดูรายละเอียด)</span>
+                    <span class="text-xs md:text-base font-normal text-slate-500 ml-1 md:ml-2">(คลิกดูรายละเอียด)</span>
                 </h2>
             </div>
             <div class="overflow-x-auto">
@@ -364,7 +366,7 @@
                         <div class="absolute inset-0 flex items-center justify-center text-sm font-bold text-slate-900">${c.percent}%</div>
                     </div>
                     <div class="w-full"> 
-                        <p class="text-[13px] font-semibold text-slate-500 tracking-wider uppercase leading-tight mb-1">${c.title}</p>                  
+                        <p class="text-[13px] font-semibold text-slate-500 tracking-wider uppercase leading-tight mb-1">${c.title}</p>                 
                         <p class="text-[12px] font-medium text-slate-400 leading-none mb-1"> ${c.budget}</p>                                          
                         <div class="text-2xl font-black leading-tight mt-2">${c.amount} <span class="text-sm font-normal text-slate-400">บาท</span></div>
                     </div>
