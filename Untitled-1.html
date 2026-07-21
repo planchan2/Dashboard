@@ -152,12 +152,13 @@
 
 <body class="flex flex-col min-h-screen antialiased">
 
+    <!-- Header -->
     <header class="bg-[#1e293b]/95 backdrop-blur-md border-b border-[#334155] sticky top-0 z-50">
         <div class="max-w-[1400px] mx-auto px-6 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div
                     class="w-10 h-10  rounded-lg flex items-center justify-center text-white shadow-lg ">
-                    <img src="logo-photoroom.png" class="w-10 h-10">
+                    <img src="logo-Photoroom.png" class="w-10 h-10">
                 </div>
                 <div>
                     <h1 class="text-lg font-bold text-white leading-tight">Dashboard ข้อมูลพื้นฐานของโรงเรียนขนาดเล็ก</h1>
@@ -365,7 +366,13 @@
                     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
 
                     const rawArray = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
-                    globalHeaders = rawArray[1].map(h => (h || "").toString().trim());
+                    
+                    // 🟢 ผสานแถว 1 กับแถว 2 เข้าด้วยกัน เพื่อดึงคำว่า "StandAlone" ลงมาให้หาเจอ!
+                    const topHeaders = rawArray[0].map(h => (h || "").toString().trim());
+                    globalHeaders = rawArray[1].map((h, i) => {
+                        let text = (h || "").toString().trim();
+                        return text !== "" ? text : (topHeaders[i] || "").toString().trim();
+                    });
 
                     globalDataRows = [];
                     for (let i = 2; i < rawArray.length; i++) {
@@ -472,19 +479,19 @@
 
             $('#color-summary-cards').html(`
                 <div id="card-แดง" onclick="filterByColor('แดง')" class="color-card cursor-pointer bg-[#1e293b] border border-[#334155] rounded-xl p-3 flex flex-col justify-center items-center transition-all text-red-400">
-                    <p class="text-xs font-bold mb-1">เร่งให้การสนับสนุนช่วยเหลือ (กลุ่มสีแดง)</p><p class="text-2xl font-black">${counts['แดง']}</p>
+                    <p class="text-xs font-bold mb-1 text-center">(กลุ่มสีแดง)<br>เร่งให้การสนับสนุนช่วยเหลือ</p><p class="text-2xl font-black">${counts['แดง']}</p>
                 </div>
                 <div id="card-เหลือง" onclick="filterByColor('เหลือง')" class="color-card cursor-pointer bg-[#1e293b] border border-[#334155] rounded-xl p-3 flex flex-col justify-center items-center transition-all text-amber-400">
-                    <p class="text-xs font-bold mb-1">ส่งเสริมและพัฒนา (กลุ่มสีเหลือง)</p><p class="text-2xl font-black">${counts['เหลือง']}</p>
+                    <p class="text-xs font-bold mb-1 text-center">(กลุ่มสีเหลือง)<br>ส่งเสริมและพัฒนา</p><p class="text-2xl font-black">${counts['เหลือง']}</p>
                 </div>
                 <div id="card-เขียว" onclick="filterByColor('เขียว')" class="color-card cursor-pointer bg-[#1e293b] border border-[#334155] rounded-xl p-3 flex flex-col justify-center items-center transition-all text-emerald-400">
-                    <p class="text-xs font-bold mb-1">ส่งเสริมและพัฒนา (กลุ่มสีเขียว)</p><p class="text-2xl font-black">${counts['เขียว']}</p>
+                    <p class="text-xs font-bold mb-1 text-center">(กลุ่มสีเขียว)<br>ส่งเสริมและพัฒนา</p><p class="text-2xl font-black">${counts['เขียว']}</p>
                 </div>
                 <div id="card-ฟ้า" onclick="filterByColor('ฟ้า')" class="color-card cursor-pointer bg-[#1e293b] border border-[#334155] rounded-xl p-3 flex flex-col justify-center items-center transition-all text-blue-400">
-                    <p class="text-xs font-bold mb-1">Best Practice (กลุ่มสีฟ้า)</p><p class="text-2xl font-black">${counts['ฟ้า']}</p>
+                    <p class="text-xs font-bold mb-1 text-center">(กลุ่มสีฟ้า)<br>Best Practice</p><p class="text-2xl font-black">${counts['ฟ้า']}</p>
                 </div>
                 <div id="card-ม่วง" onclick="filterByColor('ม่วง')" class="color-card cursor-pointer bg-[#1e293b] border border-[#334155] rounded-xl p-3 flex flex-col justify-center items-center transition-all text-purple-400">
-                    <p class="text-xs font-bold mb-1">Best Practice (กลุ่มสีม่วง)</p><p class="text-2xl font-black">${counts['ม่วง']}</p>
+                    <p class="text-xs font-bold mb-1 text-center">(กลุ่มสีม่วง)<br>Best Practice</p><p class="text-2xl font-black">${counts['ม่วง']}</p>
                 </div>
             `);
             if (activeColorFilter) {
@@ -633,13 +640,18 @@
             else if (tabName === 'project') {
                 const getProjStatus = (kw) => {
                     let val = getValSafe(r, [kw]);
-                    if (val === '-' || val === null) return `<span class="text-slate-500 text-sm">ไม่ใช่</span>`;
+                    if (val === '-' || val === null || val === '') return `<span class="text-slate-500 text-sm">ไม่ใช่</span>`;
 
                     let txt = val.toString().trim();
-                    if (txt === 'ใช่' || (txt.toLowerCase().includes('stand') && !txt.includes('ไม่'))) {
+                    if (txt === 'ไม่ใช่' || txt === 'ไม่เข้าร่วม') {
+                        return `<span class="text-slate-500 text-sm">ไม่ใช่</span>`;
+                    }
+                    
+                    if (txt === 'ใช่') {
                         return `<span class="text-emerald-400 font-bold bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/30 text-xs shadow-sm">ใช่</span>`;
                     }
-                    return `<span class="text-slate-500 text-sm">ไม่ใช่</span>`;
+ 
+                    return `<span class="text-emerald-400 font-bold bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/30 text-xs shadow-sm">${txt}</span>`;
                 };
 
                 html = `
