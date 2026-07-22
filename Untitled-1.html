@@ -45,7 +45,7 @@
         <div class="max-w-[1400px] mx-auto px-6 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white shadow-lg ">
-                    <img src="logo-photoroom.png" class="w-10 h-10 object-contain" onerror="this.outerHTML='<i data-lucide=\'building-2\' class=\'w-6 h-6 text-slate-400\'></i>'">
+                    <img src="logo-Photoroom.png" class="w-10 h-10 object-contain" onerror="this.outerHTML='<i data-lucide=\'building-2\' class=\'w-6 h-6 text-slate-400\'></i>'">
                 </div>
                 <div>
                     <h1 class="text-lg font-bold text-white leading-tight">Dashboard ข้อมูลพื้นฐานของโรงเรียนขนาดเล็ก</h1>
@@ -194,31 +194,14 @@
         updateClock();
 
         $(document).ready(function () {
-            const savedData = localStorage.getItem('eis_DataSlim');
-            const savedHeaders = localStorage.getItem('eis_HeadersSlim');
-            const savedHeadersTop = localStorage.getItem('eis_HeadersTop'); 
-            if (savedData && savedHeaders) {
-                globalDataRows = JSON.parse(savedData);
-                globalHeaders = JSON.parse(savedHeaders);
-                if (savedHeadersTop) globalHeadersTop = JSON.parse(savedHeadersTop);
-                $('#last-update-text').text('อัปเดตล่าสุด: พร้อมใช้งาน');
-                applyFiltersAndRender();
-            }
-        });
-
-        $('#excel-upload').change(function (e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            Swal.fire({ title: 'กำลังโหลดข้อมูล...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
-
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
+            fetch('data.xlsx')
+                .then(response => {
+                    if (!response.ok) throw new Error("ไม่พบไฟล์อัตโนมัติ");
+                    return response.arrayBuffer();
+                })
+                .then(data => {
                     const workbook = XLSX.read(data, { type: 'array' });
                     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-
                     const rawArray = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
                     
                     const topHeaders = rawArray[0].map(h => (h || "").toString().trim());
@@ -235,26 +218,26 @@
                     for (let i = 2; i <= range.e.r; i++) {
                         let rowData = rawArray[i];
                         if (rowData && rowData.length > 1 && rowData[2]) {
-                            let cellText = rowData[lastColIdx];
-                            globalDataRows.push({ id: i, rowData: rowData, planLink: cellText || '-' });
+                            globalDataRows.push({ id: i, rowData: rowData });
                         }
                     }
 
-                    localStorage.setItem('eis_DataSlim', JSON.stringify(globalDataRows));
-                    localStorage.setItem('eis_HeadersSlim', JSON.stringify(globalHeaders));
-                    localStorage.setItem('eis_HeadersTop', JSON.stringify(globalHeadersTop));
-
-                    Swal.fire({ icon: 'success', title: 'สำเร็จ', text: `โหลดข้อมูล ${globalDataRows.length} แห่ง`, confirmButtonColor: '#3b82f6' });
-                    $('#excel-upload').val('');
-                    clearColorFilter();
-                    $('#last-update-text').text('อัปเดตล่าสุด: เพิ่งโหลดข้อมูลใหม่');
-
-                } catch (error) {
-                    Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: "ไฟล์ไม่ถูกต้อง" });
-                    $('#excel-upload').val('');
-                }
-            };
-            reader.readAsArrayBuffer(file);
+                    $('#last-update-text').text('อัปเดตล่าสุด: โหลดไฟล์อัตโนมัติสำเร็จ').removeClass('text-slate-400').addClass('text-emerald-400 font-bold');
+                    applyFiltersAndRender();
+                })
+                .catch(error => {
+                    const savedData = localStorage.getItem('eis_DataSlim');
+                    const savedHeaders = localStorage.getItem('eis_HeadersSlim');
+                    if (savedData && savedHeaders) {
+                        globalDataRows = JSON.parse(savedData);
+                        globalHeaders = JSON.parse(savedHeaders);
+                        if (localStorage.getItem('eis_HeadersTop')) globalHeadersTop = JSON.parse(localStorage.getItem('eis_HeadersTop'));
+                        $('#last-update-text').text('อัปเดตล่าสุด: ใช้ข้อมูลจากความจำเครื่อง');
+                        applyFiltersAndRender();
+                    } else {
+                        $('#last-update-text').text('สถานะ: รอการอัปโหลดข้อมูล');
+                    }
+                });
         });
 
         function getExact(rowData, keywords) {
