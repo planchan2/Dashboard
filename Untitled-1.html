@@ -661,7 +661,6 @@
                 if (r && r.length > 0) {
                     for (let j = 0; j < r.length; j++) {
                         let cellData = (r[j] || "").toString().trim();
-                        // สแกนหาคำว่า http หรือ drive
                         if (cellData.includes('http') || cellData.includes('drive.google.com')) {
                             finalLink = cellData;
                             break; 
