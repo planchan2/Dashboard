@@ -653,8 +653,7 @@
                 `;
             }
 
-            
-            // 🟢 แท็บ 'แผน' (เวอร์ชันนักสืบ แฉข้อมูลหมดเปลือก!)
+
             else if (tabName === 'plan') {
                 const r = item.rowData;
                 let finalLink = '';
@@ -672,7 +671,6 @@
 
                 let contentHtml = '';
                 if (!finalLink) {
-                    // 🔴 ถ้าหาไม่เจอ ให้มันคายข้อมูลทั้งหมดในแถวนี้ออกมาโชว์ให้เราดูเลย!
                     let rawDump = r ? r.filter(x => x).join(' ➡️ ') : 'ไม่มีข้อมูลในแถวนี้เลย!';
                     contentHtml = `
                         <div class="py-10 flex flex-col items-center justify-center">
