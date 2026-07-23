@@ -56,8 +56,14 @@
                     </div>
                 </div>
             </div>
+            
 
             <div class="flex items-center gap-2">
+
+                <button onclick="fetchDataFromServer()" class="bg-[#0f172a] hover:bg-[#334155] border border-[#334155] text-slate-300 px-3 py-2 rounded-lg transition-all flex items-center gap-2 font-medium text-sm shadow-sm">
+                    <i data-lucide="refresh-cw" class="w-4 h-4 text-blue-400"></i> โหลดข้อมูลบนระบบใหม่
+                </button>
+
                 <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden">
                 <button onclick="document.getElementById('excel-upload').click()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2 font-bold text-sm shadow-md">
                     <i data-lucide="upload-cloud" class="w-4 h-4"></i> อัปโหลด Excel
@@ -214,7 +220,10 @@
             }
         }
 
-        $(document).ready(function () {
+        // 🟢 ฟังก์ชันดึงข้อมูลจากไฟล์ data.xlsx (ดึงเฉพาะตอนที่สั่ง)
+        function fetchDataFromServer() {
+            $('#last-update-text').text('สถานะ: กำลังดาวน์โหลดไฟล์จากเซิร์ฟเวอร์...').removeClass('text-slate-400 text-emerald-400').addClass('text-amber-400 animate-pulse');
+            
             fetch('data.xlsx?v=' + new Date().getTime())
                 .then(response => {
                     if (!response.ok) throw new Error("ไม่พบไฟล์อัตโนมัติ");
@@ -244,25 +253,44 @@
                         }
                     }
 
-                    $('#last-update-text').text('อัปเดตล่าสุด: โหลดไฟล์อัตโนมัติสำเร็จ').removeClass('text-slate-400').addClass('text-emerald-400 font-bold');
+                    // 🟢 บันทึกเข้าสมอง (Cache)
+                    try {
+                        localStorage.setItem('eis_DataSlim', JSON.stringify(globalDataRows));
+                        localStorage.setItem('eis_HeadersSlim', JSON.stringify(globalHeaders));
+                        localStorage.setItem('eis_HeadersTop', JSON.stringify(globalHeadersTop));
+                    } catch (e) { console.warn("ไฟล์ใหญ่ไป จำไม่ได้"); }
+
+                    $('#last-update-text').text('อัปเดตล่าสุด: ดึงข้อมูลจากเซิร์ฟเวอร์สำเร็จ!').removeClass('text-amber-400 animate-pulse').addClass('text-emerald-400 font-bold');
                     applyFiltersAndRender();
+                    
+                    // แจ้งเตือนหล่อๆ ว่าดึงเสร็จแล้ว
+                    Swal.fire({ icon: 'success', title: 'ดึงข้อมูลสำเร็จ!', text: 'อัปเดตข้อมูลจากเซิร์ฟเวอร์เรียบร้อย', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#f8fafc' });
                 })
                 .catch(error => {
-                    const savedData = localStorage.getItem('eis_DataSlim');
-                    const savedHeaders = localStorage.getItem('eis_HeadersSlim');
-                    if (savedData && savedHeaders) {
-                        globalDataRows = JSON.parse(savedData);
-                        globalHeaders = JSON.parse(savedHeaders);
-                        if (localStorage.getItem('eis_HeadersTop')) globalHeadersTop = JSON.parse(localStorage.getItem('eis_HeadersTop'));
-                        buildHeaderMap();
-                        $('#last-update-text').text('อัปเดตล่าสุด: ใช้ข้อมูลจากความจำเครื่อง');
-                        applyFiltersAndRender();
-                    } else {
-                        $('#last-update-text').text('สถานะ: รอการอัปโหลดข้อมูล');
-                    }
+                    $('#last-update-text').text('สถานะ: ไม่พบไฟล์บนระบบ (กรุณาอัปโหลดเอง)').removeClass('text-amber-400 animate-pulse text-emerald-400').addClass('text-rose-400');
                 });
+        }
 
-            // ระบบอัปโหลดปุ่มเดียว
+        $(document).ready(function () {
+            // 🟢 ระบบ Fast Boot: เช็คสมองก่อน ถ้าจำข้อมูลไว้แล้ว เอามาโชว์เลย! (โหลดใน 0.05 วิ)
+            const savedData = localStorage.getItem('eis_DataSlim');
+            const savedHeaders = localStorage.getItem('eis_HeadersSlim');
+            const savedTop = localStorage.getItem('eis_HeadersTop');
+
+            if (savedData && savedHeaders && savedTop) {
+                globalDataRows = JSON.parse(savedData);
+                globalHeaders = JSON.parse(savedHeaders);
+                globalHeadersTop = JSON.parse(savedTop);
+                buildHeaderMap();
+                
+                $('#last-update-text').text('อัปเดตล่าสุด: โหลดจากความจำเครื่อง (⚡ ไวปานสายฟ้า)').removeClass('text-slate-400 text-amber-400 text-rose-400').addClass('text-emerald-400 font-bold');
+                applyFiltersAndRender();
+            } else {
+                // ถ้ายังไม่เคยเข้าเว็บนี้เลย หรือสมองว่างเปล่า ค่อยไปดึงไฟล์มา
+                fetchDataFromServer();
+            }
+
+            // ระบบอัปโหลดปุ่มเดียว (อัปเสร็จให้จำลงสมองด้วย)
             $('#excel-upload').on('change', async function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -292,6 +320,7 @@
                             }
                         }
 
+                        // 🟢 บันทึกเข้าสมอง
                         try {
                             localStorage.setItem('eis_DataSlim', JSON.stringify(globalDataRows));
                             localStorage.setItem('eis_HeadersSlim', JSON.stringify(globalHeaders));
@@ -315,13 +344,13 @@
             });
         });
 
-        // 🟢 ฟังก์ชันค้นหาแบบติดเทอร์โบ (แก้บั๊ก ประถ-ม.2 และทำงานเสร็จใน 0.001 วิ)
+        
         function getExact(rowData, keywords) {
             let cacheKey = keywords.join('|');
             let targetIdx = resolvedIndexCache[cacheKey];
 
             if (targetIdx === undefined) {
-                // ค้นหาเป้าหมายแค่ครั้งเดียว!
+                
                 let keysArray = Object.keys(headerIndexMap);
                 
                 for (let kw of keywords) {
@@ -332,7 +361,7 @@
                         break;
                     }
                     
-                    let idx = headerIndexMap[cleanKw]; // หาแบบเป๊ะๆ
+                    let idx = headerIndexMap[cleanKw]; 
                     
                     if (idx === undefined) {
                         for (let i = 0; i < keysArray.length; i++) {
@@ -344,7 +373,7 @@
                                 if (cleanKw === 'ผอ.' && key.includes('รอง')) continue;
                                 if (cleanKw === 'ครู' && (key.includes('พรก') || key.includes('จ้าง') || key.includes('ชั้น') || key.includes('ครบ') || key.includes('อัตรา'))) continue;
                                 
-                                // ป้องกันบั๊ก "ม.2" ไปชน "ประถม.2"
+                                
                                 if (/^[อปม]\.[1-6]$/.test(cleanKw)) {
                                     if (key.includes('ประถม') || key.includes('รวม') || key.includes('เทอม') || key.includes('ค่า') || key.includes('เงิน') || key.includes('ภาค')) continue;
                                     if (key.length > 10) continue; 
@@ -361,7 +390,7 @@
                         break;
                     }
                 }
-                // บันทึกลงความจำสมอง (เจอใส่เลข, ไม่เจอใส่ -1)
+                
                 resolvedIndexCache[cacheKey] = (targetIdx !== undefined) ? targetIdx : -1;
             }
 
