@@ -45,7 +45,7 @@
         <div class="max-w-[1400px] mx-auto px-6 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white shadow-lg ">
-                    <img src="logo-Photoroom.png" class="w-10 h-10 object-contain" onerror="this.outerHTML='<i data-lucide=\'building-2\' class=\'w-6 h-6 text-slate-400\'></i>'">
+                    <img src="logo-photoroom.png" class="w-10 h-10 object-contain" onerror="this.outerHTML='<i data-lucide=\'building-2\' class=\'w-6 h-6 text-slate-400\'></i>'">
                 </div>
                 <div>
                     <h1 class="text-lg font-bold text-white leading-tight">Dashboard ข้อมูลพื้นฐานของโรงเรียนขนาดเล็ก</h1>
@@ -57,7 +57,6 @@
                 </div>
             </div>
 
-            <!-- 🟢 แก้ไข: กลับมาเป็นปุ่มอัปโหลดปุ่มเดียว -->
             <div class="flex items-center gap-2">
                 <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden">
                 <button onclick="document.getElementById('excel-upload').click()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2 font-bold text-sm shadow-md">
@@ -144,7 +143,6 @@
         </section>
     </main>
 
-    <!-- Pop-up หน้าโปรไฟล์ -->
     <div id="school-modal" class="fixed inset-0 bg-[#0f172a]/80 backdrop-blur-sm hidden z-[100] justify-center items-center p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-[#1e293b] w-full max-w-5xl rounded-2xl shadow-2xl border border-[#334155] flex flex-col max-h-[90vh] transform scale-95 transition-transform duration-300" id="modal-content">
 
@@ -241,7 +239,6 @@
                     }
                 });
 
-            // 🟢 ระบบอัปโหลดปุ่มเดียว
             $('#excel-upload').on('change', async function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -268,7 +265,6 @@
                         }
                     }
 
-                    // บันทึกความจำ
                     localStorage.setItem('eis_DataSlim', JSON.stringify(globalDataRows));
                     localStorage.setItem('eis_HeadersSlim', JSON.stringify(globalHeaders));
                     localStorage.setItem('eis_HeadersTop', JSON.stringify(globalHeadersTop));
@@ -284,8 +280,7 @@
                     $('#last-update-text').text('สถานะ: ไม่สามารถอ่านไฟล์ได้').removeClass('text-amber-400 animate-pulse text-emerald-400').addClass('text-rose-400');
                     Swal.fire({ icon: 'error', title: 'พังครับลูกพี่!', text: 'โครงสร้างไฟล์ผิดปกติ', background: '#1e293b', color: '#f8fafc' });
                 }
-                
-                // ล้างค่าเพื่อให้กดอัปโหลดไฟล์เดิมซ้ำได้
+ 
                 $(this).val('');
             });
         });
@@ -758,7 +753,6 @@
                 `;
             }
 
-            // 🟢 ระบบดึงคอลัมน์ DB (105) และ DC (106) แบบตายตัวจากไฟล์เดียว
             else if (tabName === 'management') {
                 // อักษรคอลัมน์ Excel: 
                 // A=0 ... Z=25 ... AA=26 ... AZ=51 ... BA=52 ... BZ=77 ... CA=78 ... CZ=103 ... DA=104
