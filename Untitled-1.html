@@ -45,7 +45,7 @@
         <div class="max-w-[1400px] mx-auto px-6 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white shadow-lg ">
-                    <img src="logo-photoroom.png" class="w-10 h-10 object-contain" onerror="this.outerHTML='<i data-lucide=\'building-2\' class=\'w-6 h-6 text-slate-400\'></i>'">
+                    <img src="logo-Photoroom.png" class="w-10 h-10 object-contain" onerror="this.outerHTML='<i data-lucide=\'building-2\' class=\'w-6 h-6 text-slate-400\'></i>'">
                 </div>
                 <div>
                     <h1 class="text-lg font-bold text-white leading-tight">Dashboard ข้อมูลพื้นฐานของโรงเรียนขนาดเล็ก</h1>
@@ -57,8 +57,9 @@
                 </div>
             </div>
 
+            <!-- 🟢 แก้ไข: กลับมาเป็นปุ่มอัปโหลดปุ่มเดียว -->
             <div class="flex items-center gap-2">
-                <input type="file" id="excel-upload" accept=".xlsx" class="hidden">
+                <input type="file" id="excel-upload" accept=".xlsx, .xls" class="hidden">
                 <button onclick="document.getElementById('excel-upload').click()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2 font-bold text-sm shadow-md">
                     <i data-lucide="upload-cloud" class="w-4 h-4"></i> อัปโหลด Excel
                 </button>
@@ -163,6 +164,7 @@
                 <button onclick="switchModalTab('academic')" id="btn-modal-academic" class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i data-lucide="book-open" class="w-4 h-4 inline mr-1"></i> วิชาการ</button>
                 <button onclick="switchModalTab('budget')" id="btn-modal-budget" class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i data-lucide="wallet" class="w-4 h-4 inline mr-1"></i> งบประมาณ</button>
                 <button onclick="switchModalTab('plan')" id="btn-modal-plan" class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i data-lucide="map" class="w-4 h-4 inline mr-1"></i> แผน</button>
+                <button onclick="switchModalTab('management')" id="btn-modal-management" class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i data-lucide="briefcase" class="w-4 h-4 inline mr-1"></i> การบริหาร </button>
             </div>
 
             <div class="p-6 overflow-y-auto flex-1 bg-[#0f172a] rounded-b-2xl" id="modal-body-content"></div>
@@ -194,7 +196,8 @@
         updateClock();
 
         $(document).ready(function () {
-            fetch('data.xlsx')
+            // ระบบโหลดอัตโนมัติจาก data.xlsx
+            fetch('data.xlsx?v=' + new Date().getTime())
                 .then(response => {
                     if (!response.ok) throw new Error("ไม่พบไฟล์อัตโนมัติ");
                     return response.arrayBuffer();
@@ -212,8 +215,7 @@
                     });
 
                     const range = XLSX.utils.decode_range(worksheet['!ref']);
-                    const lastColIdx = range.e.c;
-
+                    
                     globalDataRows = [];
                     for (let i = 2; i <= range.e.r; i++) {
                         let rowData = rawArray[i];
@@ -238,6 +240,54 @@
                         $('#last-update-text').text('สถานะ: รอการอัปโหลดข้อมูล');
                     }
                 });
+
+            // 🟢 ระบบอัปโหลดปุ่มเดียว
+            $('#excel-upload').on('change', async function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                $('#last-update-text').text('สถานะ: กำลังประมวลผลข้อมูล...').removeClass('text-slate-400 text-rose-400 text-emerald-400').addClass('text-amber-400 animate-pulse');
+
+                try {
+                    const buffer = await file.arrayBuffer();
+                    const wb = XLSX.read(buffer, { type: 'array' });
+                    const arr = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: "" });
+                    
+                    const topHeaders = arr[0].map(h => (h || "").toString().trim());
+                    globalHeadersTop = topHeaders;
+                    globalHeaders = arr[1].map((h, i) => { 
+                        let t = (h || "").toString().trim(); 
+                        return t !== "" ? t : (topHeaders[i] || "").toString().trim(); 
+                    });
+
+                    globalDataRows = [];
+                    for (let i = 2; i < arr.length; i++) {
+                        let rowData = arr[i];
+                        if (rowData && rowData.length > 1 && rowData[2]) {
+                            globalDataRows.push({ id: i, rowData: rowData });
+                        }
+                    }
+
+                    // บันทึกความจำ
+                    localStorage.setItem('eis_DataSlim', JSON.stringify(globalDataRows));
+                    localStorage.setItem('eis_HeadersSlim', JSON.stringify(globalHeaders));
+                    localStorage.setItem('eis_HeadersTop', JSON.stringify(globalHeadersTop));
+
+                    $('#last-update-text').text('อัปเดตล่าสุด: อัปโหลดข้อมูลสำเร็จ!').removeClass('text-amber-400 animate-pulse').addClass('text-emerald-400 font-bold');
+                    applyFiltersAndRender();
+                    lucide.createIcons();
+
+                    Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: 'อัปโหลดข้อมูลเรียบร้อย!', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#f8fafc' });
+
+                } catch (error) {
+                    console.error(error);
+                    $('#last-update-text').text('สถานะ: ไม่สามารถอ่านไฟล์ได้').removeClass('text-amber-400 animate-pulse text-emerald-400').addClass('text-rose-400');
+                    Swal.fire({ icon: 'error', title: 'พังครับลูกพี่!', text: 'โครงสร้างไฟล์ผิดปกติ', background: '#1e293b', color: '#f8fafc' });
+                }
+                
+                // ล้างค่าเพื่อให้กดอัปโหลดไฟล์เดิมซ้ำได้
+                $(this).val('');
+            });
         });
 
         function getExact(rowData, keywords) {
@@ -652,8 +702,6 @@
                     </div>
                 `;
             }
-
-
             else if (tabName === 'plan') {
                 const r = item.rowData;
                 let finalLink = '';
@@ -661,6 +709,7 @@
                 if (r && r.length > 0) {
                     for (let j = 0; j < r.length; j++) {
                         let cellData = (r[j] || "").toString().trim();
+                        
                         if (cellData.includes('http') || cellData.includes('drive.google.com')) {
                             finalLink = cellData;
                             break; 
@@ -709,8 +758,59 @@
                 `;
             }
 
+            // 🟢 ระบบดึงคอลัมน์ DB (105) และ DC (106) แบบตายตัวจากไฟล์เดียว
+            else if (tabName === 'management') {
+                // อักษรคอลัมน์ Excel: 
+                // A=0 ... Z=25 ... AA=26 ... AZ=51 ... BA=52 ... BZ=77 ... CA=78 ... CZ=103 ... DA=104
+                // DB = 105
+                // DC = 106
+                let step3_code = r[105] || '-'; 
+                let plan_desc = r[106] || '-';
+
+                // กันพลาดสลับตำแหน่ง
+                if (step3_code.toString().length > 20 && plan_desc.toString().length < 20) {
+                    let temp = step3_code;
+                    step3_code = plan_desc;
+                    plan_desc = temp;
+                }
+                
+                if (step3_code === '-' || !step3_code) step3_code = '<span class="text-slate-500">ไม่มีข้อมูล</span>';
+                if (plan_desc === '-' || !plan_desc) plan_desc = '<span class="text-slate-500">ไม่มีข้อมูล</span>';
+
+                html = `
+                    <div class="bg-[#1e293b] border border-[#334155] rounded-xl p-6 shadow-lg">
+                        <h3 class="text-white font-bold mb-4 border-b border-[#334155] pb-3 text-lg flex items-center gap-2">
+                            <i data-lucide="briefcase" class="text-blue-400 w-5 h-5"></i> การบริหารสถานศึกษาของโรงเรียนขนาดเล็ก (ปีการศึกษา 2568-2570)
+                        </h3>
+                        
+                        <div class="flex flex-col gap-4 mt-4">
+                            <!-- กล่องบน (สีเขียว) - เลขรหัสสั้นๆ -->
+                            <div class="bg-[#0f172a] p-5 rounded-xl border border-[#334155] shadow-inner">
+                                <h4 class="text-emerald-400 font-bold text-sm mb-2 flex items-center gap-2">
+                                    <i data-lucide="target" class="w-4 h-4"></i> ขั้นตอนที่ 3 แผนบริหารจัดการฯ
+                                </h4>
+                                <p class="text-white text-base font-bold pl-6">
+                                    ${step3_code}
+                                </p>
+                            </div>
+                            
+                            <!-- กล่องล่าง (สีฟ้า) - ข้อความอธิบายยาวๆ -->
+                            <div class="bg-[#0f172a] p-5 rounded-xl border border-[#334155] shadow-inner">
+                                <h4 class="text-sky-400 font-bold text-sm mb-2 flex items-center gap-2">
+                                    <i data-lucide="clipboard-list" class="w-4 h-4"></i> รายละเอียด / เหตุผล
+                                </h4>
+                                <p class="text-white text-sm font-medium pl-6 leading-relaxed">
+                                    ${plan_desc}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
             $('#modal-body-content').html(html);
             lucide.createIcons();
+
         }
 
         function closeSchoolModal() {
@@ -719,7 +819,7 @@
             modal.classList.add('opacity-0'); content.classList.add('scale-95');
             setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 200);
         }
+
     </script>
 </body>
-
 </html>
