@@ -149,7 +149,7 @@
         </section>
     </main>
 
-    <!-- Pop-up หน้าโปรไฟล์ -->
+   
     <div id="school-modal" class="fixed inset-0 bg-[#0f172a]/80 backdrop-blur-sm hidden z-[100] justify-center items-center p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-[#1e293b] w-full max-w-5xl rounded-2xl shadow-2xl border border-[#334155] flex flex-col max-h-[90vh] transform scale-95 transition-transform duration-300" id="modal-content">
 
@@ -184,7 +184,7 @@
         let activeColorFilter = null;
         let currentSchoolId = null;
 
-        // 🟢 ระบบ Cache Memory (แก้ปัญหาเครื่องค้าง!)
+       
         let headerIndexMap = {}; 
         let resolvedIndexCache = {}; 
 
@@ -220,7 +220,7 @@
             }
         }
 
-        // 🟢 ฟังก์ชันดึงข้อมูลจากไฟล์ data.xlsx (ดึงเฉพาะตอนที่สั่ง)
+      
         function fetchDataFromServer() {
             $('#last-update-text').text('สถานะ: กำลังดาวน์โหลดไฟล์จากเซิร์ฟเวอร์...').removeClass('text-slate-400 text-emerald-400').addClass('text-amber-400 animate-pulse');
             
@@ -253,7 +253,7 @@
                         }
                     }
 
-                    // 🟢 บันทึกเข้าสมอง (Cache)
+                    
                     try {
                         localStorage.setItem('eis_DataSlim', JSON.stringify(globalDataRows));
                         localStorage.setItem('eis_HeadersSlim', JSON.stringify(globalHeaders));
@@ -263,7 +263,7 @@
                     $('#last-update-text').text('อัปเดตล่าสุด: ดึงข้อมูลจากเซิร์ฟเวอร์สำเร็จ!').removeClass('text-amber-400 animate-pulse').addClass('text-emerald-400 font-bold');
                     applyFiltersAndRender();
                     
-                    // แจ้งเตือนหล่อๆ ว่าดึงเสร็จแล้ว
+                   
                     Swal.fire({ icon: 'success', title: 'ดึงข้อมูลสำเร็จ!', text: 'อัปเดตข้อมูลจากเซิร์ฟเวอร์เรียบร้อย', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#f8fafc' });
                 })
                 .catch(error => {
@@ -272,7 +272,7 @@
         }
 
         $(document).ready(function () {
-            // 🟢 ระบบ Fast Boot: เช็คสมองก่อน ถ้าจำข้อมูลไว้แล้ว เอามาโชว์เลย! (โหลดใน 0.05 วิ)
+            
             const savedData = localStorage.getItem('eis_DataSlim');
             const savedHeaders = localStorage.getItem('eis_HeadersSlim');
             const savedTop = localStorage.getItem('eis_HeadersTop');
@@ -283,14 +283,14 @@
                 globalHeadersTop = JSON.parse(savedTop);
                 buildHeaderMap();
                 
-                $('#last-update-text').text('อัปเดตล่าสุด: โหลดจากความจำเครื่อง (⚡ ไวปานสายฟ้า)').removeClass('text-slate-400 text-amber-400 text-rose-400').addClass('text-emerald-400 font-bold');
+                $('#last-update-text').text('อัปเดตล่าสุด: โหลดจากความจำเครื่อง ').removeClass('text-slate-400 text-amber-400 text-rose-400').addClass('text-emerald-400 font-bold');
                 applyFiltersAndRender();
             } else {
-                // ถ้ายังไม่เคยเข้าเว็บนี้เลย หรือสมองว่างเปล่า ค่อยไปดึงไฟล์มา
+               
                 fetchDataFromServer();
             }
 
-            // ระบบอัปโหลดปุ่มเดียว (อัปเสร็จให้จำลงสมองด้วย)
+          
             $('#excel-upload').on('change', async function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -310,7 +310,7 @@
                             return t !== "" ? t : (topHeaders[i] || "").toString().trim(); 
                         });
 
-                        buildHeaderMap(); // ติดเทอร์โบ!
+                        buildHeaderMap(); 
 
                         globalDataRows = [];
                         for (let i = 2; i < arr.length; i++) {
@@ -320,7 +320,7 @@
                             }
                         }
 
-                        // 🟢 บันทึกเข้าสมอง
+                       
                         try {
                             localStorage.setItem('eis_DataSlim', JSON.stringify(globalDataRows));
                             localStorage.setItem('eis_HeadersSlim', JSON.stringify(globalHeaders));
