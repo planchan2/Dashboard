@@ -184,7 +184,6 @@
         let activeColorFilter = null;
         let currentSchoolId = null;
 
-        // ระบบ Cache Memory
         let headerIndexMap = {}; 
         let resolvedIndexCache = {}; 
 
@@ -219,7 +218,7 @@
             }
         }
 
-       
+        // ดึงจากเซิร์ฟเวอร์
         function fetchDataFromServer() {
             Swal.fire({
                 title: 'กำลังดาวน์โหลดข้อมูล...',
@@ -238,14 +237,12 @@
                     return response.arrayBuffer();
                 })
                 .then(async data => { 
-                    await new Promise(resolve => setTimeout(resolve, 50));
-                    
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    
                     await new Promise(resolve => setTimeout(resolve, 50)); 
                     
-                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                     
+                    const workbook = XLSX.read(data, { type: 'array', sheetRows: 500 }); 
+                    
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                     const rawArray = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false });
                     
                     const topHeaders = rawArray[0].map(h => (h || "").toString().trim());
@@ -258,14 +255,13 @@
                     buildHeaderMap(); 
 
                     globalDataRows = [];
-                    for (let i = 2; i < rawArray.length; i++) {
+                    
+                    for (let i = 2; i < rawArray.length && i < 500; i++) {
                         let rowData = rawArray[i];
                         if (rowData && rowData.length > 1 && rowData[2]) {
                             globalDataRows.push({ id: i, rowData: rowData });
                         }
                     }
-
-                    await new Promise(resolve => setTimeout(resolve, 50)); 
 
                     try {
                         localStorage.setItem('eis_DataSlim', JSON.stringify(globalDataRows));
@@ -301,7 +297,7 @@
                 fetchDataFromServer();
             }
 
-            
+            // ระบบอัปโหลดปุ่มเดียว
             $('#excel-upload').on('change', async function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -320,14 +316,11 @@
                 setTimeout(async () => {
                     try {
                         const buffer = await file.arrayBuffer();
-                        await new Promise(resolve => setTimeout(resolve, 50)); 
                         
-                        const wb = XLSX.read(buffer, { type: 'array' });
-                        await new Promise(resolve => setTimeout(resolve, 50)); 
-
-                       
+                        
+                        const wb = XLSX.read(buffer, { type: 'array', sheetRows: 500 }); 
+                        
                         const arr = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, blankrows: false });
-                        await new Promise(resolve => setTimeout(resolve, 50)); 
                         
                         const topHeaders = arr[0].map(h => (h || "").toString().trim());
                         globalHeadersTop = topHeaders;
@@ -339,14 +332,13 @@
                         buildHeaderMap(); 
 
                         globalDataRows = [];
-                        for (let i = 2; i < arr.length; i++) {
+                        
+                        for (let i = 2; i < arr.length && i < 500; i++) {
                             let rowData = arr[i];
                             if (rowData && rowData.length > 1 && rowData[2]) {
                                 globalDataRows.push({ id: i, rowData: rowData });
                             }
                         }
-
-                        await new Promise(resolve => setTimeout(resolve, 50)); 
 
                         try {
                             localStorage.setItem('eis_DataSlim', JSON.stringify(globalDataRows));
@@ -363,15 +355,14 @@
                     } catch (error) {
                         console.error(error);
                         $('#last-update-text').text('สถานะ: ไม่สามารถอ่านไฟล์ได้').removeClass('text-amber-400 animate-pulse text-emerald-400').addClass('text-rose-400');
-                        Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: 'โครงสร้างไฟล์อาจมีเซลล์ว่างเยอะเกินไป', background: '#1e293b', color: '#f8fafc' });
+                        Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: 'โครงสร้างไฟล์อาจมีปัญหา', background: '#1e293b', color: '#f8fafc' });
                     }
                     
                     $(this).val('');
-                }, 300); 
+                }, 100); 
             });
         });
 
-        
         function getExact(rowData, keywords) {
             let cacheKey = keywords.join('|');
             let targetIdx = resolvedIndexCache[cacheKey];
