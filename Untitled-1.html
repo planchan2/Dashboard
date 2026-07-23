@@ -45,7 +45,7 @@
         <div class="max-w-[1400px] mx-auto px-6 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white shadow-lg ">
-                    <img src="logo-photoroom.png" class="w-10 h-10 object-contain" onerror="this.outerHTML='<i data-lucide=\'building-2\' class=\'w-6 h-6 text-slate-400\'></i>'">
+                    <img src="logo-Photoroom.png" class="w-10 h-10 object-contain" onerror="this.outerHTML='<i data-lucide=\'building-2\' class=\'w-6 h-6 text-slate-400\'></i>'">
                 </div>
                 <div>
                     <h1 class="text-lg font-bold text-white leading-tight">Dashboard ข้อมูลพื้นฐานของโรงเรียนขนาดเล็ก</h1>
@@ -143,6 +143,7 @@
         </section>
     </main>
 
+    <!-- Pop-up หน้าโปรไฟล์ -->
     <div id="school-modal" class="fixed inset-0 bg-[#0f172a]/80 backdrop-blur-sm hidden z-[100] justify-center items-center p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-[#1e293b] w-full max-w-5xl rounded-2xl shadow-2xl border border-[#334155] flex flex-col max-h-[90vh] transform scale-95 transition-transform duration-300" id="modal-content">
 
@@ -162,7 +163,7 @@
                 <button onclick="switchModalTab('academic')" id="btn-modal-academic" class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i data-lucide="book-open" class="w-4 h-4 inline mr-1"></i> วิชาการ</button>
                 <button onclick="switchModalTab('budget')" id="btn-modal-budget" class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i data-lucide="wallet" class="w-4 h-4 inline mr-1"></i> งบประมาณ</button>
                 <button onclick="switchModalTab('plan')" id="btn-modal-plan" class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i data-lucide="map" class="w-4 h-4 inline mr-1"></i> แผน</button>
-                <button onclick="switchModalTab('management')" id="btn-modal-management" class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i data-lucide="briefcase" class="w-4 h-4 inline mr-1"></i> การบริหาร </button>
+                <button onclick="switchModalTab('management')" id="btn-modal-management" class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i data-lucide="briefcase" class="w-4 h-4 inline mr-1"></i> การบริหาร</button>
             </div>
 
             <div class="p-6 overflow-y-auto flex-1 bg-[#0f172a] rounded-b-2xl" id="modal-body-content"></div>
@@ -176,6 +177,10 @@
         let globalHeadersTop = []; 
         let activeColorFilter = null;
         let currentSchoolId = null;
+
+        // 🟢 ระบบ Cache Memory (แก้ปัญหาเครื่องค้าง!)
+        let headerIndexMap = {}; 
+        let resolvedIndexCache = {}; 
 
         function updateClock() {
             const now = new Date();
@@ -193,8 +198,23 @@
         setInterval(updateClock, 1000);
         updateClock();
 
+        // สร้างสารบัญหัวตาราง (ทำรอบเดียวจบ ไม่เปลืองแรม)
+        function buildHeaderMap() {
+            headerIndexMap = {};
+            resolvedIndexCache = {}; 
+            
+            for (let i = 0; i < globalHeadersTop.length; i++) {
+                let text = (globalHeadersTop[i] || "").toString().replace(/\s|\n/g, '').toLowerCase();
+                if (text && headerIndexMap[text] === undefined) headerIndexMap[text] = i;
+            }
+            
+            for (let i = 0; i < globalHeaders.length; i++) {
+                let text = (globalHeaders[i] || "").toString().replace(/\s|\n/g, '').toLowerCase();
+                if (text && headerIndexMap[text] === undefined) headerIndexMap[text] = i;
+            }
+        }
+
         $(document).ready(function () {
-            // ระบบโหลดอัตโนมัติจาก data.xlsx
             fetch('data.xlsx?v=' + new Date().getTime())
                 .then(response => {
                     if (!response.ok) throw new Error("ไม่พบไฟล์อัตโนมัติ");
@@ -211,6 +231,8 @@
                         let text = (h || "").toString().trim();
                         return text !== "" ? text : (topHeaders[i] || "").toString().trim();
                     });
+
+                    buildHeaderMap(); // ติดเทอร์โบ!
 
                     const range = XLSX.utils.decode_range(worksheet['!ref']);
                     
@@ -232,6 +254,7 @@
                         globalDataRows = JSON.parse(savedData);
                         globalHeaders = JSON.parse(savedHeaders);
                         if (localStorage.getItem('eis_HeadersTop')) globalHeadersTop = JSON.parse(localStorage.getItem('eis_HeadersTop'));
+                        buildHeaderMap();
                         $('#last-update-text').text('อัปเดตล่าสุด: ใช้ข้อมูลจากความจำเครื่อง');
                         applyFiltersAndRender();
                     } else {
@@ -239,74 +262,112 @@
                     }
                 });
 
+            // ระบบอัปโหลดปุ่มเดียว
             $('#excel-upload').on('change', async function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
 
                 $('#last-update-text').text('สถานะ: กำลังประมวลผลข้อมูล...').removeClass('text-slate-400 text-rose-400 text-emerald-400').addClass('text-amber-400 animate-pulse');
 
-                try {
-                    const buffer = await file.arrayBuffer();
-                    const wb = XLSX.read(buffer, { type: 'array' });
-                    const arr = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: "" });
-                    
-                    const topHeaders = arr[0].map(h => (h || "").toString().trim());
-                    globalHeadersTop = topHeaders;
-                    globalHeaders = arr[1].map((h, i) => { 
-                        let t = (h || "").toString().trim(); 
-                        return t !== "" ? t : (topHeaders[i] || "").toString().trim(); 
-                    });
+                setTimeout(async () => {
+                    try {
+                        const buffer = await file.arrayBuffer();
+                        const wb = XLSX.read(buffer, { type: 'array' });
+                        const arr = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: "" });
+                        
+                        const topHeaders = arr[0].map(h => (h || "").toString().trim());
+                        globalHeadersTop = topHeaders;
+                        globalHeaders = arr[1].map((h, i) => { 
+                            let t = (h || "").toString().trim(); 
+                            return t !== "" ? t : (topHeaders[i] || "").toString().trim(); 
+                        });
 
-                    globalDataRows = [];
-                    for (let i = 2; i < arr.length; i++) {
-                        let rowData = arr[i];
-                        if (rowData && rowData.length > 1 && rowData[2]) {
-                            globalDataRows.push({ id: i, rowData: rowData });
+                        buildHeaderMap(); // ติดเทอร์โบ!
+
+                        globalDataRows = [];
+                        for (let i = 2; i < arr.length; i++) {
+                            let rowData = arr[i];
+                            if (rowData && rowData.length > 1 && rowData[2]) {
+                                globalDataRows.push({ id: i, rowData: rowData });
+                            }
                         }
+
+                        try {
+                            localStorage.setItem('eis_DataSlim', JSON.stringify(globalDataRows));
+                            localStorage.setItem('eis_HeadersSlim', JSON.stringify(globalHeaders));
+                            localStorage.setItem('eis_HeadersTop', JSON.stringify(globalHeadersTop));
+                        } catch (e) { console.warn("ข้อมูลใหญ่เกินกว่าจะจำในเครื่องได้"); }
+
+                        $('#last-update-text').text('อัปเดตล่าสุด: อัปโหลดข้อมูลสำเร็จ!').removeClass('text-amber-400 animate-pulse').addClass('text-emerald-400 font-bold');
+                        applyFiltersAndRender();
+                        lucide.createIcons();
+
+                        Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: 'อัปโหลดข้อมูลเรียบร้อย!', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#f8fafc' });
+
+                    } catch (error) {
+                        console.error(error);
+                        $('#last-update-text').text('สถานะ: ไม่สามารถอ่านไฟล์ได้').removeClass('text-amber-400 animate-pulse text-emerald-400').addClass('text-rose-400');
+                        Swal.fire({ icon: 'error', title: 'พังครับลูกพี่!', text: 'โครงสร้างไฟล์ผิดปกติ', background: '#1e293b', color: '#f8fafc' });
                     }
-
-                    localStorage.setItem('eis_DataSlim', JSON.stringify(globalDataRows));
-                    localStorage.setItem('eis_HeadersSlim', JSON.stringify(globalHeaders));
-                    localStorage.setItem('eis_HeadersTop', JSON.stringify(globalHeadersTop));
-
-                    $('#last-update-text').text('อัปเดตล่าสุด: อัปโหลดข้อมูลสำเร็จ!').removeClass('text-amber-400 animate-pulse').addClass('text-emerald-400 font-bold');
-                    applyFiltersAndRender();
-                    lucide.createIcons();
-
-                    Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: 'อัปโหลดข้อมูลเรียบร้อย!', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#f8fafc' });
-
-                } catch (error) {
-                    console.error(error);
-                    $('#last-update-text').text('สถานะ: ไม่สามารถอ่านไฟล์ได้').removeClass('text-amber-400 animate-pulse text-emerald-400').addClass('text-rose-400');
-                    Swal.fire({ icon: 'error', title: 'พังครับลูกพี่!', text: 'โครงสร้างไฟล์ผิดปกติ', background: '#1e293b', color: '#f8fafc' });
-                }
- 
-                $(this).val('');
+                    
+                    $(this).val('');
+                }, 100); 
             });
         });
 
+        // 🟢 ฟังก์ชันค้นหาแบบติดเทอร์โบ (แก้บั๊ก ประถ-ม.2 และทำงานเสร็จใน 0.001 วิ)
         function getExact(rowData, keywords) {
-            for (let kw of keywords) {
-                let cleanKw = kw.replace(/\s|\n/g, '').toLowerCase();
-                for (let i = 0; i < globalHeadersTop.length; i++) {
-                    if ((globalHeadersTop[i] || "").replace(/\s|\n/g, '').toLowerCase().includes(cleanKw)) {
-                        return (rowData[i] !== "" && rowData[i] !== undefined) ? rowData[i] : null;
+            let cacheKey = keywords.join('|');
+            let targetIdx = resolvedIndexCache[cacheKey];
+
+            if (targetIdx === undefined) {
+                // ค้นหาเป้าหมายแค่ครั้งเดียว!
+                let keysArray = Object.keys(headerIndexMap);
+                
+                for (let kw of keywords) {
+                    let cleanKw = kw.replace(/\s|\n/g, '').toLowerCase();
+                    
+                    if (cleanKw === 'กลุ่มสี' && headerIndexMap['กลุ่มสี2567'] !== undefined) {
+                        targetIdx = headerIndexMap['กลุ่มสี2567'];
+                        break;
+                    }
+                    
+                    let idx = headerIndexMap[cleanKw]; // หาแบบเป๊ะๆ
+                    
+                    if (idx === undefined) {
+                        for (let i = 0; i < keysArray.length; i++) {
+                            let key = keysArray[i];
+                            if (key.includes(cleanKw)) {
+                                if (cleanKw === 'กลุ่มสี' && key.includes('67')) continue;
+                                if (cleanKw === 'กลุ่มสี2568' && key.includes('ระดับ')) continue;
+                                if (cleanKw === 'โรงเรียน' && key.includes('รหัส')) continue;
+                                if (cleanKw === 'ผอ.' && key.includes('รอง')) continue;
+                                if (cleanKw === 'ครู' && (key.includes('พรก') || key.includes('จ้าง') || key.includes('ชั้น') || key.includes('ครบ') || key.includes('อัตรา'))) continue;
+                                
+                                // ป้องกันบั๊ก "ม.2" ไปชน "ประถม.2"
+                                if (/^[อปม]\.[1-6]$/.test(cleanKw)) {
+                                    if (key.includes('ประถม') || key.includes('รวม') || key.includes('เทอม') || key.includes('ค่า') || key.includes('เงิน') || key.includes('ภาค')) continue;
+                                    if (key.length > 10) continue; 
+                                }
+
+                                idx = headerIndexMap[key];
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (idx !== undefined) {
+                        targetIdx = idx;
+                        break;
                     }
                 }
+                // บันทึกลงความจำสมอง (เจอใส่เลข, ไม่เจอใส่ -1)
+                resolvedIndexCache[cacheKey] = (targetIdx !== undefined) ? targetIdx : -1;
             }
-            for (let kw of keywords) {
-                let cleanKw = kw.replace(/\s|\n/g, '').toLowerCase();
-                for (let i = 0; i < globalHeaders.length; i++) {
-                    let h = (globalHeaders[i] || "").replace(/\s|\n/g, '').toLowerCase();
-                    if (h.includes(cleanKw)) {
-                        if (cleanKw === 'กลุ่มสี' && h.includes('67')) continue;
-                        if (cleanKw === 'กลุ่มสี2568' && h.includes('ระดับ')) continue;
-                        if (cleanKw === 'โรงเรียน' && h.includes('รหัส')) continue;
-                        if (cleanKw === 'ผอ.' && h.includes('รอง')) continue;
-                        if (cleanKw === 'ครู' && (h.includes('พรก') || h.includes('จ้าง') || h.includes('ชั้น') || h.includes('ครบ'))) continue;
-                        return (rowData[i] !== "" && rowData[i] !== undefined) ? rowData[i] : null;
-                    }
-                }
+
+            if (targetIdx !== undefined && targetIdx !== -1) {
+                let val = rowData[targetIdx];
+                return (val !== "" && val !== undefined) ? val : null;
             }
             return null;
         }
@@ -393,6 +454,7 @@
             tbody.empty();
             if (dataRows.length === 0) { tbody.append(`<tr><td colspan="25" class="text-center py-10 text-slate-500">ไม่พบข้อมูล</td></tr>`); return; }
 
+            let tableHtml = ''; 
             dataRows.forEach((item, index) => {
                 const r = item.rowData;
                 const rawColor = getValSafe(r, ['กลุ่มสี2568', 'กลุ่มสี68']).toString().trim();
@@ -407,7 +469,7 @@
                 const dirHtml = (getValSafe(r, ['ผอ.']) == "0" || getValSafe(r, ['ผอ.']) === "-") ? `<span class="text-rose-400 font-bold">ขาด</span>` : `<span class="text-white font-bold">${getValSafe(r, ['ผอ.'])}</span>`;
                 const fullHtml = (getValSafe(r, ['ครูครบชั้น']).includes("ไม่")) ? `<span class="text-amber-400 font-bold">ไม่ครบ</span>` : `<span class="text-emerald-400 font-bold">ครบ</span>`;
 
-                tbody.append(`
+                tableHtml += `
                     <tr>
                         <td class="text-center text-slate-500 sticky-col">${index + 1}</td>
                         <td class="font-bold text-white sticky-col school-name-col">${getValSafe(r, ['โรงเรียน'])}</td>
@@ -444,8 +506,9 @@
                             </button>
                         </td>
                     </tr>
-                `);
+                `;
             });
+            tbody.html(tableHtml);
 
             const currentActive = $('.tab-active').attr('id').replace('btn-', '');
             switchTab(currentActive);
@@ -754,14 +817,9 @@
             }
 
             else if (tabName === 'management') {
-                // อักษรคอลัมน์ Excel: 
-                // A=0 ... Z=25 ... AA=26 ... AZ=51 ... BA=52 ... BZ=77 ... CA=78 ... CZ=103 ... DA=104
-                // DB = 105
-                // DC = 106
                 let step3_code = r[105] || '-'; 
                 let plan_desc = r[106] || '-';
 
-                // กันพลาดสลับตำแหน่ง
                 if (step3_code.toString().length > 20 && plan_desc.toString().length < 20) {
                     let temp = step3_code;
                     step3_code = plan_desc;
@@ -776,23 +834,9 @@
                         <h3 class="text-white font-bold mb-4 border-b border-[#334155] pb-3 text-lg flex items-center gap-2">
                             <i data-lucide="briefcase" class="text-blue-400 w-5 h-5"></i> การบริหารสถานศึกษาของโรงเรียนขนาดเล็ก (ปีการศึกษา 2568-2570)
                         </h3>
-                        
-                        <div class="flex flex-col gap-4 mt-4">
-                            <!-- กล่องบน (สีเขียว) - เลขรหัสสั้นๆ -->
+
                             <div class="bg-[#0f172a] p-5 rounded-xl border border-[#334155] shadow-inner">
-                                <h4 class="text-emerald-400 font-bold text-sm mb-2 flex items-center gap-2">
-                                    <i data-lucide="target" class="w-4 h-4"></i> ขั้นตอนที่ 3 แผนบริหารจัดการฯ
-                                </h4>
-                                <p class="text-white text-base font-bold pl-6">
-                                    ${step3_code}
-                                </p>
-                            </div>
-                            
-                            <!-- กล่องล่าง (สีฟ้า) - ข้อความอธิบายยาวๆ -->
-                            <div class="bg-[#0f172a] p-5 rounded-xl border border-[#334155] shadow-inner">
-                                <h4 class="text-sky-400 font-bold text-sm mb-2 flex items-center gap-2">
-                                    <i data-lucide="clipboard-list" class="w-4 h-4"></i> รายละเอียด / เหตุผล
-                                </h4>
+                                <h4 class="text-sky-400 font-bold text-sm mb-2 flex items-center gap-2">                                    
                                 <p class="text-white text-sm font-medium pl-6 leading-relaxed">
                                     ${plan_desc}
                                 </p>
@@ -804,7 +848,6 @@
 
             $('#modal-body-content').html(html);
             lucide.createIcons();
-
         }
 
         function closeSchoolModal() {
