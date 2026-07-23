@@ -45,7 +45,7 @@
         <div class="max-w-[1400px] mx-auto px-6 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white shadow-lg ">
-                    <img src="logo-photoroom.png" class="w-10 h-10 object-contain" onerror="this.outerHTML='<i data-lucide=\'building-2\' class=\'w-6 h-6 text-slate-400\'></i>'">
+                    <img src="logo-Photoroom.png" class="w-10 h-10 object-contain" onerror="this.outerHTML='<i data-lucide=\'building-2\' class=\'w-6 h-6 text-slate-400\'></i>'">
                 </div>
                 <div>
                     <h1 class="text-lg font-bold text-white leading-tight">Dashboard ข้อมูลพื้นฐานของโรงเรียนขนาดเล็ก</h1>
@@ -149,7 +149,7 @@
         </section>
     </main>
 
-   
+    <!-- Pop-up หน้าโปรไฟล์ -->
     <div id="school-modal" class="fixed inset-0 bg-[#0f172a]/80 backdrop-blur-sm hidden z-[100] justify-center items-center p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-[#1e293b] w-full max-w-5xl rounded-2xl shadow-2xl border border-[#334155] flex flex-col max-h-[90vh] transform scale-95 transition-transform duration-300" id="modal-content">
 
@@ -184,7 +184,7 @@
         let activeColorFilter = null;
         let currentSchoolId = null;
 
-       
+        // ระบบ Cache Memory
         let headerIndexMap = {}; 
         let resolvedIndexCache = {}; 
 
@@ -204,7 +204,6 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // สร้างสารบัญหัวตาราง (ทำรอบเดียวจบ ไม่เปลืองแรม)
         function buildHeaderMap() {
             headerIndexMap = {};
             resolvedIndexCache = {}; 
@@ -220,19 +219,34 @@
             }
         }
 
-      
+        // 🟢 ฟังก์ชันดึงข้อมูลจากเซิร์ฟเวอร์ (ใส่ระบบพักหายใจ + รีดไขมัน Excel)
         function fetchDataFromServer() {
-            $('#last-update-text').text('สถานะ: กำลังดาวน์โหลดไฟล์จากเซิร์ฟเวอร์...').removeClass('text-slate-400 text-emerald-400').addClass('text-amber-400 animate-pulse');
+            Swal.fire({
+                title: 'กำลังดาวน์โหลดข้อมูล...',
+                html: 'รอแป๊บนึงนะลูกพี่ กำลังดึงข้อมูลล่าสุด ⚡',
+                background: '#1e293b',
+                color: '#f8fafc',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+            
+            $('#last-update-text').text('สถานะ: กำลังดาวน์โหลดไฟล์...').removeClass('text-slate-400 text-emerald-400').addClass('text-amber-400 animate-pulse');
             
             fetch('data.xlsx?v=' + new Date().getTime())
                 .then(response => {
                     if (!response.ok) throw new Error("ไม่พบไฟล์อัตโนมัติ");
                     return response.arrayBuffer();
                 })
-                .then(data => {
+                .then(async data => { // 🟢 เปลี่ยนเป็น async เพื่อให้พักหายใจได้
+                    await new Promise(resolve => setTimeout(resolve, 50)); // พักหายใจ 1
+                    
                     const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    await new Promise(resolve => setTimeout(resolve, 50)); // พักหายใจ 2
+                    
                     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const rawArray = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
+                    // 🟢 รีดไขมัน: เอา defval ออก และใส่ blankrows: false เพื่อไม่ให้โหลดเซลล์ผีสิง!
+                    const rawArray = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false });
                     
                     const topHeaders = rawArray[0].map(h => (h || "").toString().trim());
                     globalHeadersTop = topHeaders;
@@ -241,38 +255,36 @@
                         return text !== "" ? text : (topHeaders[i] || "").toString().trim();
                     });
 
-                    buildHeaderMap(); // ติดเทอร์โบ!
+                    buildHeaderMap(); 
 
-                    const range = XLSX.utils.decode_range(worksheet['!ref']);
-                    
                     globalDataRows = [];
-                    for (let i = 2; i <= range.e.r; i++) {
+                    for (let i = 2; i < rawArray.length; i++) {
                         let rowData = rawArray[i];
                         if (rowData && rowData.length > 1 && rowData[2]) {
                             globalDataRows.push({ id: i, rowData: rowData });
                         }
                     }
 
-                    
+                    await new Promise(resolve => setTimeout(resolve, 50)); // พักหายใจ 3
+
                     try {
                         localStorage.setItem('eis_DataSlim', JSON.stringify(globalDataRows));
                         localStorage.setItem('eis_HeadersSlim', JSON.stringify(globalHeaders));
                         localStorage.setItem('eis_HeadersTop', JSON.stringify(globalHeadersTop));
                     } catch (e) { console.warn("ไฟล์ใหญ่ไป จำไม่ได้"); }
 
-                    $('#last-update-text').text('อัปเดตล่าสุด: ดึงข้อมูลจากเซิร์ฟเวอร์สำเร็จ!').removeClass('text-amber-400 animate-pulse').addClass('text-emerald-400 font-bold');
+                    $('#last-update-text').text('อัปเดตล่าสุด: โหลดข้อมูลสำเร็จ').removeClass('text-amber-400 animate-pulse').addClass('text-emerald-400 font-bold');
                     applyFiltersAndRender();
                     
-                   
                     Swal.fire({ icon: 'success', title: 'ดึงข้อมูลสำเร็จ!', text: 'อัปเดตข้อมูลจากเซิร์ฟเวอร์เรียบร้อย', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#f8fafc' });
                 })
                 .catch(error => {
                     $('#last-update-text').text('สถานะ: ไม่พบไฟล์บนระบบ (กรุณาอัปโหลดเอง)').removeClass('text-amber-400 animate-pulse text-emerald-400').addClass('text-rose-400');
+                    Swal.fire({ icon: 'warning', title: 'ไม่พบไฟล์ข้อมูล', text: 'ยังไม่มีไฟล์ในระบบ กรุณาอัปโหลด Excel เองไปก่อนนะ', background: '#1e293b', color: '#f8fafc' });
                 });
         }
 
         $(document).ready(function () {
-            
             const savedData = localStorage.getItem('eis_DataSlim');
             const savedHeaders = localStorage.getItem('eis_HeadersSlim');
             const savedTop = localStorage.getItem('eis_HeadersTop');
@@ -283,25 +295,39 @@
                 globalHeadersTop = JSON.parse(savedTop);
                 buildHeaderMap();
                 
-                $('#last-update-text').text('อัปเดตล่าสุด: โหลดจากความจำเครื่อง ').removeClass('text-slate-400 text-amber-400 text-rose-400').addClass('text-emerald-400 font-bold');
+                $('#last-update-text').text('อัปเดตล่าสุด: โหลดข้อมูลสำเร็จ').removeClass('text-slate-400 text-amber-400 text-rose-400').addClass('text-emerald-400 font-bold');
                 applyFiltersAndRender();
             } else {
-               
                 fetchDataFromServer();
             }
 
-          
+            // 🟢 ระบบอัปโหลดปุ่มเดียว (ใส่ระบบพักหายใจ + รีดไขมัน Excel)
             $('#excel-upload').on('change', async function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
+
+                Swal.fire({
+                    title: 'กำลังประมวลผล...',
+                    html: 'ไฟล์อาจมีขนาดใหญ่ รอสักครู่นะครับ 🚀',
+                    background: '#1e293b',
+                    color: '#f8fafc',
+                    allowOutsideClick: false,
+                    didOpen: () => { Swal.showLoading(); }
+                });
 
                 $('#last-update-text').text('สถานะ: กำลังประมวลผลข้อมูล...').removeClass('text-slate-400 text-rose-400 text-emerald-400').addClass('text-amber-400 animate-pulse');
 
                 setTimeout(async () => {
                     try {
                         const buffer = await file.arrayBuffer();
+                        await new Promise(resolve => setTimeout(resolve, 50)); // พักหายใจ 1
+                        
                         const wb = XLSX.read(buffer, { type: 'array' });
-                        const arr = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: "" });
+                        await new Promise(resolve => setTimeout(resolve, 50)); // พักหายใจ 2
+
+                        // 🟢 รีดไขมัน: ลบ defval ออก และตั้ง blankrows: false
+                        const arr = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, blankrows: false });
+                        await new Promise(resolve => setTimeout(resolve, 50)); // พักหายใจ 3
                         
                         const topHeaders = arr[0].map(h => (h || "").toString().trim());
                         globalHeadersTop = topHeaders;
@@ -320,37 +346,37 @@
                             }
                         }
 
-                       
+                        await new Promise(resolve => setTimeout(resolve, 50)); // พักหายใจ 4
+
                         try {
                             localStorage.setItem('eis_DataSlim', JSON.stringify(globalDataRows));
                             localStorage.setItem('eis_HeadersSlim', JSON.stringify(globalHeaders));
                             localStorage.setItem('eis_HeadersTop', JSON.stringify(globalHeadersTop));
                         } catch (e) { console.warn("ข้อมูลใหญ่เกินกว่าจะจำในเครื่องได้"); }
 
-                        $('#last-update-text').text('อัปเดตล่าสุด: อัปโหลดข้อมูลสำเร็จ!').removeClass('text-amber-400 animate-pulse').addClass('text-emerald-400 font-bold');
+                        $('#last-update-text').text('อัปเดตล่าสุด: อัปโหลดข้อมูลสำเร็จ').removeClass('text-amber-400 animate-pulse').addClass('text-emerald-400 font-bold');
                         applyFiltersAndRender();
                         lucide.createIcons();
 
-                        Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: 'อัปโหลดข้อมูลเรียบร้อย!', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#f8fafc' });
+                        Swal.fire({ icon: 'success', title: 'สำเร็จ', text: 'อัปโหลดข้อมูลเรียบร้อย', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#f8fafc' });
 
                     } catch (error) {
                         console.error(error);
                         $('#last-update-text').text('สถานะ: ไม่สามารถอ่านไฟล์ได้').removeClass('text-amber-400 animate-pulse text-emerald-400').addClass('text-rose-400');
-                        Swal.fire({ icon: 'error', title: 'พังครับลูกพี่!', text: 'โครงสร้างไฟล์ผิดปกติ', background: '#1e293b', color: '#f8fafc' });
+                        Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: 'โครงสร้างไฟล์อาจมีเซลล์ว่างเยอะเกินไป', background: '#1e293b', color: '#f8fafc' });
                     }
                     
                     $(this).val('');
-                }, 100); 
+                }, 300); 
             });
         });
 
-        
+        // 🟢 ฟังก์ชันค้นหาคำ 
         function getExact(rowData, keywords) {
             let cacheKey = keywords.join('|');
             let targetIdx = resolvedIndexCache[cacheKey];
 
             if (targetIdx === undefined) {
-                
                 let keysArray = Object.keys(headerIndexMap);
                 
                 for (let kw of keywords) {
@@ -373,7 +399,6 @@
                                 if (cleanKw === 'ผอ.' && key.includes('รอง')) continue;
                                 if (cleanKw === 'ครู' && (key.includes('พรก') || key.includes('จ้าง') || key.includes('ชั้น') || key.includes('ครบ') || key.includes('อัตรา'))) continue;
                                 
-                                
                                 if (/^[อปม]\.[1-6]$/.test(cleanKw)) {
                                     if (key.includes('ประถม') || key.includes('รวม') || key.includes('เทอม') || key.includes('ค่า') || key.includes('เงิน') || key.includes('ภาค')) continue;
                                     if (key.length > 10) continue; 
@@ -390,7 +415,6 @@
                         break;
                     }
                 }
-                
                 resolvedIndexCache[cacheKey] = (targetIdx !== undefined) ? targetIdx : -1;
             }
 
@@ -844,7 +868,6 @@
                     </div>
                 `;
             }
-
             else if (tabName === 'management') {
                 let step3_code = r[105] || '-'; 
                 let plan_desc = r[106] || '-';
@@ -863,9 +886,21 @@
                         <h3 class="text-white font-bold mb-4 border-b border-[#334155] pb-3 text-lg flex items-center gap-2">
                             <i data-lucide="briefcase" class="text-blue-400 w-5 h-5"></i> การบริหารสถานศึกษาของโรงเรียนขนาดเล็ก (ปีการศึกษา 2568-2570)
                         </h3>
-
+                        
+                        <div class="flex flex-col gap-4 mt-4">
                             <div class="bg-[#0f172a] p-5 rounded-xl border border-[#334155] shadow-inner">
-                                <h4 class="text-sky-400 font-bold text-sm mb-2 flex items-center gap-2">                                    
+                                <h4 class="text-emerald-400 font-bold text-sm mb-2 flex items-center gap-2">
+                                    <i data-lucide="target" class="w-4 h-4"></i> ขั้นตอนที่ 3 แผนบริหารจัดการฯ
+                                </h4>
+                                <p class="text-white text-base font-bold pl-6">
+                                    ${step3_code}
+                                </p>
+                            </div>
+                            
+                            <div class="bg-[#0f172a] p-5 rounded-xl border border-[#334155] shadow-inner">
+                                <h4 class="text-sky-400 font-bold text-sm mb-2 flex items-center gap-2">
+                                    <i data-lucide="clipboard-list" class="w-4 h-4"></i> รายละเอียด / เหตุผล
+                                </h4>
                                 <p class="text-white text-sm font-medium pl-6 leading-relaxed">
                                     ${plan_desc}
                                 </p>
@@ -887,5 +922,3 @@
         }
 
     </script>
-</body>
-</html>
