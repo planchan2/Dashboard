@@ -45,7 +45,7 @@
         <div class="max-w-[1400px] mx-auto px-6 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white shadow-lg ">
-                    <img src="logo-photoroom.png" class="w-10 h-10 object-contain" onerror="this.outerHTML='<i data-lucide=\'building-2\' class=\'w-6 h-6 text-slate-400\'></i>'">
+                    <img src="logo-Photoroom.png" class="w-10 h-10 object-contain" onerror="this.outerHTML='<i data-lucide=\'building-2\' class=\'w-6 h-6 text-slate-400\'></i>'">
                 </div>
                 <div>
                     <h1 class="text-lg font-bold text-white leading-tight">Dashboard ข้อมูลพื้นฐานของโรงเรียนขนาดเล็ก</h1>
@@ -255,7 +255,7 @@
                     buildHeaderMap(); 
 
                     globalDataRows = [];
-                    
+                    // 🟢 ยาแรงเสริม: จำกัดลูปไม่เกินความยาวจริง และไม่เกิน 500 บรรทัด
                     for (let i = 2; i < rawArray.length && i < 500; i++) {
                         let rowData = rawArray[i];
                         if (rowData && rowData.length > 1 && rowData[2]) {
@@ -317,7 +317,7 @@
                     try {
                         const buffer = await file.arrayBuffer();
                         
-                        
+                        // 🟢 ยาแรงที่ 2: ตอนอัปโหลดก็บังคับอ่านแค่ 500 บรรทัดแรกเหมือนกัน!!
                         const wb = XLSX.read(buffer, { type: 'array', sheetRows: 500 }); 
                         
                         const arr = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, blankrows: false });
@@ -332,7 +332,7 @@
                         buildHeaderMap(); 
 
                         globalDataRows = [];
-                        
+                        // 🟢 จำกัดลูปดึงข้อมูล
                         for (let i = 2; i < arr.length && i < 500; i++) {
                             let rowData = arr[i];
                             if (rowData && rowData.length > 1 && rowData[2]) {
@@ -876,14 +876,21 @@
                     <div class="bg-[#1e293b] border border-[#334155] rounded-xl p-6 shadow-lg">
                         <h3 class="text-white font-bold mb-4 border-b border-[#334155] pb-3 text-lg flex items-center gap-2">
                             <i data-lucide="briefcase" class="text-blue-400 w-5 h-5"></i> การบริหารสถานศึกษาของโรงเรียนขนาดเล็ก (ปีการศึกษา 2568-2570)
-                        </h3>                        
-                            
-                            <div class="bg-[#0f172a] p-5 rounded-xl border border-[#334155] shadow-inner">
-                                <h4 class="text-sky-400 font-bold text-sm mb-2 flex items-center gap-2">
-                                    <i data-lucide="clipboard-list" class="w-4 h-4"></i> รายละเอียด
-                                <p class="text-white text-sm font-medium pl-6 leading-relaxed">
-                                    ${plan_desc}
-                                </p>
+                        </h3>
+
+                            <div class="flex flex-col gap-2 mt-2">
+                                <h4 class="text-slate-300 font-bold text-sm flex items-center gap-2">
+                                    <i data-lucide="info" class="w-4 h-4 text-sky-400"></i> รายละเอียด 
+                                </h4>
+                                <div class="relative bg-gradient-to-r from-[#0f172a] to-[#1e293b] p-5 rounded-r-xl rounded-bl-xl border border-[#334155] border-l-4 border-l-sky-500 shadow-md overflow-hidden">
+                                 
+                                    <i data-lucide="quote" class="absolute -bottom-2 -right-2 w-16 h-16 text-sky-900 opacity-20 transform rotate-12"></i>
+                                    
+                                 
+                                    <p class="text-sky-50 text-sm font-medium leading-relaxed relative z-10">
+                                        ${plan_desc}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
