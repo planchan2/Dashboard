@@ -120,8 +120,6 @@
                             <th class="col-group-personnel text-blue-300 hide-col">ครู</th>
                             <th class="col-group-personnel text-blue-300 hide-col">พรก.</th>
                             <th class="col-group-personnel text-blue-300 hide-col">อัตราจ้าง</th>
-                            <th class="col-group-personnel text-blue-300 hide-col">ธุรการ</th>
-                            <th class="col-group-personnel text-blue-300 hide-col">ภารโรง</th>
                             <th class="col-group-personnel text-blue-300 hide-col border-r border-[#334155]">สถานะ</th>
 
                             <th class="col-group-academic text-purple-300 hide-col">RT 66</th>
@@ -131,10 +129,11 @@
                             <th class="col-group-academic text-purple-300 hide-col">O-NET(ป.6) 66</th>
                             <th class="col-group-academic text-purple-300 hide-col border-r border-[#334155]">O-NET(ป.6) 67</th>
 
-                            <th class="col-group-budget text-emerald-300 hide-col">เรียนฟรี (฿)</th>
-                            <th class="col-group-budget text-emerald-300 hide-col">ค่าน้ำ (฿)</th>
-                            <th class="col-group-budget text-emerald-300 hide-col">ค่าไฟ (฿)</th>
-                            <th class="col-group-budget text-emerald-300 hide-col border-r border-[#334155]">ค่าเน็ต (฿)</th>
+                            <th class="col-group-budget text-emerald-300 hide-col">จัดการเรียนฯ (฿)</th>
+                            <th class="col-group-budget text-emerald-300 hide-col">หนังสือเรียน (฿)</th>
+                            <th class="col-group-budget text-emerald-300 hide-col">อุปกรณ์ฯ (฿)</th>
+                            <th class="col-group-budget text-emerald-300 hide-col">เครื่องแบบฯ (฿)</th>
+                            <th class="col-group-budget text-emerald-300 hide-col border-r border-[#334155]">กิจกรรมฯ (฿)</th>
 
                             <th class="text-center w-24 bg-[#1e293b] text-slate-300">จัดการ</th>
                         </tr>
@@ -527,9 +526,7 @@
                         <td class="col-group-personnel hide-col">${dirHtml}</td>
                         <td class="col-group-personnel font-bold text-blue-200 hide-col">${getValSafe(r, ['ครู'])}</td>
                         <td class="col-group-personnel text-slate-400 hide-col">${getValSafe(r, ['พรก.'])}</td>
-                        <td class="col-group-personnel text-slate-400 hide-col">${getValSafe(r, ['อัตราจ้าง'])}</td>
-                        <td class="col-group-personnel text-slate-400 hide-col">${getValSafe(r, ['ธุรการ'])}</td>
-                        <td class="col-group-personnel text-slate-400 hide-col">${getValSafe(r, ['นักการภารโรง'])}</td>
+                        <td class="col-group-personnel text-slate-400 hide-col">${getValSafe(r, ['อัตราจ้าง'])}</td>                      
                         <td class="col-group-personnel hide-col border-r border-[#334155]">${fullHtml}</td>
 
                         <td class="col-group-academic text-slate-400 hide-col">${fmtScore(getValSafe(r, ['rtปี66', 'rt66']))}</td>
@@ -539,12 +536,12 @@
                         <td class="col-group-academic text-slate-400 hide-col">${fmtScore(getValSafe(r, ['o-netป.6ปี66', 'onet66']))}</td>
                         <td class="col-group-academic font-bold text-purple-300 hide-col border-r border-[#334155]">${fmtScore(getValSafe(r, ['o-netป.6ปี67', 'onet67']))}</td>
 
-                        <td class="col-group-budget text-white hide-col">${fmtNum(getValSafe(r, ['ค่าจัดการเรียนการสอน']))}</td>
-                        <td class="col-group-budget text-emerald-200 hide-col">${fmtNum(getValSafe(r, ['ค่าน้ำ', 'ค่าใช้จ่าย:ค่าน้ำ']))}</td>
-                        <td class="col-group-budget text-emerald-200 hide-col">${fmtNum(getValSafe(r, ['ค่าไฟ', 'ค่าใช้จ่าย:ค่าไฟ']))}</td>
-                        <td class="col-group-budget text-emerald-200 hide-col border-r border-[#334155]">${fmtNum(getValSafe(r, ['ค่าอินเทอร์เน็ต']))}</td>
-
-                        <td class="text-center bg-[#1e293b]/50">
+                        <td class="col-group-budget text-white font-bold hide-col">${fmtNum(getValSafe(r, ['ค่าจัดการเรียนการสอน']))}</td>
+                        <td class="col-group-budget text-emerald-200 hide-col">${fmtNum(getValSafe(r, ['ค่าหนังสือเรียน']))}</td>
+                        <td class="col-group-budget text-emerald-200 hide-col">${fmtNum(getValSafe(r, ['ค่าอุปกรณ์การเรียน']))}</td>
+                        <td class="col-group-budget text-emerald-200 hide-col">${fmtNum(getValSafe(r, ['ค่าเครื่องแบบนักเรียน']))}</td>
+                        <td class="col-group-budget text-emerald-200 hide-col border-r border-[#334155]">${fmtNum(getValSafe(r, ['ค่ากิจกรรมพัฒนาคุณภาพผู้เรียน']))}</td>
+                                                <td class="text-center bg-[#1e293b]/50">
                             <button onclick="openSchoolProfile(${item.id})" class="text-blue-400 hover:text-white bg-blue-500/10 hover:bg-blue-600 px-3 py-1.5 rounded text-xs font-bold transition-all mx-auto">
                                 ดูข้อมูล
                             </button>
@@ -744,12 +741,12 @@ else if (tabName === 'project') {
 
                         <div class="grid grid-cols-2 gap-4 mb-6">
                             <div class="bg-gradient-to-br from-[#0f172a] to-[#1e293b] p-4 rounded-xl border ${getValSafe(r, ['มีผอ.']).includes('ไม่มี') ? 'border-rose-500/50' : 'border-emerald-500/50'} flex flex-col justify-center items-center shadow-md relative overflow-hidden">
-                                <i data-lucide="user-check" class="absolute -bottom-2 -right-2 w-12 h-12 opacity-10 ${getValSafe(r, ['มีผอ.']).includes('ไม่มี') ? 'text-rose-500' : 'text-emerald-500'}"></i>
+                             
                                 <p class="text-xs text-slate-400 mb-1 z-10">สถานะผู้บริหาร</p>
                                 <p class="text-lg font-black z-10 ${getValSafe(r, ['มีผอ.']).includes('ไม่มี') ? 'text-rose-400' : 'text-emerald-400'}">${getValSafe(r, ['มีผอ.'])}</p>
                             </div>
                             <div class="bg-gradient-to-br from-[#0f172a] to-[#1e293b] p-4 rounded-xl border ${getValSafe(r, ['ครูครบชั้น']).includes('ไม่') ? 'border-amber-500/50' : 'border-emerald-500/50'} flex flex-col justify-center items-center shadow-md relative overflow-hidden">
-                                <i data-lucide="users" class="absolute -bottom-2 -right-2 w-12 h-12 opacity-10 ${getValSafe(r, ['ครูครบชั้น']).includes('ไม่') ? 'text-amber-500' : 'text-emerald-500'}"></i>
+                                
                                 <p class="text-xs text-slate-400 mb-1 z-10">สถานะครูครบชั้น</p>
                                 <p class="text-lg font-black z-10 ${getValSafe(r, ['ครูครบชั้น']).includes('ไม่') ? 'text-amber-400' : 'text-emerald-400'}">${getValSafe(r, ['ครูครบชั้น'])}</p>
                             </div>
@@ -784,7 +781,7 @@ else if (tabName === 'project') {
                                     <th class="p-3 font-bold border-b border-[#334155]">การทดสอบระดับชาติ</th>
                                     <th class="p-3 font-bold border-b border-[#334155] text-center">คะแนน ปี 66</th>
                                     <th class="p-3 font-bold border-b border-[#334155] text-center text-purple-400">คะแนน ปี 67</th>
-                                    <th class="p-3 font-bold border-b border-[#334155] text-right">สรุปผลประเมิน</th>
+                                    <th class="p-3 font-bold border-b border-[#334155] text-right">แปลงค่า</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-[#334155]">
