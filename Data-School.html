@@ -631,14 +631,14 @@
             }
                 else if (tabName === 'project') {
                 const projectsData = [
-                    { title: 'StandAlone โดยพื้นที่', value: getExact(r, ['standalone', 'stand alone']) || 'ไม่มีข้อมูล', icon: 'map-pin', colorPrefix: 'orange' },
-                    { title: 'โรงเรียนคุณภาพ (ศรต. ภายใต้ สนก.)', value: getExact(r, ['โรงเรียนคุณภาพ']) || 'ไม่มีข้อมูล', icon: 'star', colorPrefix: 'blue' },
-                    { title: 'คอนเน็กซ์อีดี (สนก.)', value: getExact(r, ['คอนเน็กซ์']) || 'ไม่มีข้อมูล', icon: 'globe', colorPrefix: 'emerald' },
-                    { title: 'Partnership School', value: getExact(r, ['partnership']) || 'ไม่มีข้อมูล', icon: 'link', colorPrefix: 'indigo' },
-                    { title: 'พื้นที่นวัตกรรม (สบน. ภายใต้ สนก.)', value: getExact(r, ['นวัตกรรม']) || 'ไม่มีข้อมูล', icon: 'lightbulb', colorPrefix: 'fuchsia' },
-                    { title: 'กลุ่มไทยรัฐ (สตผ.)', value: getExact(r, ['ไทยรัฐ']) || 'ไม่มีข้อมูล', icon: 'newspaper', colorPrefix: 'rose' },
-                    { title: 'ลักษณะพิเศษ (สส.สนผ.)', value: getExact(r, ['ลักษณะพิเศษ']) || 'ไม่มีข้อมูล', icon: 'award', colorPrefix: 'amber' },
-                    { title: 'พระราชดำริ (ศดร.สนผ.)', value: getExact(r, ['พระราชดำริ']) || 'ไม่มีข้อมูล', icon: 'crown', colorPrefix: 'yellow' }
+                    { title: 'StandAlone โดยพื้นที่', value: getExact(r, ['standalone', 'stand alone']) || 'ไม่มีข้อมูล', colorPrefix: 'orange' },
+                    { title: 'โรงเรียนคุณภาพ (ศรต. ภายใต้ สนก.)', value: getExact(r, ['โรงเรียนคุณภาพ']) || 'ไม่มีข้อมูล', colorPrefix: 'blue' },
+                    { title: 'คอนเน็กซ์อีดี (สนก.)', value: getExact(r, ['คอนเน็กซ์']) || 'ไม่มีข้อมูล', colorPrefix: 'emerald' },
+                    { title: 'Partnership School', value: getExact(r, ['partnership']) || 'ไม่มีข้อมูล', colorPrefix: 'indigo' },
+                    { title: 'พื้นที่นวัตกรรม (สบน. ภายใต้ สนก.)', value: getExact(r, ['นวัตกรรม']) || 'ไม่มีข้อมูล', colorPrefix: 'fuchsia' },
+                    { title: 'กลุ่มไทยรัฐ (สตผ.)', value: getExact(r, ['ไทยรัฐ']) || 'ไม่มีข้อมูล', colorPrefix: 'rose' },
+                    { title: 'ลักษณะพิเศษ (สส.สนผ.)', value: getExact(r, ['ลักษณะพิเศษ']) || 'ไม่มีข้อมูล', colorPrefix: 'amber' },
+                    { title: 'พระราชดำริ (ศดร.สนผ.)', value: getExact(r, ['พระราชดำริ']) || 'ไม่มีข้อมูล', colorPrefix: 'yellow' }
                 ];
 
                 let listHtml = '';
