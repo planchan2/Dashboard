@@ -629,68 +629,61 @@
                     </div>
                 `;
             }
-else if (tabName === 'project') {
+                else if (tabName === 'project') {
                 const projectsData = [
                     { title: 'StandAlone โดยพื้นที่', value: getExact(r, ['standalone', 'stand alone']) || 'ไม่มีข้อมูล', icon: 'map-pin', colorPrefix: 'orange' },
-                    { title: 'โรงเรียนคุณภาพ <br>(ศรต. ภายใต้ สนก.)', value: getExact(r, ['โรงเรียนคุณภาพ']) || 'ไม่มีข้อมูล', icon: 'star', colorPrefix: 'blue' },
-                    { title: 'คอนเน็กซ์อีดี <br>(สนก.)', value: getExact(r, ['คอนเน็กซ์']) || 'ไม่มีข้อมูล', icon: 'globe', colorPrefix: 'emerald' },
+                    { title: 'โรงเรียนคุณภาพ (ศรต. ภายใต้ สนก.)', value: getExact(r, ['โรงเรียนคุณภาพ']) || 'ไม่มีข้อมูล', icon: 'star', colorPrefix: 'blue' },
+                    { title: 'คอนเน็กซ์อีดี (สนก.)', value: getExact(r, ['คอนเน็กซ์']) || 'ไม่มีข้อมูล', icon: 'globe', colorPrefix: 'emerald' },
                     { title: 'Partnership School', value: getExact(r, ['partnership']) || 'ไม่มีข้อมูล', icon: 'link', colorPrefix: 'indigo' },
-                    { title: 'พื้นที่นวัตกรรม <br>(สบน. ภายใต้ สนก.)', value: getExact(r, ['นวัตกรรม']) || 'ไม่มีข้อมูล', icon: 'lightbulb', colorPrefix: 'fuchsia' },
-                    { title: 'กลุ่มไทยรัฐ <br>(สตผ.)', value: getExact(r, ['ไทยรัฐ']) || 'ไม่มีข้อมูล', icon: 'newspaper', colorPrefix: 'rose' },
-                    { title: 'ลักษณะพิเศษ <br>(สส.สนผ.)', value: getExact(r, ['ลักษณะพิเศษ']) || 'ไม่มีข้อมูล', icon: 'award', colorPrefix: 'amber' },
-                    { title: 'พระราชดำริ <br>(ศดร.สนผ.)', value: getExact(r, ['พระราชดำริ']) || 'ไม่มีข้อมูล', icon: 'crown', colorPrefix: 'yellow' }
+                    { title: 'พื้นที่นวัตกรรม (สบน. ภายใต้ สนก.)', value: getExact(r, ['นวัตกรรม']) || 'ไม่มีข้อมูล', icon: 'lightbulb', colorPrefix: 'fuchsia' },
+                    { title: 'กลุ่มไทยรัฐ (สตผ.)', value: getExact(r, ['ไทยรัฐ']) || 'ไม่มีข้อมูล', icon: 'newspaper', colorPrefix: 'rose' },
+                    { title: 'ลักษณะพิเศษ (สส.สนผ.)', value: getExact(r, ['ลักษณะพิเศษ']) || 'ไม่มีข้อมูล', icon: 'award', colorPrefix: 'amber' },
+                    { title: 'พระราชดำริ (ศดร.สนผ.)', value: getExact(r, ['พระราชดำริ']) || 'ไม่มีข้อมูล', icon: 'crown', colorPrefix: 'yellow' }
                 ];
 
-                let cardsHtml = '';
+                let listHtml = '';
                 projectsData.forEach(p => {
                     let isActive = p.value !== 'ไม่ใช่' && p.value !== 'ไม่มีข้อมูล' && p.value !== '-';
 
-                    let cardBg = isActive
-                        ? `bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-[#334155] border-t-2 border-t-${p.colorPrefix}-500 shadow-lg`
-                        : `bg-[#1e293b]/40 border border-[#334155]/50 border-t-2 border-t-[#334155] hover:bg-[#1e293b]/80`;
+                    let cardStyle = isActive 
+                        ? `bg-gradient-to-r from-[#1e293b] to-[#0f172a] border border-${p.colorPrefix}-500/80 shadow-[0_0_12px_rgba(0,0,0,0.2)] shadow-${p.colorPrefix}-500/10` 
+                        : `bg-[#0f172a]/40 border border-[#334155]/50 opacity-60`;
 
-                    let iconBgClass = isActive
-                        ? `bg-${p.colorPrefix}-500/20 text-${p.colorPrefix}-400 group-hover:scale-110 group-hover:bg-${p.colorPrefix}-500/30 border border-${p.colorPrefix}-500/30`
-                        : `bg-[#0f172a] text-slate-500 group-hover:text-slate-400 group-hover:bg-[#1e293b] border border-[#334155]`;
+                    let iconStyle = isActive
+                        ? `bg-${p.colorPrefix}-500/20 text-${p.colorPrefix}-400`
+                        : `bg-[#1e293b] text-slate-600`;
 
-                    let titleClass = isActive ? `text-white` : `text-slate-400 group-hover:text-slate-200`;
+                    let titleStyle = isActive ? `text-white font-bold` : `text-slate-500`;
+                    
+                    let badgeStyle = isActive
+                        ? `bg-${p.colorPrefix}-500/10 border border-${p.colorPrefix}-500/40 text-${p.colorPrefix}-400`
+                        : `bg-[#1e293b] border border-[#334155] text-slate-600`;
 
-                    let badgeBg = isActive
-                        ? `bg-${p.colorPrefix}-500/10 border border-${p.colorPrefix}-500/30 text-${p.colorPrefix}-400`
-                        : `bg-[#0f172a] border border-[#334155] text-slate-500`;
-
-                    let watermarkColor = isActive ? `text-${p.colorPrefix}-500 opacity-5` : `text-slate-700 opacity-20`;
-
-                    cardsHtml += `
-                        <div class="relative overflow-hidden group flex flex-col items-center justify-center p-6 rounded-2xl transition-all duration-300 ${cardBg} hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/50 cursor-default">
-                            
-                            <!-- ลายน้ำพื้นหลัง -->
-                            <i data-lucide="${p.icon}" class="absolute -bottom-4 -right-4 w-28 h-28 ${watermarkColor} transform -rotate-12 transition-transform duration-500 group-hover:rotate-0 group-hover:scale-110 pointer-events-none"></i>
-
-                            <!-- ไอคอนหลัก -->
-                            <div class="w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-all duration-300 shadow-inner ${iconBgClass} relative z-10">
-                                <i data-lucide="${p.icon}" class="w-7 h-7"></i>
+                    listHtml += `
+                        <div class="flex items-center justify-between p-4 rounded-xl transition-all ${cardStyle}">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${iconStyle}">
+                                    <i data-lucide="${p.icon}" class="w-5 h-5"></i>
+                                </div>
+                                <h3 class="text-sm leading-snug ${titleStyle}">${p.title}</h3>
                             </div>
-
-                            <!-- ชื่อโครงการ -->
-                            <h3 class="font-bold text-center mb-4 text-sm h-10 flex items-center justify-center relative z-10 leading-tight px-2 ${titleClass} drop-shadow-md">
-                                ${p.title}
-                            </h3>
-
-                            <!-- ป้ายสถานะ (Pill) -->
-                            <div class="relative z-10 w-full flex justify-center mt-auto">
-                                <span class="px-5 py-1.5 rounded-full text-[13px] font-medium shadow-sm transition-colors ${badgeBg} max-w-full truncate text-center backdrop-blur-sm" title="${p.value}">
+                            <div class="shrink-0 ml-4">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap ${badgeStyle}">
                                     ${p.value}
                                 </span>
                             </div>
-
                         </div>
                     `;
                 });
 
                 html = `
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-5 p-2">
-                        ${cardsHtml}
+                    <div class="bg-[#1e293b] border border-[#334155] rounded-xl p-6 shadow-lg">
+                        <h3 class="text-white font-bold mb-5 border-b border-[#334155] pb-3 text-sm flex items-center gap-2">
+                            <i data-lucide="award" class="w-4 h-4 text-amber-400"></i> โครงการที่สนับสนุน / เข้าร่วม
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            ${listHtml}
+                        </div>
                     </div>
                 `;
             }
