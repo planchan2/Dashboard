@@ -737,26 +737,33 @@ else if (tabName === 'project') {
             }
             else if (tabName === 'personnel') {
                 html = `
-                    <div class="bg-[#1e293b] border border-[#334155] rounded-xl p-6">
-                        <h3 class="text-white font-bold mb-4 border-b border-[#334155] pb-2 text-sm"><i data-lucide="users" class="w-4 h-4 inline mr-1 text-blue-400"></i> ข้อมูลบุคลากร</h3>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-y-4 gap-x-6">
-                            <div><p class="text-xs text-slate-500 mb-1">ผู้อำนวยการ</p><p class="text-xl font-bold text-white">${getValSafe(r, ['ผอ.'])}</p></div>
-                            <div><p class="text-xs text-slate-500 mb-1">รองผู้อำนวยการ</p><p class="text-xl font-bold text-white">${getValSafe(r, ['รองผอ.'])}</p></div>
-                            <div><p class="text-xs text-slate-500 mb-1">มี ผอ. หรือไม่?</p><p class="text-sm font-bold mt-1 ${getValSafe(r, ['มีผอ.']).includes('ไม่มี') ? 'text-rose-400' : 'text-emerald-400'}">${getValSafe(r, ['มีผอ.'])}</p></div>
-                            <div><p class="text-xs text-blue-400 mb-1 font-bold">รวมครูทั้งหมด</p><p class="text-2xl font-black text-blue-400">${getValSafe(r, ['ครู'])}</p></div>
+                    <div class="bg-[#1e293b] border border-[#334155] rounded-xl p-6 shadow-lg">
+                        <h3 class="text-white font-bold mb-5 border-b border-[#334155] pb-3 text-sm flex items-center gap-2">
+                            <i data-lucide="users" class="w-4 h-4 text-blue-400"></i> ข้อมูลบุคลากร
+                        </h3>
+
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="bg-gradient-to-br from-[#0f172a] to-[#1e293b] p-4 rounded-xl border ${getValSafe(r, ['มีผอ.']).includes('ไม่มี') ? 'border-rose-500/50' : 'border-emerald-500/50'} flex flex-col justify-center items-center shadow-md relative overflow-hidden">
+                                <i data-lucide="user-check" class="absolute -bottom-2 -right-2 w-12 h-12 opacity-10 ${getValSafe(r, ['มีผอ.']).includes('ไม่มี') ? 'text-rose-500' : 'text-emerald-500'}"></i>
+                                <p class="text-xs text-slate-400 mb-1 z-10">สถานะผู้บริหาร</p>
+                                <p class="text-lg font-black z-10 ${getValSafe(r, ['มีผอ.']).includes('ไม่มี') ? 'text-rose-400' : 'text-emerald-400'}">${getValSafe(r, ['มีผอ.'])}</p>
+                            </div>
+                            <div class="bg-gradient-to-br from-[#0f172a] to-[#1e293b] p-4 rounded-xl border ${getValSafe(r, ['ครูครบชั้น']).includes('ไม่') ? 'border-amber-500/50' : 'border-emerald-500/50'} flex flex-col justify-center items-center shadow-md relative overflow-hidden">
+                                <i data-lucide="users" class="absolute -bottom-2 -right-2 w-12 h-12 opacity-10 ${getValSafe(r, ['ครูครบชั้น']).includes('ไม่') ? 'text-amber-500' : 'text-emerald-500'}"></i>
+                                <p class="text-xs text-slate-400 mb-1 z-10">สถานะครูครบชั้น</p>
+                                <p class="text-lg font-black z-10 ${getValSafe(r, ['ครูครบชั้น']).includes('ไม่') ? 'text-amber-400' : 'text-emerald-400'}">${getValSafe(r, ['ครูครบชั้น'])}</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-y-5 gap-x-6 pt-2 border-t border-[#334155]/50">
+                            <div><p class="text-xs text-slate-500 mb-1">ผู้อำนวยการ</p><p class="text-lg font-bold text-white">${getValSafe(r, ['ผอ.'])}</p></div>
+                            <div><p class="text-xs text-slate-500 mb-1">รองผู้อำนวยการ</p><p class="text-lg font-bold text-white">${getValSafe(r, ['รองผอ.'])}</p></div>
+                            <div class="col-span-2"><p class="text-xs text-blue-400 mb-1 font-bold">รวมครูทั้งหมด</p><p class="text-2xl font-black text-blue-400">${getValSafe(r, ['ครู'])}</p></div>
                             
                             <div><p class="text-xs text-slate-500 mb-1">ครู (พรก.)</p><p class="text-lg font-bold text-white">${getValSafe(r, ['พรก.'])}</p></div>
                             <div><p class="text-xs text-slate-500 mb-1">ครู (อัตราจ้าง)</p><p class="text-lg font-bold text-white">${getValSafe(r, ['อัตราจ้าง'])}</p></div>
-                            <div class="col-span-2"><p class="text-xs text-slate-500 mb-1">สถานะครูครบชั้น</p><p class="text-sm font-bold ${getValSafe(r, ['ครูครบชั้น']).includes('ไม่') ? 'text-amber-400' : 'text-emerald-400'}">${getValSafe(r, ['ครูครบชั้น'])}</p></div>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-4 mt-5 pt-5 border-t border-[#334155]/50">
-                            <div class="bg-[#0f172a] p-4 rounded-lg flex flex-col justify-center items-center border border-[#334155]">
-                                <p class="text-xs text-slate-500 mb-1">ธุรการโรงเรียน</p><p class="text-xl font-bold text-white">${getValSafe(r, ['ธุรการ'])}</p>
-                            </div>
-                            <div class="bg-[#0f172a] p-4 rounded-lg flex flex-col justify-center items-center border border-[#334155]">
-                                <p class="text-xs text-slate-500 mb-1">นักการภารโรง</p><p class="text-xl font-bold text-white">${getValSafe(r, ['นักการภารโรง'])}</p>
-                            </div>
+                            <div><p class="text-xs text-slate-500 mb-1">ธุรการโรงเรียน</p><p class="text-lg font-bold text-white">${getValSafe(r, ['ธุรการ'])}</p></div>
+                            <div><p class="text-xs text-slate-500 mb-1">นักการภารโรง</p><p class="text-lg font-bold text-white">${getValSafe(r, ['นักการภารโรง'])}</p></div>
                         </div>
                     </div>
                 `;
