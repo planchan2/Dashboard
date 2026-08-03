@@ -627,14 +627,14 @@
             }
                 else if (tabName === 'project') {
                 const projectsData = [
-                    { title: 'StandAlone โดยพื้นที่', value: getExact(r, ['standalone', 'stand alone']) || 'ไม่มีข้อมูล', icon: 'map-pin', colorPrefix: 'orange' },
-                    { title: 'โรงเรียนคุณภาพ (ศรต. ภายใต้ สนก.)', value: getExact(r, ['โรงเรียนคุณภาพ']) || 'ไม่มีข้อมูล', icon: 'star', colorPrefix: 'blue' },
-                    { title: 'คอนเน็กซ์อีดี (สนก.)', value: getExact(r, ['คอนเน็กซ์']) || 'ไม่มีข้อมูล', icon: 'globe', colorPrefix: 'emerald' },
-                    { title: 'Partnership School', value: getExact(r, ['partnership']) || 'ไม่มีข้อมูล', icon: 'link', colorPrefix: 'indigo' },
-                    { title: 'พื้นที่นวัตกรรม (สบน. ภายใต้ สนก.)', value: getExact(r, ['นวัตกรรม']) || 'ไม่มีข้อมูล', icon: 'lightbulb', colorPrefix: 'fuchsia' },
-                    { title: 'กลุ่มไทยรัฐ (สตผ.)', value: getExact(r, ['ไทยรัฐ']) || 'ไม่มีข้อมูล', icon: 'newspaper', colorPrefix: 'rose' },
-                    { title: 'ลักษณะพิเศษ (สส.สนผ.)', value: getExact(r, ['ลักษณะพิเศษ']) || 'ไม่มีข้อมูล', icon: 'award', colorPrefix: 'amber' },
-                    { title: 'พระราชดำริ (ศดร.สนผ.)', value: getExact(r, ['พระราชดำริ']) || 'ไม่มีข้อมูล', icon: 'crown', colorPrefix: 'yellow' }
+                    { title: 'StandAlone โดยพื้นที่', value: getExact(r, ['standalone', 'stand alone']) || 'ไม่มีข้อมูล', colorPrefix: 'orange' },
+                    { title: 'โรงเรียนคุณภาพ (ศรต. ภายใต้ สนก.)', value: getExact(r, ['โรงเรียนคุณภาพ']) || 'ไม่มีข้อมูล', colorPrefix: 'blue' },
+                    { title: 'คอนเน็กซ์อีดี (สนก.)', value: getExact(r, ['คอนเน็กซ์']) || 'ไม่มีข้อมูล', colorPrefix: 'emerald' },
+                    { title: 'Partnership School', value: getExact(r, ['partnership']) || 'ไม่มีข้อมูล', colorPrefix: 'indigo' },
+                    { title: 'พื้นที่นวัตกรรม (สบน. ภายใต้ สนก.)', value: getExact(r, ['นวัตกรรม']) || 'ไม่มีข้อมูล', colorPrefix: 'fuchsia' },
+                    { title: 'กลุ่มไทยรัฐ (สตผ.)', value: getExact(r, ['ไทยรัฐ']) || 'ไม่มีข้อมูล', colorPrefix: 'rose' },
+                    { title: 'ลักษณะพิเศษ (สส.สนผ.)', value: getExact(r, ['ลักษณะพิเศษ']) || 'ไม่มีข้อมูล', colorPrefix: 'amber' },
+                    { title: 'พระราชดำริ (ศดร.สนผ.)', value: getExact(r, ['พระราชดำริ']) || 'ไม่มีข้อมูล', colorPrefix: 'yellow' }
                 ];
 
                 let listHtml = '';
@@ -645,10 +645,6 @@
                         ? `bg-gradient-to-r from-[#1e293b] to-[#0f172a] border border-${p.colorPrefix}-500/80 shadow-[0_0_12px_rgba(0,0,0,0.2)] shadow-${p.colorPrefix}-500/10` 
                         : `bg-[#0f172a]/40 border border-[#334155]/50 opacity-60`;
 
-                    let iconStyle = isActive
-                        ? `bg-${p.colorPrefix}-500/20 text-${p.colorPrefix}-400`
-                        : `bg-[#1e293b] text-slate-600`;
-
                     let titleStyle = isActive ? `text-white font-bold` : `text-slate-500`;
                     
                     let badgeStyle = isActive
@@ -657,10 +653,7 @@
 
                     listHtml += `
                         <div class="flex items-center justify-between p-4 rounded-xl transition-all ${cardStyle}">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${iconStyle}">
-                                    <i data-lucide="${p.icon}" class="w-5 h-5"></i>
-                                </div>
+                            <div class="flex items-center">
                                 <h3 class="text-sm leading-snug ${titleStyle}">${p.title}</h3>
                             </div>
                             <div class="shrink-0 ml-4">
