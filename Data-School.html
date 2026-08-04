@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,26 +14,111 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body { font-family: 'Sarabun', sans-serif; background-color: #0f172a; color: #cbd5e1; }
-        table { border-collapse: separate; border-spacing: 0; width: 100%; }
-        #main-data-table th[class*="col-group-"] { width: 100px; min-width: 100px; max-width: 100px; text-align: center; }
-        #main-data-table td[class*="col-group-"] { text-align: center; }
-        .school-name-col { width: 100%; min-width: 250px; }
-        th { position: sticky; top: 0; background-color: #1e293b; color: #94a3b8; font-weight: 600; font-size: 13px; padding: 10px 12px; border-bottom: 2px solid #334155; z-index: 10; white-space: nowrap; }
-        td { padding: 8px 12px; font-size: 13px; border-bottom: 1px solid #1e293b; color: #e2e8f0; white-space: nowrap; }
-        tbody tr:hover td { background-color: #334155; }
-        .sticky-col { position: sticky; left: 0; background-color: #0f172a; z-index: 20; border-right: 1px solid #334155; }
-        .sticky-col-header { position: sticky; left: 0; background-color: #1e293b; z-index: 30; border-right: 1px solid #334155; }
-        tbody tr:hover .sticky-col { background-color: #334155; }
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #0f172a;
+            color: #cbd5e1;
+        }
+
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+
+        #main-data-table th[class*="col-group-"] {
+            width: 100px;
+            min-width: 100px;
+            max-width: 100px;
+            text-align: center;
+        }
+
+        #main-data-table td[class*="col-group-"] {
+            text-align: center;
+        }
+
+        .school-name-col {
+            width: 100%;
+            min-width: 250px;
+        }
+
+        th {
+            position: sticky;
+            top: 0; 
+            background-color: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 13px;
+            padding: 10px 12px;
+            border-bottom: 2px solid #334155;
+            z-index: 40;
+            white-space: nowrap;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); /* เพิ่มเงาให้ดูมีมิติเวลาเลื่อนทับข้อมูล */
+        }
+
+        td {
+            padding: 8px 12px;
+            font-size: 13px;
+            border-bottom: 1px solid #1e293b;
+            color: #e2e8f0;
+            white-space: nowrap;
+        }
+
+        tbody tr:hover td {
+            background-color: #334155;
+        }
+
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            background-color: #0f172a;
+            z-index: 30;
+            border-right: 1px solid #334155;
+        }
+
+        .sticky-col-header {
+            position: sticky;
+            left: 0;
+            background-color: #1e293b;
+            z-index: 50;
+            border-right: 1px solid #334155;
+        }
+
+        tbody tr:hover .sticky-col {
+            background-color: #334155;
+        }
+
         .hide-col { display: none !important; }
         .show-col { display: table-cell !important; }
-        .tab-btn { color: #94a3b8; font-weight: 600; font-size: 13px; padding: 8px 16px; border-radius: 6px; transition: all 0.2s; background: transparent; border: 1px solid transparent; }
-        .tab-btn:hover { color: #f8fafc; background-color: rgba(255, 255, 255, 0.05); }
-        .tab-active { color: #ffffff !important; background-color: #3b82f6 !important; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4); border-color: #60a5fa !important; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+
+        .tab-btn {
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 13px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            background: transparent;
+            border: 1px solid transparent;
+        }
+
+        .tab-btn:hover {
+            color: #f8fafc;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-active {
+            color: #ffffff !important;
+            background-color: #3b82f6 !important;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+            border-color: #60a5fa !important;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
         .swal2-popup { background-color: #1e293b !important; color: #f8fafc !important; border: 1px solid #334155; }
         .swal2-title, .swal2-html-container { color: #f8fafc !important; }
     </style>
@@ -40,15 +126,16 @@
 
 <body class="flex flex-col min-h-screen antialiased">
 
-    <!-- Header -->
-    <header class="bg-[#1e293b]/95 backdrop-blur-md border-b border-[#334155] sticky top-0 z-50">
-        <div class="max-w-[1400px] mx-auto px-6 py-3 flex justify-between items-center">
+    <header class="bg-[#1e293b]/95 border-b border-[#334155] relative z-50 min-w-max">
+        <div class="w-full px-6 py-3 flex justify-between items-center gap-6">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white shadow-lg ">
-                    <img src="logo-photoroom.png" class="w-10 h-10 object-contain" onerror="this.outerHTML='<i data-lucide=\'building-2\' class=\'w-6 h-6 text-slate-400\'></i>'">
+                    <img src="logo-Photoroom.png" class="w-10 h-10 object-contain"
+                        onerror="this.outerHTML='<i data-lucide=\'building-2\' class=\'w-6 h-6 text-slate-400\'></i>'">
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold text-white leading-tight">Dashboard ข้อมูลพื้นฐานของโรงเรียนขนาดเล็ก</h1>
+                    <h1 class="text-lg font-bold text-white leading-tight">Dashboard ข้อมูลพื้นฐานของโรงเรียนขนาดเล็ก
+                    </h1>
                     <div class="flex items-center gap-2 mt-0.5">
                         <p class="text-[11px] text-blue-400 font-medium flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> <span id="live-clock">กำลังโหลดเวลา...</span></p>
                         <span class="text-slate-600 text-[10px]">|</span>
@@ -56,10 +143,8 @@
                     </div>
                 </div>
             </div>
-            
 
             <div class="flex items-center gap-2">
-
                 <button onclick="fetchDataFromServer()" class="bg-[#0f172a] hover:bg-[#334155] border border-[#334155] text-slate-300 px-3 py-2 rounded-lg transition-all flex items-center gap-2 font-medium text-sm shadow-sm">
                     <i data-lucide="refresh-cw" class="w-4 h-4 text-blue-400"></i> โหลดข้อมูลบนระบบใหม่
                 </button>
@@ -72,7 +157,7 @@
         </div>
     </header>
 
-    <main class="flex-1 w-full max-w-[1400px] mx-auto p-4 md:p-6 flex flex-col gap-6">
+    <main class="flex-1 w-full min-w-max mx-auto p-4 md:p-6 flex flex-col gap-6">
 
         <section>
             <div class="grid grid-cols-2 lg:grid-cols-5 gap-4" id="color-summary-cards">
@@ -84,9 +169,9 @@
             </div>
         </section>
 
-        <section class="flex-1 flex flex-col bg-[#0f172a] border border-[#334155] rounded-2xl shadow-xl overflow-hidden">
+        <section class="flex-1 flex flex-col bg-[#0f172a] border border-[#334155] rounded-2xl shadow-xl">
 
-            <div class="px-5 py-3 border-b border-[#334155] flex justify-between items-center bg-[#1e293b] flex-wrap gap-3">
+            <div class="px-5 py-3 border-b border-[#334155] flex justify-between items-center bg-[#1e293b] flex-wrap gap-3 rounded-t-2xl">
                 <div class="flex items-center gap-2 w-full md:w-auto">
                     <div class="relative w-full md:w-64">
                         <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3 top-2.5"></i>
@@ -103,11 +188,11 @@
                 </div>
             </div>
 
-            <div class="overflow-x-auto relative w-full flex-1">
+            <div class="relative w-full flex-1">
                 <table id="main-data-table">
                     <thead>
                         <tr>
-                            <th class="text-center w-10 sticky-col-header">No.</th>
+                            <th class="text-center w-10 sticky-col-header">ลำดับ</th>
                             <th class="text-left school-name-col sticky-col-header">ชื่อสถานศึกษา</th>
                             <th class="text-center w-24 border-r border-[#334155]">กลุ่มสี 68</th>
 
@@ -134,6 +219,7 @@
                             <th class="col-group-budget text-emerald-300 hide-col">อุปกรณ์ฯ (฿)</th>
                             <th class="col-group-budget text-emerald-300 hide-col">เครื่องแบบฯ (฿)</th>
                             <th class="col-group-budget text-emerald-300 hide-col border-r border-[#334155]">กิจกรรมฯ (฿)</th>
+                            </th>
 
                             <th class="text-center w-24 bg-[#1e293b] text-slate-300">จัดการ</th>
                         </tr>
@@ -149,26 +235,48 @@
     </main>
 
     <!-- Pop-up หน้าโปรไฟล์ -->
-    <div id="school-modal" class="fixed inset-0 bg-[#0f172a]/80 backdrop-blur-sm hidden z-[100] justify-center items-center p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-[#1e293b] w-full max-w-5xl rounded-2xl shadow-2xl border border-[#334155] flex flex-col max-h-[90vh] transform scale-95 transition-transform duration-300" id="modal-content">
+    <div id="school-modal"
+        class="fixed inset-0 bg-[#0f172a]/80 backdrop-blur-sm hidden z-[100] justify-center items-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-[#1e293b] w-full max-w-5xl rounded-2xl shadow-2xl border border-[#334155] flex flex-col max-h-[90vh] transform scale-95 transition-transform duration-300"
+            id="modal-content">
 
-            <div class="px-6 py-4 border-b border-[#334155] bg-[#0f172a] rounded-t-2xl flex justify-between items-start">
+            <div
+                class="px-6 py-4 border-b border-[#334155] bg-[#0f172a] rounded-t-2xl flex justify-between items-start">
                 <div class="w-full">
-                    <h2 class="text-xl font-bold text-white flex items-center gap-2 mb-2" id="modal-school-name"><i data-lucide="school" class="w-5 h-5 text-blue-400"></i> -</h2>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2 mb-2" id="modal-school-name"><i
+                            data-lucide="school" class="w-5 h-5 text-blue-400"></i> -</h2>
                     <div class="flex flex-wrap gap-2 text-xs" id="modal-badges"></div>
                 </div>
-                <button onclick="closeSchoolModal()" class="text-slate-400 hover:text-white bg-[#1e293b] p-1.5 rounded-md border border-[#334155]"><i data-lucide="x" class="w-4 h-4"></i></button>
+                <button onclick="closeSchoolModal()"
+                    class="text-slate-400 hover:text-white bg-[#1e293b] p-1.5 rounded-md border border-[#334155]"><i
+                        data-lucide="x" class="w-4 h-4"></i></button>
             </div>
 
             <div class="flex overflow-x-auto border-b border-[#334155] bg-[#1e293b] px-4 pt-2">
-                <button onclick="switchModalTab('general')" id="btn-modal-general" class="modal-tab-btn active px-4 py-2 border-b-2 border-blue-500 text-blue-400 font-bold text-sm whitespace-nowrap"><i data-lucide="info" class="w-4 h-4 inline mr-1"></i> ทั่วไป</button>
-                <button onclick="switchModalTab('project')" id="btn-modal-project" class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i data-lucide="award" class="w-4 h-4 inline mr-1"></i> โครงการ</button>
-                <button onclick="switchModalTab('student')" id="btn-modal-student" class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i data-lucide="users" class="w-4 h-4 inline mr-1"></i> นักเรียน</button>
-                <button onclick="switchModalTab('personnel')" id="btn-modal-personnel" class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i data-lucide="contact" class="w-4 h-4 inline mr-1"></i> บุคลากร</button>
-                <button onclick="switchModalTab('academic')" id="btn-modal-academic" class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i data-lucide="book-open" class="w-4 h-4 inline mr-1"></i> วิชาการ</button>
-                <button onclick="switchModalTab('budget')" id="btn-modal-budget" class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i data-lucide="wallet" class="w-4 h-4 inline mr-1"></i> งบประมาณ</button>
-                <button onclick="switchModalTab('plan')" id="btn-modal-plan" class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i data-lucide="map" class="w-4 h-4 inline mr-1"></i> แผน</button>
-                <button onclick="switchModalTab('management')" id="btn-modal-management" class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i data-lucide="briefcase" class="w-4 h-4 inline mr-1"></i> การบริหาร</button>
+                <button onclick="switchModalTab('general')" id="btn-modal-general"
+                    class="modal-tab-btn active px-4 py-2 border-b-2 border-blue-500 text-blue-400 font-bold text-sm whitespace-nowrap"><i
+                        data-lucide="info" class="w-4 h-4 inline mr-1"></i> ทั่วไป</button>
+                <button onclick="switchModalTab('project')" id="btn-modal-project"
+                    class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i
+                        data-lucide="award" class="w-4 h-4 inline mr-1"></i> โครงการ</button>
+                <button onclick="switchModalTab('student')" id="btn-modal-student"
+                    class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i
+                        data-lucide="users" class="w-4 h-4 inline mr-1"></i> นักเรียน</button>
+                <button onclick="switchModalTab('personnel')" id="btn-modal-personnel"
+                    class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i
+                        data-lucide="contact" class="w-4 h-4 inline mr-1"></i> บุคลากร</button>
+                <button onclick="switchModalTab('academic')" id="btn-modal-academic"
+                    class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i
+                        data-lucide="book-open" class="w-4 h-4 inline mr-1"></i> วิชาการ</button>
+                <button onclick="switchModalTab('budget')" id="btn-modal-budget"
+                    class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i
+                        data-lucide="wallet" class="w-4 h-4 inline mr-1"></i> งบประมาณ</button>
+                <button onclick="switchModalTab('plan')" id="btn-modal-plan"
+                    class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i
+                        data-lucide="map" class="w-4 h-4 inline mr-1"></i> แผน</button>
+                <button onclick="switchModalTab('management')" id="btn-modal-management"
+                    class="modal-tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-slate-200 text-sm whitespace-nowrap"><i
+                        data-lucide="briefcase" class="w-4 h-4 inline mr-1"></i> การบริหาร</button>
             </div>
 
             <div class="p-6 overflow-y-auto flex-1 bg-[#0f172a] rounded-b-2xl" id="modal-body-content"></div>
@@ -179,12 +287,12 @@
         lucide.createIcons();
         let globalDataRows = [];
         let globalHeaders = [];
-        let globalHeadersTop = []; 
+        let globalHeadersTop = [];
         let activeColorFilter = null;
         let currentSchoolId = null;
 
-        let headerIndexMap = {}; 
-        let resolvedIndexCache = {}; 
+        let headerIndexMap = {};
+        let resolvedIndexCache = {};
 
         function updateClock() {
             const now = new Date();
@@ -204,20 +312,19 @@
 
         function buildHeaderMap() {
             headerIndexMap = {};
-            resolvedIndexCache = {}; 
-            
+            resolvedIndexCache = {};
+
             for (let i = 0; i < globalHeadersTop.length; i++) {
                 let text = (globalHeadersTop[i] || "").toString().replace(/\s|\n/g, '').toLowerCase();
                 if (text && headerIndexMap[text] === undefined) headerIndexMap[text] = i;
             }
-            
+
             for (let i = 0; i < globalHeaders.length; i++) {
                 let text = (globalHeaders[i] || "").toString().replace(/\s|\n/g, '').toLowerCase();
                 if (text && headerIndexMap[text] === undefined) headerIndexMap[text] = i;
             }
         }
 
-        // ดึงจากเซิร์ฟเวอร์
         function fetchDataFromServer() {
             Swal.fire({
                 title: 'กำลังดาวน์โหลดข้อมูล...',
@@ -227,23 +334,21 @@
                 allowOutsideClick: false,
                 didOpen: () => { Swal.showLoading(); }
             });
-            
+
             $('#last-update-text').text('สถานะ: กำลังดาวน์โหลดไฟล์...').removeClass('text-slate-400 text-emerald-400').addClass('text-amber-400 animate-pulse');
-            
+
             fetch('data.xlsx?v=' + new Date().getTime())
                 .then(response => {
                     if (!response.ok) throw new Error("ไม่พบไฟล์อัตโนมัติ");
                     return response.arrayBuffer();
                 })
-                .then(async data => { 
-                    await new Promise(resolve => setTimeout(resolve, 50)); 
-                    
-                    
-                    const workbook = XLSX.read(data, { type: 'array', sheetRows: 500 }); 
-                    
+                .then(async data => {
+                    await new Promise(resolve => setTimeout(resolve, 50));
+
+                    const workbook = XLSX.read(data, { type: 'array', sheetRows: 500 });
                     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                     const rawArray = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false });
-                    
+
                     const topHeaders = rawArray[0].map(h => (h || "").toString().trim());
                     globalHeadersTop = topHeaders;
                     globalHeaders = rawArray[1].map((h, i) => {
@@ -251,7 +356,7 @@
                         return text !== "" ? text : (topHeaders[i] || "").toString().trim();
                     });
 
-                    buildHeaderMap(); 
+                    buildHeaderMap();
 
                     globalDataRows = [];
                     for (let i = 2; i < rawArray.length && i < 500; i++) {
@@ -269,7 +374,7 @@
 
                     $('#last-update-text').text('อัปเดตล่าสุด: โหลดข้อมูลสำเร็จ').removeClass('text-amber-400 animate-pulse').addClass('text-emerald-400 font-bold');
                     applyFiltersAndRender();
-                    
+
                     Swal.fire({ icon: 'success', title: 'ดึงข้อมูลสำเร็จ!', text: 'อัปเดตข้อมูลจากเซิร์ฟเวอร์เรียบร้อย', timer: 1500, showConfirmButton: false, background: '#1e293b', color: '#f8fafc' });
                 })
                 .catch(error => {
@@ -288,14 +393,14 @@
                 globalHeaders = JSON.parse(savedHeaders);
                 globalHeadersTop = JSON.parse(savedTop);
                 buildHeaderMap();
-                
+
                 $('#last-update-text').text('อัปเดตล่าสุด: โหลดข้อมูลสำเร็จ').removeClass('text-slate-400 text-amber-400 text-rose-400').addClass('text-emerald-400 font-bold');
                 applyFiltersAndRender();
             } else {
                 fetchDataFromServer();
             }
 
-            $('#excel-upload').on('change', async function(e) {
+            $('#excel-upload').on('change', async function (e) {
                 const file = e.target.files[0];
                 if (!file) return;
 
@@ -313,19 +418,17 @@
                 setTimeout(async () => {
                     try {
                         const buffer = await file.arrayBuffer();
-    
-                        const wb = XLSX.read(buffer, { type: 'array', sheetRows: 500 }); 
-                        
+                        const wb = XLSX.read(buffer, { type: 'array', sheetRows: 500 });
                         const arr = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, blankrows: false });
-                        
+
                         const topHeaders = arr[0].map(h => (h || "").toString().trim());
                         globalHeadersTop = topHeaders;
-                        globalHeaders = arr[1].map((h, i) => { 
-                            let t = (h || "").toString().trim(); 
-                            return t !== "" ? t : (topHeaders[i] || "").toString().trim(); 
+                        globalHeaders = arr[1].map((h, i) => {
+                            let t = (h || "").toString().trim();
+                            return t !== "" ? t : (topHeaders[i] || "").toString().trim();
                         });
 
-                        buildHeaderMap(); 
+                        buildHeaderMap();
 
                         globalDataRows = [];
                         for (let i = 2; i < arr.length && i < 500; i++) {
@@ -352,9 +455,8 @@
                         $('#last-update-text').text('สถานะ: ไม่สามารถอ่านไฟล์ได้').removeClass('text-amber-400 animate-pulse text-emerald-400').addClass('text-rose-400');
                         Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: 'โครงสร้างไฟล์อาจมีปัญหา', background: '#1e293b', color: '#f8fafc' });
                     }
-                    
                     $(this).val('');
-                }, 100); 
+                }, 100);
             });
         });
 
@@ -364,17 +466,17 @@
 
             if (targetIdx === undefined) {
                 let keysArray = Object.keys(headerIndexMap);
-                
+
                 for (let kw of keywords) {
                     let cleanKw = kw.replace(/\s|\n/g, '').toLowerCase();
-                    
+
                     if (cleanKw === 'กลุ่มสี' && headerIndexMap['กลุ่มสี2567'] !== undefined) {
                         targetIdx = headerIndexMap['กลุ่มสี2567'];
                         break;
                     }
-                    
-                    let idx = headerIndexMap[cleanKw]; 
-                    
+
+                    let idx = headerIndexMap[cleanKw];
+
                     if (idx === undefined) {
                         for (let i = 0; i < keysArray.length; i++) {
                             let key = keysArray[i];
@@ -384,18 +486,17 @@
                                 if (cleanKw === 'โรงเรียน' && key.includes('รหัส')) continue;
                                 if (cleanKw === 'ผอ.' && key.includes('รอง')) continue;
                                 if (cleanKw === 'ครู' && (key.includes('พรก') || key.includes('จ้าง') || key.includes('ชั้น') || key.includes('ครบ') || key.includes('อัตรา'))) continue;
-                                
+
                                 if (/^[อปม]\.[1-6]$/.test(cleanKw)) {
                                     if (key.includes('ประถม') || key.includes('รวม') || key.includes('เทอม') || key.includes('ค่า') || key.includes('เงิน') || key.includes('ภาค')) continue;
-                                    if (key.length > 10) continue; 
+                                    if (key.length > 10) continue;
                                 }
-
                                 idx = headerIndexMap[key];
                                 break;
                             }
                         }
                     }
-                    
+
                     if (idx !== undefined) {
                         targetIdx = idx;
                         break;
@@ -493,7 +594,7 @@
             tbody.empty();
             if (dataRows.length === 0) { tbody.append(`<tr><td colspan="25" class="text-center py-10 text-slate-500">ไม่พบข้อมูล</td></tr>`); return; }
 
-            let tableHtml = ''; 
+            let tableHtml = '';
             dataRows.forEach((item, index) => {
                 const r = item.rowData;
                 const rawColor = getValSafe(r, ['กลุ่มสี2568', 'กลุ่มสี68']).toString().trim();
@@ -522,7 +623,7 @@
                         <td class="col-group-personnel hide-col">${dirHtml}</td>
                         <td class="col-group-personnel font-bold text-blue-200 hide-col">${getValSafe(r, ['ครู'])}</td>
                         <td class="col-group-personnel text-slate-400 hide-col">${getValSafe(r, ['พรก.'])}</td>
-                        <td class="col-group-personnel text-slate-400 hide-col">${getValSafe(r, ['อัตราจ้าง'])}</td>                      
+                        <td class="col-group-personnel text-slate-400 hide-col">${getValSafe(r, ['อัตราจ้าง'])}</td>
                         <td class="col-group-personnel hide-col border-r border-[#334155]">${fullHtml}</td>
 
                         <td class="col-group-academic text-slate-400 hide-col">${fmtScore(getValSafe(r, ['rtปี66', 'rt66']))}</td>
@@ -537,7 +638,8 @@
                         <td class="col-group-budget text-emerald-200 hide-col">${fmtNum(getValSafe(r, ['ค่าอุปกรณ์การเรียน']))}</td>
                         <td class="col-group-budget text-emerald-200 hide-col">${fmtNum(getValSafe(r, ['ค่าเครื่องแบบนักเรียน']))}</td>
                         <td class="col-group-budget text-emerald-200 hide-col border-r border-[#334155]">${fmtNum(getValSafe(r, ['ค่ากิจกรรมพัฒนาคุณภาพผู้เรียน']))}</td>
-                                                <td class="text-center bg-[#1e293b]/50">
+
+                        <td class="text-center bg-[#1e293b]/50">
                             <button onclick="openSchoolProfile(${item.id})" class="text-blue-400 hover:text-white bg-blue-500/10 hover:bg-blue-600 px-3 py-1.5 rounded text-xs font-bold transition-all mx-auto">
                                 ดูข้อมูล
                             </button>
@@ -610,7 +712,7 @@
                             <div class="space-y-2 text-sm">
                                 <div class="flex justify-between"><span class="text-slate-400">รหัสโรงเรียน</span><span class="font-bold text-white">${getValSafe(r, ['รหัสโรงเรียน'])}</span></div>
                                 <div class="flex justify-between"><span class="text-slate-400">เบอร์โทรศัพท์</span><span class="font-bold text-white">${getValSafe(r, ['โทรศัพท์'])}</span></div>
-                               
+                                
                                 <div class="flex justify-between"><span class="text-slate-400">ขยายโอกาส</span><span class="font-bold text-white">${getValSafe(r, ['ขยายโอกาส'])}</span></div>
                             </div>
                         </div>
@@ -625,7 +727,7 @@
                     </div>
                 `;
             }
-                else if (tabName === 'project') {
+            else if (tabName === 'project') {
                 const projectsData = [
                     { title: 'StandAlone โดยพื้นที่', value: getExact(r, ['standalone', 'stand alone']) || 'ไม่มีข้อมูล', colorPrefix: 'orange' },
                     { title: 'โรงเรียนคุณภาพ (ศรต. ภายใต้ สนก.)', value: getExact(r, ['โรงเรียนคุณภาพ']) || 'ไม่มีข้อมูล', colorPrefix: 'blue' },
@@ -640,7 +742,6 @@
                 let listHtml = '';
                 projectsData.forEach(p => {
                     let isActive = p.value !== 'ไม่ใช่' && p.value !== 'ไม่มีข้อมูล' && p.value !== '-';
-
                     let cardStyle = isActive 
                         ? `bg-gradient-to-r from-[#1e293b] to-[#0f172a] border border-${p.colorPrefix}-500/80 shadow-[0_0_12px_rgba(0,0,0,0.2)] shadow-${p.colorPrefix}-500/10` 
                         : `bg-[#0f172a]/40 border border-[#334155]/50 opacity-60`;
@@ -720,16 +821,14 @@
                         <h3 class="text-white font-bold mb-5 border-b border-[#334155] pb-3 text-sm flex items-center gap-2">
                             <i data-lucide="users" class="w-4 h-4 text-blue-400"></i> ข้อมูลบุคลากร
                         </h3>
-
+                        
                         <div class="grid grid-cols-2 gap-4 mb-6">
                             <div class="bg-gradient-to-br from-[#0f172a] to-[#1e293b] p-4 rounded-xl border ${getValSafe(r, ['มีผอ.']).includes('ไม่มี') ? 'border-rose-500/50' : 'border-emerald-500/50'} flex flex-col justify-center items-center shadow-md relative overflow-hidden">
-                             
                                 <p class="text-xs text-slate-400 mb-1 z-10">สถานะผู้บริหาร</p>
                                 <p class="text-lg font-black z-10 ${getValSafe(r, ['มีผอ.']).includes('ไม่มี') ? 'text-rose-400' : 'text-emerald-400'}">${getValSafe(r, ['มีผอ.'])}</p>
                             </div>
                             <div class="bg-gradient-to-br from-[#0f172a] to-[#1e293b] p-4 rounded-xl border ${getValSafe(r, ['ครูครบชั้น']).includes('ไม่') ? 'border-amber-500/50' : 'border-emerald-500/50'} flex flex-col justify-center items-center shadow-md relative overflow-hidden">
-                                
-                                <p class="text-xs text-slate-400 mb-1 z-10">สถานะครูครบชั้น</p>
+                                <p class="text-xs text-slate-400 mb-1 z-10">สถานะครู</p>
                                 <p class="text-lg font-black z-10 ${getValSafe(r, ['ครูครบชั้น']).includes('ไม่') ? 'text-amber-400' : 'text-emerald-400'}">${getValSafe(r, ['ครูครบชั้น'])}</p>
                             </div>
                         </div>
@@ -821,14 +920,14 @@
             else if (tabName === 'plan') {
                 const r = item.rowData;
                 let finalLink = '';
-                
+
                 if (r && r.length > 0) {
                     for (let j = 0; j < r.length; j++) {
                         let cellData = (r[j] || "").toString().trim();
-                        
+
                         if (cellData.includes('http') || cellData.includes('drive.google.com')) {
                             finalLink = cellData;
-                            break; 
+                            break;
                         }
                     }
                 }
@@ -874,7 +973,7 @@
                 `;
             }
             else if (tabName === 'management') {
-                let step3_code = r[105] || '-'; 
+                let step3_code = r[105] || '-';
                 let plan_desc = r[106] || '-';
 
                 if (step3_code.toString().length > 20 && plan_desc.toString().length < 20) {
@@ -882,7 +981,7 @@
                     step3_code = plan_desc;
                     plan_desc = temp;
                 }
-                
+
                 if (step3_code === '-' || !step3_code) step3_code = '<span class="text-slate-500">ไม่มีข้อมูล</span>';
                 if (plan_desc === '-' || !plan_desc) plan_desc = '<span class="text-slate-500">ไม่มีข้อมูล</span>';
 
@@ -907,7 +1006,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
                 `;
             }
 
@@ -923,3 +1021,5 @@
         }
 
     </script>
+</body>
+</html>
