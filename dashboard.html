@@ -80,7 +80,7 @@
                 
                 <div class="flex-1 min-w-0">
                     <h1 class="text-[15px] md:text-2xl font-extrabold text-white leading-tight tracking-normal mb-0.5 truncate md:overflow-visible md:whitespace-normal">
-                       Dashboard ติดตามการใช้จ่ายงบประมาณ
+                       Dashboard ติดตามการใช้จ่ายงบประมาณ ณ ไตรมาส 3
                     </h1>
                    
                     <div class="text-[11px] md:text-sm text-blue-100 font-medium opacity-90 leading-tight">
@@ -95,8 +95,7 @@
             
             <div class="flex items-center justify-end w-full md:w-auto mt-1 md:mt-0 border-t border-white/20 md:border-t-0 pt-2 md:pt-0">
                 <div class="hidden md:block text-right mr-4">
-                    <p class="text-xs text-blue-200/90 font-medium">อัปเดตข้อมูลล่าสุด</p>
-                    <p class="text-sm font-semibold text-white tracking-wide" id="report-date">กำลังเชื่อมต่อ...</p>
+
                 </div>
                 <button id="reload-btn" class="flex items-center justify-center gap-1.5 md:gap-2 bg-white hover:bg-blue-50 text-blue-900 px-3 py-1.5 md:px-6 md:py-3 rounded-lg md:rounded-2xl text-xs md:text-base font-bold transition-all duration-300 shadow-[0_4px_15px_rgba(255,255,255,0.4)] hover:shadow-[0_6px_20px_rgba(255,255,255,0.6)] active:scale-95 ml-auto md:ml-0">
                     <i data-lucide="refresh-cw" class="w-3.5 h-3.5 md:w-5 md:h-5"></i>
@@ -271,10 +270,7 @@
             renderChart(); 
             renderTop5Chart(); 
             
-            const now = new Date();
-            document.getElementById('report-date').textContent = now.toLocaleDateString('th-TH', { 
-                year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'
-            }) + " น.";
+           
         }
 
         function processAndGroupData(projects) {
