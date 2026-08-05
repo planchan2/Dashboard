@@ -78,9 +78,9 @@
             <div class="flex items-center gap-3 md:gap-5 max-w-full w-full md:w-auto">
                 <img src="logo-photoroom.png" alt="โลโก้สำนักงาน" class="h-10 md:h-[80px] w-auto rounded-lg md:rounded-xl shadow-md flex-shrink-0">
                 
-                <div class="flex-1 min-w-0">
-                    <h1 class="text-[15px] md:text-2xl font-extrabold text-white leading-tight tracking-normal mb-0.5 truncate md:overflow-visible md:whitespace-normal">
-                       Dashboard ติดตามการใช้จ่ายงบประมาณ ณ ไตรมาส 3
+               <h1 id="main-title"
+                        class="text-[15px] md:text-2xl font-extrabold text-white leading-tight tracking-normal mb-0.5 truncate md:overflow-visible md:whitespace-normal">
+                        Dashboard ติดตามการใช้จ่ายงบประมาณ ณ ไตรมาส 3
                     </h1>
                    
                     <div class="text-[11px] md:text-sm text-blue-100 font-medium opacity-90 leading-tight">
@@ -715,6 +715,25 @@
                 alert("ดึงข้อมูลไม่สำเร็จ ลองใหม่อีกครั้งครับ");
             }
         });
+        function switchQuarter(q) {
+            currentQuarter = q; // อัปเดตตัวเลขไตรมาส
+            
+            let titleEl = document.getElementById('main-title');
+            if (titleEl) {
+                titleEl.innerText = "Dashboard ติดตามการใช้จ่ายงบประมาณ ณ ไตรมาส " + q;
+            }
+
+            if (q === 3) {
+                document.getElementById('tab-q3').className = "text-white font-bold text-xs md:text-sm uppercase tracking-wide border-b-[3px] border-white pb-2 md:pb-3 px-1 whitespace-nowrap flex items-center gap-2 transition-all";
+                document.getElementById('tab-q4').className = "text-white/60 hover:text-white/80 font-bold text-xs md:text-sm uppercase tracking-wide border-b-[3px] border-transparent hover:border-white/50 pb-2 md:pb-3 px-1 whitespace-nowrap flex items-center gap-2 transition-all";
+            } else {
+                document.getElementById('tab-q4').className = "text-white font-bold text-xs md:text-sm uppercase tracking-wide border-b-[3px] border-white pb-2 md:pb-3 px-1 whitespace-nowrap flex items-center gap-2 transition-all";
+                document.getElementById('tab-q3').className = "text-white/60 hover:text-white/80 font-bold text-xs md:text-sm uppercase tracking-wide border-b-[3px] border-transparent hover:border-white/50 pb-2 md:pb-3 px-1 whitespace-nowrap flex items-center gap-2 transition-all";
+            }
+
+            document.getElementById('reload-btn').click();
+        }
     </script>
 </body>
+
 </html>
