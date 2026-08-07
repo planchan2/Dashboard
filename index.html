@@ -262,7 +262,7 @@
                 return;
             }
 
-            const cacheBusterUrl = API_URL + "?t=" + new Date().getTime();
+            const cacheBusterUrl = API_URL + "?q=3&t=" + new Date().getTime();
             const response = await fetch(cacheBusterUrl);
             const data = await response.json();
 
