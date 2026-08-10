@@ -69,20 +69,19 @@
             </div>
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 md:px-6">
-            <div class="flex items-center gap-6 overflow-x-auto border-t border-white/10 pt-2 md:pt-3">
-                <!-- ตั้งค่าให้ ไตรมาสที่ 1 สว่าง (Active) เป็นค่าเริ่มต้น -->
-                <button onclick="switchQuarter(1)" id="tab-q1" class="text-white font-bold text-xs md:text-sm uppercase tracking-wide border-b-[3px] border-white pb-2 md:pb-3 px-1 whitespace-nowrap flex items-center gap-2 transition-all">
-                    ไตรมาสที่ 1 (ต.ค.68-ธ.ค.68)
+        <div class="max-w-7xl mx-auto px-4 md:px-6 pb-3 md:pb-4 mt-2">
+            <div class="flex items-center gap-1 md:gap-2 overflow-x-auto bg-black/15 p-1.5 rounded-xl md:rounded-full border border-white/10 backdrop-blur-md w-max max-w-full shadow-inner">
+                <button onclick="switchQuarter(1)" id="tab-q1" class="bg-white text-blue-900 shadow-[0_2px_10px_rgba(0,0,0,0.15)] font-bold text-xs md:text-sm tracking-wide py-2 md:py-2.5 px-4 md:px-6 rounded-lg md:rounded-full whitespace-nowrap flex items-center gap-2 transition-all duration-300">
+                ไตรมาสที่ 1 (ต.ค.68-ธ.ค.68)
                 </button>
-                <button onclick="switchQuarter(2)" id="tab-q2" class="text-white/60 hover:text-white/80 font-bold text-xs md:text-sm uppercase tracking-wide border-b-[3px] border-transparent hover:border-white/50 pb-2 md:pb-3 px-1 whitespace-nowrap flex items-center gap-2 transition-all">
-                    ไตรมาสที่ 2 (ม.ค.69-มี.ค.69)
+                <button onclick="switchQuarter(2)" id="tab-q2" class="text-white/80 hover:bg-white/20 hover:text-white font-medium text-xs md:text-sm tracking-wide py-2 md:py-2.5 px-4 md:px-6 rounded-lg md:rounded-full whitespace-nowrap flex items-center gap-2 transition-all duration-300">
+                ไตรมาสที่ 2 (ม.ค.69-มี.ค.69)
                 </button>
-                <button onclick="switchQuarter(3)" id="tab-q3" class="text-white/60 hover:text-white/80 font-bold text-xs md:text-sm uppercase tracking-wide border-b-[3px] border-transparent hover:border-white/50 pb-2 md:pb-3 px-1 whitespace-nowrap flex items-center gap-2 transition-all">
-                    ไตรมาสที่ 3 (เม.ย.69-มิ.ย.69)
+                <button onclick="switchQuarter(3)" id="tab-q3" class="text-white/80 hover:bg-white/20 hover:text-white font-medium text-xs md:text-sm tracking-wide py-2 md:py-2.5 px-4 md:px-6 rounded-lg md:rounded-full whitespace-nowrap flex items-center gap-2 transition-all duration-300">
+                ไตรมาสที่ 3 (เม.ย.69-มิ.ย.69)
                 </button>
-                <button onclick="switchQuarter(4)" id="tab-q4" class="text-white/60 hover:text-white/80 font-bold text-xs md:text-sm uppercase tracking-wide border-b-[3px] border-transparent hover:border-white/50 pb-2 md:pb-3 px-1 whitespace-nowrap flex items-center gap-2 transition-all">
-                    ไตรมาสที่ 4 (ก.ค.69-ก.ย.69)
+                <button onclick="switchQuarter(4)" id="tab-q4" class="text-white/80 hover:bg-white/20 hover:text-white font-medium text-xs md:text-sm tracking-wide py-2 md:py-2.5 px-4 md:px-6 rounded-lg md:rounded-full whitespace-nowrap flex items-center gap-2 transition-all duration-300">
+                ไตรมาสที่ 4 (ก.ค.69-ก.ย.69)
                 </button>
             </div>
         </div>
@@ -606,12 +605,10 @@
             for (let i = 1; i <= 4; i++) {
                 let btn = document.getElementById('tab-q' + i);
                 if (btn) {
-
-                    if (i === q) {                       
-                        btn.className = "text-white font-bold text-xs md:text-sm uppercase tracking-wide border-b-[3px] border-white pb-2 md:pb-3 px-1 whitespace-nowrap flex items-center gap-2 transition-all";
-                    
-                    } else {                        
-                        btn.className = "text-white/60 hover:text-white/80 font-bold text-xs md:text-sm uppercase tracking-wide border-b-[3px] border-transparent hover:border-white/50 pb-2 md:pb-3 px-1 whitespace-nowrap flex items-center gap-2 transition-all";
+                    if (i === q) {
+                        btn.className = "bg-white text-blue-900 shadow-[0_2px_10px_rgba(0,0,0,0.15)] font-bold text-xs md:text-sm tracking-wide py-2 md:py-2.5 px-4 md:px-6 rounded-lg md:rounded-full whitespace-nowrap flex items-center gap-2 transition-all duration-300";
+                    } else {
+                        btn.className = "text-white/80 hover:bg-white/20 hover:text-white font-medium text-xs md:text-sm tracking-wide py-2 md:py-2.5 px-4 md:px-6 rounded-lg md:rounded-full whitespace-nowrap flex items-center gap-2 transition-all duration-300";
                     }
                 }
             }
