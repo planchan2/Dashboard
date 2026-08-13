@@ -61,10 +61,24 @@
                     </div>
                 </div>
 
-            <div class="flex items-center justify-end w-full md:w-auto mt-1 md:mt-0 border-t border-white/20 md:border-t-0 pt-2 md:pt-0">
+            <div class="flex items-center justify-end w-full md:w-auto mt-1 md:mt-0 border-t border-white/20 md:border-t-0 pt-2 md:pt-0 gap-2 md:gap-3">
+                <div id="year-select-container" class="relative flex items-center">
+                    <span class="text-blue-100 text-xs md:text-sm font-semibold mr-1.5 md:mr-2 hidden md:block">ปีงบฯ:</span>
+                    <select id="year-select" onchange="changeYear()" class="appearance-none bg-blue-900/50 hover:bg-blue-800/80 text-white font-bold border border-blue-300/30 rounded-lg md:rounded-xl pl-3 pr-7 py-1.5 md:pl-4 md:pr-9 md:py-2.5 outline-none transition-all cursor-pointer text-xs md:text-base shadow-inner">
+                        <select id="year-select" onchange="changeYear()" class="appearance-none bg-blue-900/50 hover:bg-blue-800/80 text-white font-bold border border-blue-300/30 rounded-lg md:rounded-xl pl-3 pr-7 py-1.5 md:pl-4 md:pr-9 md:py-2.5 outline-none transition-all cursor-pointer text-xs md:text-base shadow-inner">
+                        <option value="2569" selected class="text-slate-800">2569</option>
+                        <option value="2570" class="text-slate-800">2570</option>
+                        <option value="2571" class="text-slate-800">2571</option>
+                    </select>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 md:px-2.5 text-white">
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 md:w-4 md:h-4"></i>
+                    </div>
+                </div>
                 <button id="reload-btn" class="flex items-center justify-center gap-1.5 md:gap-2 bg-white hover:bg-blue-50 text-blue-900 px-3 py-1.5 md:px-6 md:py-3 rounded-lg md:rounded-2xl text-xs md:text-base font-bold transition-all duration-300 shadow-[0_4px_15px_rgba(255,255,255,0.4)] hover:shadow-[0_6px_20px_rgba(255,255,255,0.6)] active:scale-95 ml-auto md:ml-0">
                     <i data-lucide="refresh-cw" class="w-3.5 h-3.5 md:w-5 md:h-5"></i>
-                    <span>อัปเดตข้อมูล</span>
+                    <span class="hidden md:inline">อัปเดตข้อมูล</span>
+                    <span class="inline md:hidden">อัปเดต</span>
                 </button>
             </div>
         </div>
@@ -205,9 +219,31 @@
 
     <script>
         
-        const API_URL = "https://script.google.com/macros/s/AKfycbyD1YYLLuirVUxPbYm44f-nXGn8u9qnpQcrj-Un6GgHd_E3nFFXLDyWNoaqNERaHwYiYw/exec";
-        
+        <script>
+        const API_LINKS = {
+            "2569": "https://script.google.com/macros/s/AKfycbyD1YYLLuirVUxPbYm44f-nXGn8u9qnpQcrj-Un6GgHd_E3nFFXLDyWNoaqNERaHwYiYw/exec",
+            "2570": ""  // รอใส่ลิงก์ API ของปี 70 ตรงนี้
+            "2571": "", // รอใส่ลิงก์ API ของปี 71 ตรงนี้
+        };
+
+        let currentYear = "2569";
+        let API_URL = API_LINKS[currentYear];
         let currentQuarter = 1; 
+
+        function changeYear() {
+            currentYear = document.getElementById('year-select').value;
+            API_URL = API_LINKS[currentYear]; 
+            
+            let yearDisplay = document.getElementById('display-year');
+            if (yearDisplay) yearDisplay.innerText = currentYear;
+            
+            if (!API_URL || API_URL === "") {
+                alert("ยังไม่มีฐานข้อมูลของปี พ.ศ. " + currentYear + " ครับ!");
+                return;
+            }
+            
+            switchQuarter(1); 
+        }
 
         let ceoData = [];
         let regData = [];
