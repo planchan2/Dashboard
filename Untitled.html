@@ -27,7 +27,6 @@
             transition: all 0.2s;
             outline: none;
         }
-
         .form-input:focus {
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
@@ -41,94 +40,118 @@
             font-size: 0.95rem;
         }
 
-        .section-title {
-            font-size: 1.15rem;
-            font-weight: 800;
-            color: #1e3a8a;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 0.5rem;
-            margin-bottom: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .file-upload-btn {
+        .step-circle {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-            font-weight: 700;
-            cursor: pointer;
+            font-weight: 800;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        .step-circle.active {
+            background-color: #1e3a8a;
+            color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.15);
+        }
+        .step-circle.completed {
+            background-color: #10b981;
+            color: #ffffff;
+        }
+        .step-circle.inactive {
+            background-color: #e2e8f0;
+            color: #94a3b8;
+        }
+        .step-line {
+            flex: 1;
+            height: 4px;
+            background-color: #e2e8f0;
+            margin: 0 1rem;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+        .step-line.active { background-color: #10b981; }
+
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .upload-zone {
+            border: 2px dashed #cbd5e1;
             transition: all 0.2s;
-            background-color: #ffffff;
-            border: 1px solid #60a5fa;
-            color: #2563eb;
         }
-
-        .file-upload-btn:hover {
-            background-color: #eff6ff;
-        }
-
-        .file-upload-btn.has-file {
-            background-color: #eff6ff;
-            border-color: #3b82f6;
-            color: #1d4ed8;
+        .upload-zone:hover {
+            border-color: #94a3b8;
+            background-color: #f8fafc;
         }
         
-        .clear-file-btn {
-            display: none;
-            color: #ef4444;
-            padding: 0.2rem;
-            border-radius: 999px;
+        .progress-bar {
+            height: 4px;
+            background-color: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 8px;
         }
-        
-        .clear-file-btn:hover {
-            background-color: #fee2e2;
+        .progress-fill {
+            height: 100%;
+            background-color: #10b981;
+            width: 0%;
+        }
+        @keyframes loadProgress {
+            from { width: 0%; }
+            to { width: 100%; }
         }
     </style>
 </head>
 
-<body class="p-4 md:p-8 flex justify-center items-start min-h-screen">
+<body class="p-4 md:p-8 flex justify-center items-start min-h-screen relative overflow-x-hidden">
 
-    <div class="w-full max-w-3xl bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+    <div id="toast-container" class="fixed top-6 right-6 z-[100] flex flex-col gap-3"></div>
+
+    <div class="w-full max-w-4xl bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
 
         <div class="bg-blue-900 px-6 py-6 text-center border-b-4 border-yellow-500 relative">
-            
             <div class="absolute top-3 right-3 md:top-4 md:right-4">
-                <select id="year-select" class="bg-blue-800 text-white border border-blue-700 text-xs md:text-sm rounded-md px-2 py-1 outline-none cursor-pointer hover:bg-blue-700 transition">
-                    <option value="2569" class="text-slate-800 bg-white">ปี 2569</option>
-                    <option value="2570" class="text-slate-800 bg-white">ปี 2570</option>
-                    <option value="2571" class="text-slate-800 bg-white">ปี 2571</option>
-                    <option value="2572" class="text-slate-800 bg-white">ปี 2572</option>
+                <select id="year-select" class="bg-blue-800 text-white border border-blue-700 text-xs md:text-sm rounded-md px-2 py-1 outline-none cursor-pointer hover:bg-blue-700 transition font-bold">
+                    <option value="2569">ปี 2569</option>
+                    <option value="2570">ปี 2570</option>
                 </select>
             </div>
-
-            <img src="https://planchan2.github.io/Dashboard/logo-photoroom.png" alt="โลโก้" class="h-16 mx-auto mb-3 bg-white rounded-full p-1 mt-2">
-            
+            <img src="https://planchan2.github.io/Dashboard/logo-photoroom.png" alt="โลโก้" class="h-16 mx-auto mb-3 bg-white rounded-full p-1 mt-2 shadow-sm">
             <h1 class="text-xl md:text-2xl font-extrabold text-white tracking-wide">
                 โครงการใบงวด ประจำปีงบประมาณ พ.ศ. <span id="display-year">2569</span>
             </h1>
-            
-            <p class="text-white text-sm md:text-base mt-2 font-medium">
+            <p class="text-white/80 text-sm md:text-base mt-2 font-medium">
                 สำนักงานเขตพื้นที่การศึกษาประถมศึกษาจันทบุรี เขต 2
             </p>
         </div>
 
-        <form class="p-6 md:p-8 space-y-8" id="project-form">
+        <div class="bg-slate-50 px-8 py-5 border-b border-slate-200 flex items-center justify-center">
+            <div class="flex items-center w-full max-w-md mx-auto">
+                <div class="flex flex-col items-center relative z-10 w-24">
+                    <div id="step-icon-1" class="step-circle active">1</div>
+                    <span id="step-text-1" class="text-xs font-bold text-blue-900 mt-2 text-center">ข้อมูลโครงการ</span>
+                </div>
+                <div id="step-connector" class="step-line"></div>
+                <div class="flex flex-col items-center relative z-10 w-24">
+                    <div id="step-icon-2" class="step-circle inactive">2</div>
+                    <span id="step-text-2" class="text-xs font-bold text-slate-400 mt-2 text-center">แนบไฟล์ PDF</span>
+                </div>
+            </div>
+        </div>
 
-            <div>
-                <h2 class="section-title">
-                    ส่วนที่ 1: ข้อมูลทั่วไป
-                </h2>
+        <form id="project-form" class="p-6 md:p-10 relative">
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div id="form-step-1" class="space-y-6 fade-in block">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
                     <div>
                         <label class="form-label">กลุ่ม/หน่วย <span class="text-red-500">*</span></label>
-                        <select class="form-input" required>
+                        <select class="form-input step1-required" required>
                             <option value="">-- เลือกกลุ่ม/หน่วย --</option>
                             <option value="กลุ่มอำนวยการ">กลุ่มอำนวยการ</option>
                             <option value="กลุ่มนโยบายและแผน">กลุ่มนโยบายและแผน</option>
@@ -145,22 +168,14 @@
 
                     <div>
                         <label class="form-label">ผู้รับผิดชอบโครงการ <span class="text-red-500">*</span></label>
-                        <input type="text" class="form-input" placeholder="ระบุชื่อ-นามสกุล" required>
+                        <input type="text" class="form-input step1-required" placeholder="ระบุชื่อ-นามสกุล" required>
                     </div>
-                </div>
-            </div>
 
-            <div>
-                <h2 class="section-title">
-                    ส่วนที่ 2: หมวดหมู่และการจัดสรรงบประมาณ
-                </h2>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                         <label class="form-label">ประเภทงบประมาณ <span class="text-red-500">*</span></label>
-                        <select class="form-input" required>
+                        <select class="form-input step1-required" required>
                             <option value="">-- เลือกประเภทงบประมาณ --</option>
-                            <option value="2">งบดำเนินงาน (2)</option>
+                             <option value="2">งบดำเนินงาน (2)</option>
                             <option value="5">งบลงทุน (5)</option>
                             <option value="6">งบเงินอุดหนุน (6)</option>
                             <option value="9">งบรายจ่ายอื่น (7)</option>
@@ -170,7 +185,7 @@
 
                     <div>
                         <label class="form-label">แผนงาน <span class="text-red-500">*</span></label>
-                        <select class="form-input" required>
+                        <select class="form-input step1-required" required>
                             <option value="">-- เลือกแผนงาน --</option>
                             <option value="พื้นฐานด้านการพัฒนาและเสริมสร้างศักยภาพทรัพยากรมนุษย์">พื้นฐานด้านการพัฒนาและเสริมสร้างศักยภาพทรัพยากรมนุษย์</option>
                             <option value="ยุทธศาสตร์เพื่อพัฒนาคุณภาพการศึกษาและการเรียนรู้">ยุทธศาสตร์เพื่อพัฒนาคุณภาพการศึกษาและการเรียนรู้</option>
@@ -182,83 +197,143 @@
                         </select>
                     </div>
 
-                    <div class="md:col-span-2 md:w-1/2">
+                    <div>
                         <label class="form-label">จำนวนเงิน (บาท) <span class="text-red-500">*</span></label>
                         <div class="relative">
-                            <input type="text" id="money-input" class="form-input pl-10" placeholder="0.00" required>
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="text-slate-500 font-bold">฿</span>
+                            <input type="text" id="money-input" class="form-input pl-10 font-bold text-blue-900 step1-required" placeholder="0.00" required>
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <span class="text-slate-400 font-bold">฿</span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div>
-                <h2 class="section-title">
-                    ส่วนที่ 3: เอกสารแนบ (เฉพาะไฟล์ PDF)
-                </h2>
-
-                <div class="space-y-4 mt-4">
-
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div>
-                            <p class="font-bold text-slate-800">1. ไฟล์จัดสรร (ไฟล์ PDF)<span class="text-red-500">*</span></p>
-                            <p class="text-xs text-slate-500 mt-1">ขนาดไม่เกิน 30 MB</p>
-                        </div>
-                        <div class="w-full sm:w-auto flex-shrink-0 flex items-center gap-2">
-                            <label class="file-upload-btn" id="label-file-1">
-                                <i data-lucide="upload" class="w-4 h-4 upload-icon"></i>
-                                <span class="file-name-text max-w-[150px] truncate">เลือกไฟล์ PDF</span>
-                                <input type="file" accept=".pdf" class="hidden file-input-magic" id="input-file-1" required>
-                            </label>
-                            <button type="button" class="clear-file-btn" onclick="clearFile('1')">
-                                <i data-lucide="x" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div>
-                            <p class="font-bold text-slate-800">2. ไฟล์ใบงวด (ไฟล์ PDF)<span class="text-red-500">*</span></p>
-                            <p class="text-xs text-slate-500 mt-1">ขนาดไม่เกิน 30 MB</p>
-                        </div>
-                        <div class="w-full sm:w-auto flex-shrink-0 flex items-center gap-2">
-                            <label class="file-upload-btn" id="label-file-2">
-                                <i data-lucide="upload" class="w-4 h-4 upload-icon"></i>
-                                <span class="file-name-text max-w-[150px] truncate">เลือกไฟล์ PDF</span>
-                                <input type="file" accept=".pdf" class="hidden file-input-magic" id="input-file-2" required>
-                            </label>
-                            <button type="button" class="clear-file-btn" onclick="clearFile('2')">
-                                <i data-lucide="x" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div>
-                            <p class="font-bold text-slate-800">3. โครงการ (ไฟล์ PDF) <span class="text-slate-400 text-xs font-normal ml-1"></span></p>
-                            <p class="text-xs text-slate-500 mt-1">ขนาดไม่เกิน 30 MB</p>
-                        </div>
-                        <div class="w-full sm:w-auto flex-shrink-0 flex items-center gap-2">
-                            <label class="file-upload-btn" id="label-file-3">
-                                <i data-lucide="upload" class="w-4 h-4 upload-icon"></i>
-                                <span class="file-name-text max-w-[150px] truncate">เลือกไฟล์ PDF</span>
-                                <input type="file" accept=".pdf" class="hidden file-input-magic" id="input-file-3">
-                            </label>
-                            <button type="button" class="clear-file-btn" onclick="clearFile('3')">
-                                <i data-lucide="x" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    </div>
-
+                <div class="pt-6 border-t border-slate-200 flex justify-end">
+                    <button type="button" onclick="nextStep()" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-extrabold rounded-lg shadow-lg shadow-blue-500/30 transform hover:-translate-y-1 transition-all duration-200 flex items-center gap-2 text-base">
+                        ถัดไป (แนบเอกสาร) <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
                 </div>
             </div>
 
-            <div class="pt-6 border-t border-slate-200">
-                <button type="button" class="w-full md:w-auto px-10 py-3.5 bg-blue-700 hover:bg-blue-800 text-white font-extrabold rounded-lg shadow-md transition-all flex items-center justify-center gap-2 mx-auto text-lg">
-                    <i data-lucide="send" class="w-5 h-5"></i> บันทึกและนำส่งข้อมูล
-                </button>
+            <div id="form-step-2" class="hidden fade-in space-y-8">
+                
+                <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 flex gap-3 items-start">
+                    <i data-lucide="info" class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <p class="text-sm font-bold text-blue-900">อัปโหลดเอกสาร (PDF)</p>
+                        <p class="text-xs text-blue-700 mt-1">รองรับเฉพาะไฟล์ PDF </p>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-slate-800 mb-3 text-base">จัดสรร (PDF) <span class="text-red-500 text-xs font-normal">*บังคับ</span></h3>
+                    
+                    <label id="upload-zone-1" class="upload-zone flex flex-col items-center justify-center p-6 rounded-xl cursor-pointer bg-white">
+                        <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 mb-3"></i>
+                        <p class="font-bold text-slate-700">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์มาวางที่นี่</p>
+                        <p class="text-xs text-slate-400 mt-1 mb-4">รองรับไฟล์ PDF ขนาดไม่เกิน 30 MB</p>
+                        <span class="px-5 py-2 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 transition">เลือกไฟล์ PDF</span>
+                        <input type="file" accept=".pdf" class="hidden file-input-magic" data-id="1" required>
+                    </label>
+
+                    <div id="file-item-1" class="hidden mt-2 p-4 border border-slate-200 rounded-xl shadow-sm bg-white flex items-start justify-between">
+                        <div class="flex items-start gap-4 w-full">
+                            <div class="flex flex-col items-center justify-center w-10 h-12 border border-slate-200 rounded-md bg-slate-50 flex-shrink-0 relative">
+                                <div class="absolute -top-1 -right-1 w-3 h-3 bg-white"></div>
+                                <span class="bg-red-500 text-white text-[9px] font-black px-1 py-0.5 rounded-sm absolute bottom-1">PDF</span>
+                            </div>
+                            
+                            <div class="flex-1">
+                                <p id="file-name-1" class="font-bold text-slate-700 text-sm truncate pr-4">filename.pdf</p>
+                                <div id="status-container-1" class="text-xs mt-1 flex items-center gap-1">
+                                    <i data-lucide="loader-2" class="w-3 h-3 text-blue-500 animate-spin"></i> 
+                                    <span class="text-blue-500 font-bold">กำลังอัปโหลด...</span>
+                                </div>
+                                <div class="progress-bar w-full max-w-[200px]">
+                                    <div class="progress-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" onclick="removeFile('1')" class="text-slate-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg transition flex-shrink-0">
+                            <i data-lucide="trash-2" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-slate-800 mb-3 text-base">ใบงวด (PDF) <span class="text-red-500 text-xs font-normal">*บังคับ</span></h3>
+                    
+                    <label id="upload-zone-2" class="upload-zone flex flex-col items-center justify-center p-6 rounded-xl cursor-pointer bg-white">
+                        <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 mb-3"></i>
+                        <p class="font-bold text-slate-700">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์มาวางที่นี่</p>
+                        <p class="text-xs text-slate-400 mt-1 mb-4">รองรับไฟล์ PDF ขนาดไม่เกิน 30 MB</p>
+                        <span class="px-5 py-2 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 transition">เลือกไฟล์ PDF</span>
+                        <input type="file" accept=".pdf" class="hidden file-input-magic" data-id="2" required>
+                    </label>
+
+                    <div id="file-item-2" class="hidden mt-2 p-4 border border-slate-200 rounded-xl shadow-sm bg-white flex items-start justify-between">
+                        <div class="flex items-start gap-4 w-full">
+                            <div class="flex flex-col items-center justify-center w-10 h-12 border border-slate-200 rounded-md bg-slate-50 flex-shrink-0 relative">
+                                <span class="bg-red-500 text-white text-[9px] font-black px-1 py-0.5 rounded-sm absolute bottom-1">PDF</span>
+                            </div>
+                            <div class="flex-1">
+                                <p id="file-name-2" class="font-bold text-slate-700 text-sm truncate pr-4">filename.pdf</p>
+                                <div id="status-container-2" class="text-xs mt-1 flex items-center gap-1">
+                                    <i data-lucide="loader-2" class="w-3 h-3 text-blue-500 animate-spin"></i> 
+                                    <span class="text-blue-500 font-bold">กำลังอัปโหลด...</span>
+                                </div>
+                                <div class="progress-bar w-full max-w-[200px]">
+                                    <div class="progress-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" onclick="removeFile('2')" class="text-slate-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg transition flex-shrink-0">
+                            <i data-lucide="trash-2" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-slate-800 mb-3 text-base">โครงการ (PDF) <span class="text-slate-400 text-xs font-normal">(สามารถแนบภายหลังได้)</span></h3>
+                    
+                    <label id="upload-zone-3" class="upload-zone flex flex-col items-center justify-center p-6 rounded-xl cursor-pointer bg-white">
+                        <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 mb-3"></i>
+                        <p class="font-bold text-slate-700">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์มาวางที่นี่</p>
+                        <p class="text-xs text-slate-400 mt-1 mb-4">รองรับไฟล์ PDF ขนาดไม่เกิน 30 MB</p>
+                        <span class="px-5 py-2 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 transition">เลือกไฟล์ PDF</span>
+                        <input type="file" accept=".pdf" class="hidden file-input-magic" data-id="3">
+                    </label>
+
+                    <div id="file-item-3" class="hidden mt-2 p-4 border border-slate-200 rounded-xl shadow-sm bg-white flex items-start justify-between">
+                        <div class="flex items-start gap-4 w-full">
+                            <div class="flex flex-col items-center justify-center w-10 h-12 border border-slate-200 rounded-md bg-slate-50 flex-shrink-0 relative">
+                                <span class="bg-red-500 text-white text-[9px] font-black px-1 py-0.5 rounded-sm absolute bottom-1">PDF</span>
+                            </div>
+                            <div class="flex-1">
+                                <p id="file-name-3" class="font-bold text-slate-700 text-sm truncate pr-4">filename.pdf</p>
+                                <div id="status-container-3" class="text-xs mt-1 flex items-center gap-1">
+                                    <i data-lucide="loader-2" class="w-3 h-3 text-blue-500 animate-spin"></i> 
+                                    <span class="text-blue-500 font-bold">กำลังอัปโหลด...</span>
+                                </div>
+                                <div class="progress-bar w-full max-w-[200px]">
+                                    <div class="progress-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" onclick="removeFile('3')" class="text-slate-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg transition flex-shrink-0">
+                            <i data-lucide="trash-2" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-8 border-t border-slate-200 flex flex-col-reverse md:flex-row justify-between gap-4">
+                    <button type="button" onclick="prevStep()" class="px-5 py-2.5 bg-white border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-600 font-bold rounded-lg shadow-sm transform hover:-translate-y-1 transition-all duration-200 flex items-center justify-center gap-2 text-base w-full md:w-auto">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i> ย้อนกลับ
+                    </button>
+                    <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-extrabold rounded-lg shadow-lg shadow-emerald-500/30 transform hover:-translate-y-1 transition-all duration-200 flex items-center justify-center gap-2 text-base w-full md:w-auto">
+                        <i data-lucide="send" class="w-4 h-4"></i> บันทึกและนำส่งข้อมูล
+                    </button>
+                </div>
             </div>
 
         </form>
@@ -269,63 +344,141 @@
 
         const yearSelect = document.getElementById('year-select');
         const displayYear = document.getElementById('display-year');
-        
-        yearSelect.addEventListener('change', function() {
-            displayYear.textContent = this.value;
-        });
-
-        document.querySelectorAll('.file-input-magic').forEach(input => {
-            input.addEventListener('change', function() {
-                const label = this.closest('label');
-                const fileNameDisplay = label.querySelector('.file-name-text');
-                const icon = label.querySelector('.upload-icon');
-                const clearBtn = label.nextElementSibling;
-                
-                if (this.files && this.files.length > 0) {
-                    fileNameDisplay.textContent = this.files[0].name;
-                    label.classList.add('has-file');
-                    icon.setAttribute('data-lucide', 'file-check-2');
-                    clearBtn.style.display = 'block';
-                } else {
-                    fileNameDisplay.textContent = 'เลือกไฟล์ PDF';
-                    label.classList.remove('has-file');
-                    icon.setAttribute('data-lucide', 'upload');
-                    clearBtn.style.display = 'none';
-                }
-                lucide.createIcons();
-            });
-        });
-
-        function clearFile(id) {
-            const input = document.getElementById('input-file-' + id);
-            const label = document.getElementById('label-file-' + id);
-            const fileNameDisplay = label.querySelector('.file-name-text');
-            const icon = label.querySelector('.upload-icon');
-            const clearBtn = label.nextElementSibling;
-
-            input.value = '';
-            fileNameDisplay.textContent = 'เลือกไฟล์ PDF';
-            label.classList.remove('has-file');
-            icon.setAttribute('data-lucide', 'upload');
-            clearBtn.style.display = 'none';
-            
-            lucide.createIcons();
-        }
+        yearSelect.addEventListener('change', function() { displayYear.textContent = this.value; });
 
         const moneyInput = document.getElementById('money-input');
-        moneyInput.addEventListener('input', function(e) {
+        moneyInput.addEventListener('input', function() {
             let value = this.value.replace(/[^0-9.]/g, '');
             const parts = value.split('.');
-            if (parts.length > 2) {
-                value = parts[0] + '.' + parts.slice(1).join('');
-            }
+            if (parts.length > 2) value = parts[0] + '.' + parts.slice(1).join('');
             if (value) {
                 let numberParts = value.split('.');
                 numberParts[0] = numberParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                 this.value = numberParts.join('.');
-            } else {
-                this.value = '';
+            } else { this.value = ''; }
+        });
+
+        const step1Div = document.getElementById('form-step-1');
+        const step2Div = document.getElementById('form-step-2');
+        const icon1 = document.getElementById('step-icon-1');
+        const text1 = document.getElementById('step-text-1');
+        const connector = document.getElementById('step-connector');
+        const icon2 = document.getElementById('step-icon-2');
+        const text2 = document.getElementById('step-text-2');
+
+        function nextStep() {
+            let isValid = true;
+            const requiredInputs = document.querySelectorAll('.step1-required');
+            requiredInputs.forEach(input => {
+                if (!input.checkValidity()) {
+                    input.reportValidity();
+                    isValid = false;
+                }
+            });
+
+            if (isValid) {
+                step1Div.classList.remove('block'); step1Div.classList.add('hidden');
+                step2Div.classList.remove('hidden'); step2Div.classList.add('block');
+                icon1.className = "step-circle completed";
+                icon1.innerHTML = `<i data-lucide="check" class="w-5 h-5"></i>`;
+                text1.className = "text-xs font-bold text-emerald-600 mt-2 text-center";
+                connector.classList.add('active');
+                icon2.className = "step-circle active";
+                text2.className = "text-xs font-bold text-blue-900 mt-2 text-center";
+                lucide.createIcons();
+                window.scrollTo(0, 0);
             }
+        }
+
+        function prevStep() {
+            step2Div.classList.remove('block'); step2Div.classList.add('hidden');
+            step1Div.classList.remove('hidden'); step1Div.classList.add('block');
+            icon1.className = "step-circle active";
+            icon1.innerHTML = "1";
+            text1.className = "text-xs font-bold text-blue-900 mt-2 text-center";
+            connector.classList.remove('active');
+            icon2.className = "step-circle inactive";
+            text2.className = "text-xs font-bold text-slate-400 mt-2 text-center";
+            window.scrollTo(0, 0);
+        }
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            if(!container) return;
+            
+            const toast = document.createElement('div');
+            toast.className = 'bg-white border border-slate-100 shadow-xl rounded-xl px-5 py-3 flex items-center gap-3 transform translate-x-full opacity-0 transition-all duration-300 ease-out border-b-4 border-b-emerald-500';
+            toast.innerHTML = `
+                <div class="bg-emerald-100 p-1 rounded-full">
+                    <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600"></i>
+                </div>
+                <p class="text-sm font-extrabold text-slate-700">${message}</p>
+            `;
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+                toast.classList.add('translate-x-0', 'opacity-100');
+            });
+
+            setTimeout(() => {
+                toast.classList.remove('translate-x-0', 'opacity-100');
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        document.querySelectorAll('.file-input-magic').forEach(input => {
+            input.addEventListener('change', function() {
+                const id = this.getAttribute('data-id');
+                const uploadZone = document.getElementById('upload-zone-' + id);
+                const fileItem = document.getElementById('file-item-' + id);
+                const fileNameDisplay = document.getElementById('file-name-' + id);
+                
+                const statusContainer = document.getElementById('status-container-' + id);
+                const progressFill = fileItem.querySelector('.progress-fill');
+                
+                if (this.files && this.files.length > 0) {
+                    const file = this.files[0];
+                    fileNameDisplay.textContent = file.name;
+                    uploadZone.style.display = 'none'; 
+                    fileItem.style.display = 'flex';   
+                    
+                    statusContainer.innerHTML = `
+                        <i data-lucide="loader-2" class="w-3 h-3 text-blue-500 animate-spin"></i> 
+                        <span class="text-blue-500 font-bold">กำลังอัปโหลด...</span>
+                    `;
+                    lucide.createIcons();
+
+                    progressFill.style.animation = 'none';
+                    progressFill.offsetHeight; 
+                    progressFill.style.animation = 'loadProgress 1.5s ease-out forwards'; 
+
+                    setTimeout(() => {
+                        statusContainer.innerHTML = `
+                            <i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-500"></i> 
+                            <span class="text-emerald-600 font-bold">อัปโหลดสำเร็จ</span>
+                        `;
+                        lucide.createIcons();
+                        showToast(`อัปโหลด ${file.name} เสร็จสมบูรณ์`);
+                    }, 1500);
+                }
+            });
+        });
+
+        function removeFile(id) {
+            const input = document.querySelector(`.file-input-magic[data-id="${id}"]`);
+            const uploadZone = document.getElementById('upload-zone-' + id);
+            const fileItem = document.getElementById('file-item-' + id);
+
+            input.value = ''; 
+            uploadZone.style.display = 'flex';
+            fileItem.style.display = 'none';
+        }
+
+        document.getElementById('project-form').addEventListener('submit', function(e){
+            e.preventDefault();
         });
     </script>
 </body>
