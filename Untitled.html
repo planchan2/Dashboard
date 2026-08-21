@@ -42,7 +42,7 @@
         }
 
         .section-title {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 800;
             color: #1e3a8a;
             border-bottom: 2px solid #e2e8f0;
@@ -96,11 +96,23 @@
 
     <div class="w-full max-w-3xl bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
 
-        <div class="bg-blue-900 px-6 py-6 text-center border-b-4 border-yellow-500">
-            <img src="https://planchan2.github.io/Dashboard/logo-photoroom.png" alt="โลโก้" class="h-16 mx-auto mb-3 bg-white rounded-full p-1">
-            <h1 class="text-xl md:text-2xl font-bold text-white tracking-wide">
-                โครงการใบงวด ประจำปีงบประมาณ พ.ศ 2569
+        <div class="bg-blue-900 px-6 py-6 text-center border-b-4 border-yellow-500 relative">
+            
+            <div class="absolute top-3 right-3 md:top-4 md:right-4">
+                <select id="year-select" class="bg-blue-800 text-white border border-blue-700 text-xs md:text-sm rounded-md px-2 py-1 outline-none cursor-pointer hover:bg-blue-700 transition">
+                    <option value="2569" class="text-slate-800 bg-white">ปี 2569</option>
+                    <option value="2570" class="text-slate-800 bg-white">ปี 2570</option>
+                    <option value="2571" class="text-slate-800 bg-white">ปี 2571</option>
+                    <option value="2572" class="text-slate-800 bg-white">ปี 2572</option>
+                </select>
+            </div>
+
+            <img src="https://planchan2.github.io/Dashboard/logo-photoroom.png" alt="โลโก้" class="h-16 mx-auto mb-3 bg-white rounded-full p-1 mt-2">
+            
+            <h1 class="text-xl md:text-2xl font-extrabold text-white tracking-wide">
+                โครงการใบงวด ประจำปีงบประมาณ พ.ศ. <span id="display-year">2569</span>
             </h1>
+            
             <p class="text-white text-sm md:text-base mt-2 font-medium">
                 สำนักงานเขตพื้นที่การศึกษาประถมศึกษาจันทบุรี เขต 2
             </p>
@@ -109,7 +121,6 @@
         <form class="p-6 md:p-8 space-y-8" id="project-form">
 
             <div>
-                <!-- เอาไอคอนออกแล้ว -->
                 <h2 class="section-title">
                     ส่วนที่ 1: ข้อมูลทั่วไป
                 </h2>
@@ -140,7 +151,6 @@
             </div>
 
             <div>
-                <!-- เอาไอคอนออกแล้ว -->
                 <h2 class="section-title">
                     ส่วนที่ 2: หมวดหมู่และการจัดสรรงบประมาณ
                 </h2>
@@ -175,7 +185,6 @@
                     <div class="md:col-span-2 md:w-1/2">
                         <label class="form-label">จำนวนเงิน (บาท) <span class="text-red-500">*</span></label>
                         <div class="relative">
-                            <!-- เปลี่ยนเป็น type="text" และเพิ่ม id="money-input" เพื่อให้ใส่ลูกน้ำได้ -->
                             <input type="text" id="money-input" class="form-input pl-10" placeholder="0.00" required>
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <span class="text-slate-500 font-bold">฿</span>
@@ -186,7 +195,6 @@
             </div>
 
             <div>
-                <!-- เอาไอคอนออกแล้ว -->
                 <h2 class="section-title">
                     ส่วนที่ 3: เอกสารแนบ (เฉพาะไฟล์ PDF)
                 </h2>
@@ -248,7 +256,7 @@
             </div>
 
             <div class="pt-6 border-t border-slate-200">
-                <button type="button" class="w-full md:w-auto px-10 py-3.5 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-lg shadow-md transition-all flex items-center justify-center gap-2 mx-auto text-lg">
+                <button type="button" class="w-full md:w-auto px-10 py-3.5 bg-blue-700 hover:bg-blue-800 text-white font-extrabold rounded-lg shadow-md transition-all flex items-center justify-center gap-2 mx-auto text-lg">
                     <i data-lucide="send" class="w-5 h-5"></i> บันทึกและนำส่งข้อมูล
                 </button>
             </div>
@@ -259,7 +267,13 @@
     <script>
         lucide.createIcons();
 
-        // 1. สคริปต์สำหรับจัดการอัปโหลดและแสดงชื่อไฟล์
+        const yearSelect = document.getElementById('year-select');
+        const displayYear = document.getElementById('display-year');
+        
+        yearSelect.addEventListener('change', function() {
+            displayYear.textContent = this.value;
+        });
+
         document.querySelectorAll('.file-input-magic').forEach(input => {
             input.addEventListener('change', function() {
                 const label = this.closest('label');
@@ -282,7 +296,6 @@
             });
         });
 
-        // ฟังก์ชันสำหรับกด X เพื่อยกเลิกไฟล์
         function clearFile(id) {
             const input = document.getElementById('input-file-' + id);
             const label = document.getElementById('label-file-' + id);
@@ -299,19 +312,13 @@
             lucide.createIcons();
         }
 
-        // 2. สคริปต์สำหรับใส่ลูกน้ำ (,) ในช่องจำนวนเงินอัตโนมัติ
         const moneyInput = document.getElementById('money-input');
         moneyInput.addEventListener('input', function(e) {
-            // ลบตัวอักษรที่ไม่ใช่ตัวเลขและจุดทศนิยมออก
             let value = this.value.replace(/[^0-9.]/g, '');
-            
-            // ดักไว้ไม่ให้พิมพ์จุดทศนิยมซ้อนกันหลายตัว (เช่น 100.50.2)
             const parts = value.split('.');
             if (parts.length > 2) {
                 value = parts[0] + '.' + parts.slice(1).join('');
             }
-
-            // จัดฟอร์แมตใส่ลูกน้ำให้หลักพัน, หลักล้าน ฯลฯ
             if (value) {
                 let numberParts = value.split('.');
                 numberParts[0] = numberParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
