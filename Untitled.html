@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบฟอร์มนำส่งโครงการ - สพป.</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f1f5f9;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.625rem 1rem;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            color: #334155;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #1e3a8a;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .file-upload-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: #ffffff;
+            border: 1px solid #60a5fa;
+            color: #2563eb;
+        }
+
+        .file-upload-btn:hover {
+            background-color: #eff6ff;
+        }
+
+        .file-upload-btn.has-file {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            color: #1d4ed8;
+        }
+        
+        .clear-file-btn {
+            display: none;
+            color: #ef4444;
+            padding: 0.2rem;
+            border-radius: 999px;
+        }
+        
+        .clear-file-btn:hover {
+            background-color: #fee2e2;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-8 flex justify-center items-start min-h-screen">
+
+    <div class="w-full max-w-3xl bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+
+        <div class="bg-blue-900 px-6 py-6 text-center border-b-4 border-yellow-500">
+            <img src="https://planchan2.github.io/Dashboard/logo-photoroom.png" alt="โลโก้" class="h-16 mx-auto mb-3 bg-white rounded-full p-1">
+            <h1 class="text-xl md:text-2xl font-bold text-white tracking-wide">
+                โครงการใบงวด ประจำปีงบประมาณ พ.ศ 2569
+            </h1>
+            <p class="text-white text-sm md:text-base mt-2 font-medium">
+                สำนักงานเขตพื้นที่การศึกษาประถมศึกษาจันทบุรี เขต 2
+            </p>
+        </div>
+
+        <form class="p-6 md:p-8 space-y-8" id="project-form">
+
+            <div>
+                <!-- เอาไอคอนออกแล้ว -->
+                <h2 class="section-title">
+                    ส่วนที่ 1: ข้อมูลทั่วไป
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="form-label">กลุ่ม/หน่วย <span class="text-red-500">*</span></label>
+                        <select class="form-input" required>
+                            <option value="">-- เลือกกลุ่ม/หน่วย --</option>
+                            <option value="กลุ่มอำนวยการ">กลุ่มอำนวยการ</option>
+                            <option value="กลุ่มนโยบายและแผน">กลุ่มนโยบายและแผน</option>
+                            <option value="กลุ่มDLICT">กลุ่ม DLICT</option>
+                            <option value="กลุ่มบริหารการเงินและทรัพย์สิน">กลุ่มบริหารการเงินและทรัพย์สิน</option>
+                            <option value="กลุ่มบริหารงานบุคคล">กลุ่มบริหารงานบุคคล</option>
+                            <option value="กลุ่มพัฒนาครูและบุคลากรทางการศึกษา">กลุ่มพัฒนาครูและบุคลากรทางการศึกษา</option>
+                            <option value="กลุ่มนิเทศ ติดตาม ประเมินผล">กลุ่มนิเทศ ติดตาม ประเมินผล</option>
+                            <option value="กลุ่มส่งเสริมการจัดการศึกษา">กลุ่มส่งเสริมการจัดการศึกษา</option>
+                            <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
+                            <option value="กลุ่มกฏหมายและคดี">กลุ่มกฏหมายและคดี</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label">ผู้รับผิดชอบโครงการ <span class="text-red-500">*</span></label>
+                        <input type="text" class="form-input" placeholder="ระบุชื่อ-นามสกุล" required>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <!-- เอาไอคอนออกแล้ว -->
+                <h2 class="section-title">
+                    ส่วนที่ 2: หมวดหมู่และการจัดสรรงบประมาณ
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="form-label">ประเภทงบประมาณ <span class="text-red-500">*</span></label>
+                        <select class="form-input" required>
+                            <option value="">-- เลือกประเภทงบประมาณ --</option>
+                            <option value="2">งบดำเนินงาน (2)</option>
+                            <option value="5">งบลงทุน (5)</option>
+                            <option value="6">งบเงินอุดหนุน (6)</option>
+                            <option value="9">งบรายจ่ายอื่น (7)</option>
+                            <option value="8">งบกลาง (8)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label">แผนงาน <span class="text-red-500">*</span></label>
+                        <select class="form-input" required>
+                            <option value="">-- เลือกแผนงาน --</option>
+                            <option value="พื้นฐานด้านการพัฒนาและเสริมสร้างศักยภาพทรัพยากรมนุษย์">พื้นฐานด้านการพัฒนาและเสริมสร้างศักยภาพทรัพยากรมนุษย์</option>
+                            <option value="ยุทธศาสตร์เพื่อพัฒนาคุณภาพการศึกษาและการเรียนรู้">ยุทธศาสตร์เพื่อพัฒนาคุณภาพการศึกษาและการเรียนรู้</option>
+                            <option value="บูรณาการต่อต้านการทุจริตและประพฤติมิชอบ">บูรณาการต่อต้านการทุจริตและประพฤติมิชอบ</option>
+                            <option value="ยุทธศาสตร์สร้างความเสมอภาค">ยุทธศาสตร์สร้างความเสมอภาค</option>
+                            <option value="บุคลากรภาครัฐ">บุคลากรภาครัฐ</option>
+                            <option value="บูรณาการป้องกัน ปราบปราม และแก้ไขปัญหายาเสพติด">บูรณาการป้องกัน ปราบปราม และแก้ไขปัญหายาเสพติด</option>
+                            <option value="บริหารเพื่อรองรับกรณีฉุกเฉินหรือจำเป็น">บริหารเพื่อรองรับกรณีฉุกเฉินหรือจำเป็น</option>
+                        </select>
+                    </div>
+
+                    <div class="md:col-span-2 md:w-1/2">
+                        <label class="form-label">จำนวนเงิน (บาท) <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <!-- เปลี่ยนเป็น type="text" และเพิ่ม id="money-input" เพื่อให้ใส่ลูกน้ำได้ -->
+                            <input type="text" id="money-input" class="form-input pl-10" placeholder="0.00" required>
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-slate-500 font-bold">฿</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <!-- เอาไอคอนออกแล้ว -->
+                <h2 class="section-title">
+                    ส่วนที่ 3: เอกสารแนบ (เฉพาะไฟล์ PDF)
+                </h2>
+
+                <div class="space-y-4 mt-4">
+
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <p class="font-bold text-slate-800">1. ไฟล์จัดสรร (ไฟล์ PDF)<span class="text-red-500">*</span></p>
+                            <p class="text-xs text-slate-500 mt-1">ขนาดไม่เกิน 30 MB</p>
+                        </div>
+                        <div class="w-full sm:w-auto flex-shrink-0 flex items-center gap-2">
+                            <label class="file-upload-btn" id="label-file-1">
+                                <i data-lucide="upload" class="w-4 h-4 upload-icon"></i>
+                                <span class="file-name-text max-w-[150px] truncate">เลือกไฟล์ PDF</span>
+                                <input type="file" accept=".pdf" class="hidden file-input-magic" id="input-file-1" required>
+                            </label>
+                            <button type="button" class="clear-file-btn" onclick="clearFile('1')">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <p class="font-bold text-slate-800">2. ไฟล์ใบงวด (ไฟล์ PDF)<span class="text-red-500">*</span></p>
+                            <p class="text-xs text-slate-500 mt-1">ขนาดไม่เกิน 30 MB</p>
+                        </div>
+                        <div class="w-full sm:w-auto flex-shrink-0 flex items-center gap-2">
+                            <label class="file-upload-btn" id="label-file-2">
+                                <i data-lucide="upload" class="w-4 h-4 upload-icon"></i>
+                                <span class="file-name-text max-w-[150px] truncate">เลือกไฟล์ PDF</span>
+                                <input type="file" accept=".pdf" class="hidden file-input-magic" id="input-file-2" required>
+                            </label>
+                            <button type="button" class="clear-file-btn" onclick="clearFile('2')">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <p class="font-bold text-slate-800">3. โครงการ (ไฟล์ PDF) <span class="text-slate-400 text-xs font-normal ml-1"></span></p>
+                            <p class="text-xs text-slate-500 mt-1">ขนาดไม่เกิน 30 MB</p>
+                        </div>
+                        <div class="w-full sm:w-auto flex-shrink-0 flex items-center gap-2">
+                            <label class="file-upload-btn" id="label-file-3">
+                                <i data-lucide="upload" class="w-4 h-4 upload-icon"></i>
+                                <span class="file-name-text max-w-[150px] truncate">เลือกไฟล์ PDF</span>
+                                <input type="file" accept=".pdf" class="hidden file-input-magic" id="input-file-3">
+                            </label>
+                            <button type="button" class="clear-file-btn" onclick="clearFile('3')">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-slate-200">
+                <button type="button" class="w-full md:w-auto px-10 py-3.5 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-lg shadow-md transition-all flex items-center justify-center gap-2 mx-auto text-lg">
+                    <i data-lucide="send" class="w-5 h-5"></i> บันทึกและนำส่งข้อมูล
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // 1. สคริปต์สำหรับจัดการอัปโหลดและแสดงชื่อไฟล์
+        document.querySelectorAll('.file-input-magic').forEach(input => {
+            input.addEventListener('change', function() {
+                const label = this.closest('label');
+                const fileNameDisplay = label.querySelector('.file-name-text');
+                const icon = label.querySelector('.upload-icon');
+                const clearBtn = label.nextElementSibling;
+                
+                if (this.files && this.files.length > 0) {
+                    fileNameDisplay.textContent = this.files[0].name;
+                    label.classList.add('has-file');
+                    icon.setAttribute('data-lucide', 'file-check-2');
+                    clearBtn.style.display = 'block';
+                } else {
+                    fileNameDisplay.textContent = 'เลือกไฟล์ PDF';
+                    label.classList.remove('has-file');
+                    icon.setAttribute('data-lucide', 'upload');
+                    clearBtn.style.display = 'none';
+                }
+                lucide.createIcons();
+            });
+        });
+
+        // ฟังก์ชันสำหรับกด X เพื่อยกเลิกไฟล์
+        function clearFile(id) {
+            const input = document.getElementById('input-file-' + id);
+            const label = document.getElementById('label-file-' + id);
+            const fileNameDisplay = label.querySelector('.file-name-text');
+            const icon = label.querySelector('.upload-icon');
+            const clearBtn = label.nextElementSibling;
+
+            input.value = '';
+            fileNameDisplay.textContent = 'เลือกไฟล์ PDF';
+            label.classList.remove('has-file');
+            icon.setAttribute('data-lucide', 'upload');
+            clearBtn.style.display = 'none';
+            
+            lucide.createIcons();
+        }
+
+        // 2. สคริปต์สำหรับใส่ลูกน้ำ (,) ในช่องจำนวนเงินอัตโนมัติ
+        const moneyInput = document.getElementById('money-input');
+        moneyInput.addEventListener('input', function(e) {
+            // ลบตัวอักษรที่ไม่ใช่ตัวเลขและจุดทศนิยมออก
+            let value = this.value.replace(/[^0-9.]/g, '');
+            
+            // ดักไว้ไม่ให้พิมพ์จุดทศนิยมซ้อนกันหลายตัว (เช่น 100.50.2)
+            const parts = value.split('.');
+            if (parts.length > 2) {
+                value = parts[0] + '.' + parts.slice(1).join('');
+            }
+
+            // จัดฟอร์แมตใส่ลูกน้ำให้หลักพัน, หลักล้าน ฯลฯ
+            if (value) {
+                let numberParts = value.split('.');
+                numberParts[0] = numberParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                this.value = numberParts.join('.');
+            } else {
+                this.value = '';
+            }
+        });
+    </script>
+</body>
+
+</html>
