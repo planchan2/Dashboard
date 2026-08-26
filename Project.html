@@ -1,362 +1,832 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แบบฟอร์มนำส่งโครงการ - สพป.</title>
-
+    <title>ระบบจัดการโครงการ - สพป.</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-
     <style>
-        body {
-            font-family: 'Sarabun', sans-serif;
-            background-color: #f1f5f9;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 0.625rem 1rem;
-            background-color: #ffffff;
-            border: 1px solid #cbd5e1;
-            border-radius: 0.5rem;
-            font-size: 0.95rem;
-            color: #334155;
-            transition: all 0.2s;
-            outline: none;
-        }
-        .form-input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .form-label {
-            display: block;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 0.5rem;
-            font-size: 0.95rem;
-        }
-
-        .step-circle {
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 1.1rem;
-            transition: all 0.3s;
-        }
-        .step-circle.active {
-            background-color: #1e3a8a;
-            color: #ffffff;
-            box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.15);
-        }
-        .step-circle.completed {
-            background-color: #10b981;
-            color: #ffffff;
-        }
-        .step-circle.inactive {
-            background-color: #e2e8f0;
-            color: #94a3b8;
-        }
-        .step-line {
-            flex: 1;
-            height: 4px;
-            background-color: #e2e8f0;
-            margin: 0 1rem;
-            border-radius: 2px;
-            transition: all 0.3s;
-        }
+        body { font-family: 'Sarabun', sans-serif; background-color: #f1f5f9; }
+        .form-input { width: 100%; padding: 0.625rem 1rem; background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.95rem; color: #334155; transition: all 0.2s; outline: none; }
+        .form-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .form-label { display: block; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem; font-size: 0.95rem; }
+        .step-circle { width: 2.5rem; height: 2.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; transition: all 0.3s; }
+        .step-circle.active { background-color: #1e3a8a; color: #ffffff; box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.15); }
+        .step-circle.completed { background-color: #10b981; color: #ffffff; }
+        .step-circle.inactive { background-color: #e2e8f0; color: #94a3b8; }
+        .step-line { flex: 1; height: 4px; background-color: #e2e8f0; margin: 0 1rem; border-radius: 2px; transition: all 0.3s; }
         .step-line.active { background-color: #10b981; }
-
-        .fade-in { animation: fadeIn 0.4s ease-in-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .upload-zone {
-            border: 2px dashed #cbd5e1;
-            transition: all 0.2s;
-        }
-        .upload-zone:hover {
-            border-color: #94a3b8;
-            background-color: #f8fafc;
-        }
-        
-        .progress-bar {
-            height: 4px;
-            background-color: #e2e8f0;
-            border-radius: 2px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-        .progress-fill {
-            height: 100%;
-            background-color: #10b981;
-            width: 0%;
-        }
-        @keyframes loadProgress {
-            from { width: 0%; }
-            to { width: 100%; }
-        }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .upload-zone { border: 2px dashed #cbd5e1; transition: all 0.2s; }
+        .upload-zone:hover { border-color: #94a3b8; background-color: #f8fafc; }
+        .progress-bar { height: 4px; background-color: #e2e8f0; border-radius: 2px; overflow: hidden; margin-top: 8px; }
+        .progress-fill { height: 100%; background-color: #10b981; width: 0%; }
+        @keyframes loadProgress { from { width: 0%; } to { width: 100%; } }
     </style>
 </head>
-
-<body class="p-4 md:p-8 flex justify-center items-start min-h-screen relative overflow-x-hidden">
-
-    <div id="toast-container" class="fixed top-6 right-6 z-[100] flex flex-col gap-3"></div>
-
-    <div class="w-full max-w-4xl bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
-
-        <div class="bg-blue-900 px-6 py-6 text-center border-b-4 border-yellow-500 relative">
-            <div class="absolute top-3 right-3 md:top-4 md:right-4">
-                <select id="year-select" class="bg-blue-800 text-white border border-blue-700 text-xs md:text-sm rounded-md px-2 py-1 outline-none cursor-pointer hover:bg-blue-700 transition font-bold">
-                    <option value="2569">ปี 2569</option>
-                    <option value="2570">ปี 2570</option>
-                </select>
-            </div>
-            <img src="https://planchan2.github.io/Dashboard/logo-photoroom.png" alt="โลโก้" class="h-16 mx-auto mb-3 bg-white rounded-full p-1 mt-2 shadow-sm">
-            <h1 class="text-xl md:text-2xl font-extrabold text-white tracking-wide">
-                โครงการ ประจำปีงบประมาณ พ.ศ. <span id="display-year">2569</span>
-            </h1>
-            <p class="text-white/80 text-sm md:text-base mt-2 font-medium">
-                สำนักงานเขตพื้นที่การศึกษาประถมศึกษาจันทบุรี เขต 2
-            </p>
-        </div>
-
-        <div class="bg-slate-50 px-8 py-5 border-b border-slate-200 flex items-center justify-center">
-            <div class="flex items-center w-full max-w-md mx-auto">
-                <div class="flex flex-col items-center relative z-10 w-24">
-                    <div id="step-icon-1" class="step-circle active">1</div>
-                    <span id="step-text-1" class="text-xs font-bold text-blue-900 mt-2 text-center">ข้อมูลโครงการ</span>
-                </div>
-                <div id="step-connector" class="step-line"></div>
-                <div class="flex flex-col items-center relative z-10 w-24">
-                    <div id="step-icon-2" class="step-circle inactive">2</div>
-                    <span id="step-text-2" class="text-xs font-bold text-slate-400 mt-2 text-center">แนบไฟล์ PDF</span>
-                </div>
-            </div>
-        </div>
-
-        <form id="project-form" class="p-6 md:p-10 relative">
-
-            <div id="form-step-1" class="space-y-6 fade-in block">
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
-                    <div>
-                        <label class="form-label">กลุ่ม/หน่วย <span class="text-red-500">*</span></label>
-                        <select class="form-input step1-required" required>
-                            <option value="">-- เลือกกลุ่ม/หน่วย --</option>
-                            <option value="กลุ่มอำนวยการ">กลุ่มอำนวยการ</option>
-                            <option value="กลุ่มนโยบายและแผน">กลุ่มนโยบายและแผน</option>
-                            <option value="กลุ่มDLICT">กลุ่ม DLICT</option>
-                            <option value="กลุ่มบริหารงานการเงินและสินทรัพย์">กลุ่มบริหารงานการเงินและสินทรัพย์</option>
-                            <option value="กลุ่มบริหารงานบุคคล">กลุ่มบริหารงานบุคคล</option>
-                            <option value="กลุ่มพัฒนาครูและบุคลากรทางการศึกษา">กลุ่มพัฒนาครูและบุคลากรทางการศึกษา</option>
-                            <option value="กลุ่มนิเทศ ติดตาม ประเมินผล">กลุ่มนิเทศ ติดตาม ประเมินผล</option>
-                            <option value="กลุ่มส่งเสริมการจัดการศึกษา">กลุ่มส่งเสริมการจัดการศึกษา</option>
-                            <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
-                            <option value="กลุ่มกฏหมายและคดี">กลุ่มกฏหมายและคดี</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="form-label">ผู้รับผิดชอบโครงการ <span class="text-red-500">*</span></label>
-                        <input type="text" class="form-input step1-required" placeholder="ระบุชื่อ-นามสกุล" required>
-                    </div>
-
-                    <div>
-                        <label class="form-label">ประเภทงบประมาณ <span class="text-red-500">*</span></label>
-                        <select class="form-input step1-required" required>
-                            <option value="">-- เลือกประเภทงบประมาณ --</option>
-                             <option value="2">งบดำเนินงาน (2)</option>
-                            <option value="5">งบลงทุน (5)</option>
-                            <option value="6">งบเงินอุดหนุน (6)</option>
-                            <option value="9">งบรายจ่ายอื่น (7)</option>
-                            <option value="8">งบกลาง (8)</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="form-label">แผนงาน <span class="text-red-500">*</span></label>
-                        <select class="form-input step1-required" required>
-                            <option value="">-- เลือกแผนงาน --</option>
-                            <option value="พื้นฐานด้านการพัฒนาและเสริมสร้างศักยภาพทรัพยากรมนุษย์">พื้นฐานด้านการพัฒนาและเสริมสร้างศักยภาพทรัพยากรมนุษย์</option>
-                            <option value="ยุทธศาสตร์เพื่อพัฒนาคุณภาพการศึกษาและการเรียนรู้">ยุทธศาสตร์เพื่อพัฒนาคุณภาพการศึกษาและการเรียนรู้</option>
-                            <option value="บูรณาการต่อต้านการทุจริตและประพฤติมิชอบ">บูรณาการต่อต้านการทุจริตและประพฤติมิชอบ</option>
-                            <option value="ยุทธศาสตร์สร้างความเสมอภาค">ยุทธศาสตร์สร้างความเสมอภาค</option>
-                            <option value="บุคลากรภาครัฐ">บุคลากรภาครัฐ</option>
-                            <option value="บูรณาการป้องกัน ปราบปราม และแก้ไขปัญหายาเสพติด">บูรณาการป้องกัน ปราบปราม และแก้ไขปัญหายาเสพติด</option>
-                            <option value="บริหารเพื่อรองรับกรณีฉุกเฉินหรือจำเป็น">บริหารเพื่อรองรับกรณีฉุกเฉินหรือจำเป็น</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="form-label">จำนวนเงิน (บาท) <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <input type="text" id="money-input" class="form-input pl-10 font-bold text-blue-900 step1-required" placeholder="0.00" required>
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <span class="text-slate-400 font-bold">฿</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="pt-6 border-t border-slate-200 flex justify-end">
-                    <button type="button" onclick="nextStep()" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-extrabold rounded-lg shadow-lg shadow-blue-500/30 transform hover:-translate-y-1 transition-all duration-200 flex items-center gap-2 text-base">
-                        ถัดไป (แนบเอกสาร) <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div id="form-step-2" class="hidden fade-in space-y-8">
-                
-                <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 flex gap-3 items-start">
-                    <i data-lucide="info" class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0"></i>
-                    <div>
-                        <p class="text-sm font-bold text-blue-900">อัปโหลดเอกสาร (PDF)</p>
-                        <p class="text-xs text-blue-700 mt-1">รองรับเฉพาะไฟล์ PDF </p>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 class="font-bold text-slate-800 mb-3 text-base">จัดสรร (PDF) <span class="text-red-500 text-xs font-normal">*บังคับ</span></h3>
-                    
-                    <label id="upload-zone-1" class="upload-zone flex flex-col items-center justify-center p-6 rounded-xl cursor-pointer bg-white">
-                        <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 mb-3"></i>
-                        <p class="font-bold text-slate-700">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์มาวางที่นี่</p>
-                        <p class="text-xs text-slate-400 mt-1 mb-4">รองรับไฟล์ PDF ขนาดไม่เกิน 30 MB</p>
-                        <span class="px-5 py-2 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 transition">เลือกไฟล์ PDF</span>
-                        <input type="file" accept=".pdf" class="hidden file-input-magic" data-id="1" required>
-                    </label>
-
-                    <div id="file-item-1" class="hidden mt-2 p-4 border border-slate-200 rounded-xl shadow-sm bg-white flex items-start justify-between">
-                        <div class="flex items-start gap-4 w-full">
-                            <div class="flex flex-col items-center justify-center w-10 h-12 border border-slate-200 rounded-md bg-slate-50 flex-shrink-0 relative">
-                                <div class="absolute -top-1 -right-1 w-3 h-3 bg-white"></div>
-                                <span class="bg-red-500 text-white text-[9px] font-black px-1 py-0.5 rounded-sm absolute bottom-1">PDF</span>
-                            </div>
-                            
-                            <div class="flex-1">
-                                <p id="file-name-1" class="font-bold text-slate-700 text-sm truncate pr-4">filename.pdf</p>
-                                <div id="status-container-1" class="text-xs mt-1 flex items-center gap-1">
-                                    <i data-lucide="loader-2" class="w-3 h-3 text-blue-500 animate-spin"></i> 
-                                    <span class="text-blue-500 font-bold">กำลังอัปโหลด...</span>
-                                </div>
-                                <div class="progress-bar w-full max-w-[200px]">
-                                    <div class="progress-fill"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="button" onclick="removeFile('1')" class="text-slate-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg transition flex-shrink-0">
-                            <i data-lucide="trash-2" class="w-5 h-5"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 class="font-bold text-slate-800 mb-3 text-base">ใบงวด (PDF) <span class="text-red-500 text-xs font-normal">*บังคับ</span></h3>
-                    
-                    <label id="upload-zone-2" class="upload-zone flex flex-col items-center justify-center p-6 rounded-xl cursor-pointer bg-white">
-                        <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 mb-3"></i>
-                        <p class="font-bold text-slate-700">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์มาวางที่นี่</p>
-                        <p class="text-xs text-slate-400 mt-1 mb-4">รองรับไฟล์ PDF ขนาดไม่เกิน 30 MB</p>
-                        <span class="px-5 py-2 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 transition">เลือกไฟล์ PDF</span>
-                        <input type="file" accept=".pdf" class="hidden file-input-magic" data-id="2" required>
-                    </label>
-
-                    <div id="file-item-2" class="hidden mt-2 p-4 border border-slate-200 rounded-xl shadow-sm bg-white flex items-start justify-between">
-                        <div class="flex items-start gap-4 w-full">
-                            <div class="flex flex-col items-center justify-center w-10 h-12 border border-slate-200 rounded-md bg-slate-50 flex-shrink-0 relative">
-                                <span class="bg-red-500 text-white text-[9px] font-black px-1 py-0.5 rounded-sm absolute bottom-1">PDF</span>
-                            </div>
-                            <div class="flex-1">
-                                <p id="file-name-2" class="font-bold text-slate-700 text-sm truncate pr-4">filename.pdf</p>
-                                <div id="status-container-2" class="text-xs mt-1 flex items-center gap-1">
-                                    <i data-lucide="loader-2" class="w-3 h-3 text-blue-500 animate-spin"></i> 
-                                    <span class="text-blue-500 font-bold">กำลังอัปโหลด...</span>
-                                </div>
-                                <div class="progress-bar w-full max-w-[200px]">
-                                    <div class="progress-fill"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="button" onclick="removeFile('2')" class="text-slate-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg transition flex-shrink-0">
-                            <i data-lucide="trash-2" class="w-5 h-5"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 class="font-bold text-slate-800 mb-3 text-base">โครงการ (PDF) <span class="text-slate-400 text-xs font-normal">(สามารถแนบภายหลังได้)</span></h3>
-                    
-                    <label id="upload-zone-3" class="upload-zone flex flex-col items-center justify-center p-6 rounded-xl cursor-pointer bg-white">
-                        <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 mb-3"></i>
-                        <p class="font-bold text-slate-700">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์มาวางที่นี่</p>
-                        <p class="text-xs text-slate-400 mt-1 mb-4">รองรับไฟล์ PDF ขนาดไม่เกิน 30 MB</p>
-                        <span class="px-5 py-2 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 transition">เลือกไฟล์ PDF</span>
-                        <input type="file" accept=".pdf" class="hidden file-input-magic" data-id="3">
-                    </label>
-
-                    <div id="file-item-3" class="hidden mt-2 p-4 border border-slate-200 rounded-xl shadow-sm bg-white flex items-start justify-between">
-                        <div class="flex items-start gap-4 w-full">
-                            <div class="flex flex-col items-center justify-center w-10 h-12 border border-slate-200 rounded-md bg-slate-50 flex-shrink-0 relative">
-                                <span class="bg-red-500 text-white text-[9px] font-black px-1 py-0.5 rounded-sm absolute bottom-1">PDF</span>
-                            </div>
-                            <div class="flex-1">
-                                <p id="file-name-3" class="font-bold text-slate-700 text-sm truncate pr-4">filename.pdf</p>
-                                <div id="status-container-3" class="text-xs mt-1 flex items-center gap-1">
-                                    <i data-lucide="loader-2" class="w-3 h-3 text-blue-500 animate-spin"></i> 
-                                    <span class="text-blue-500 font-bold">กำลังอัปโหลด...</span>
-                                </div>
-                                <div class="progress-bar w-full max-w-[200px]">
-                                    <div class="progress-fill"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="button" onclick="removeFile('3')" class="text-slate-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg transition flex-shrink-0">
-                            <i data-lucide="trash-2" class="w-5 h-5"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="pt-8 border-t border-slate-200 flex flex-col-reverse md:flex-row justify-between gap-4">
-                    <button type="button" onclick="prevStep()" class="px-5 py-2.5 bg-white border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-600 font-bold rounded-lg shadow-sm transform hover:-translate-y-1 transition-all duration-200 flex items-center justify-center gap-2 text-base w-full md:w-auto">
-                        <i data-lucide="arrow-left" class="w-4 h-4"></i> ย้อนกลับ
-                    </button>
-                    <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-extrabold rounded-lg shadow-lg shadow-emerald-500/30 transform hover:-translate-y-1 transition-all duration-200 flex items-center justify-center gap-2 text-base w-full md:w-auto">
-                        <i data-lucide="send" class="w-4 h-4"></i> บันทึกและนำส่งข้อมูล
-                    </button>
-                </div>
-            </div>
-
-        </form>
+<body class="p-4 md:p-8 flex flex-col items-center justify-start min-h-screen relative overflow-x-hidden">
+    
+    <div id="loading-overlay" class="fixed inset-0 bg-slate-900/80 z-[300] hidden flex-col items-center justify-center px-4 text-center backdrop-blur-sm">
+        <i data-lucide="loader-2" class="w-16 h-16 text-blue-500 animate-spin mb-6"></i>
+        <h2 class="text-2xl font-extrabold text-white mb-2" id="loading-title">กำลังอัปโหลดไฟล์ข้อมูล...</h2>
+        <p class="text-slate-300 text-sm" id="loading-subtitle">ไฟล์ PDF ที่มีขนาดใหญ่อาจใช้เวลาสักครู่ กรุณารอและไม่ปิดแท็บ</p>
     </div>
+
+    <div id="delete-confirm-modal" class="fixed inset-0 bg-slate-900/60 z-[500] hidden flex items-center justify-center px-4 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center transform scale-90 transition-transform duration-300" id="delete-confirm-box">
+            <div class="mx-auto flex items-center justify-center w-20 h-20 rounded-full mb-5 bg-red-100 text-red-500">
+                <i data-lucide="shield-alert" class="w-10 h-10"></i>
+            </div>
+            <h3 class="text-2xl font-black text-slate-800 mb-2">ยืนยันการลบข้อมูล?</h3>
+            <p class="text-slate-500 font-medium mb-6 text-sm">ข้อมูลและไฟล์จะถูกลบถาวร ไม่สามารถกู้คืนได้</p>
+            
+            <div class="mb-6 text-left bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-2 text-center">รหัสผ่านยืนยันการลบ:</label>
+                <input type="password" id="delete-password-input" class="w-full px-4 py-3 border border-slate-300 rounded-lg text-center font-bold tracking-widest outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition text-lg placeholder:text-sm placeholder:font-normal" placeholder="ใส่รหัสผ่าน">
+                <p id="delete-error-msg" class="text-red-500 text-xs mt-2 hidden font-bold text-center"><i data-lucide="x-circle" class="w-3 h-3 inline"></i> รหัสผ่านไม่ถูกต้อง!</p>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="closeDeleteConfirm()" class="flex-1 py-3 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition">ยกเลิก</button>
+                <button id="confirm-delete-btn" class="flex-1 py-3 rounded-xl font-bold text-white bg-red-500 hover:bg-red-600 shadow-lg shadow-red-500/30 transition">ลบข้อมูล</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="center-alert" class="fixed inset-0 bg-slate-900/60 z-[400] hidden flex items-center justify-center px-4 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center transform scale-90 transition-transform duration-300" id="center-alert-box">
+            <div id="alert-icon-container" class="mx-auto flex items-center justify-center w-20 h-20 rounded-full mb-5"></div>
+            <h3 id="alert-title" class="text-2xl font-black text-slate-800 mb-2"></h3>
+            <p id="alert-message" class="text-slate-500 font-medium mb-8 text-sm"></p>
+            <button onclick="closeCenterAlert()" id="alert-btn" class="w-full py-3.5 rounded-xl font-bold text-white shadow-lg transition-transform hover:-translate-y-0.5 active:translate-y-0"></button>
+        </div>
+    </div>
+
+    <div id="manage-modal" class="fixed inset-0 bg-slate-900/60 hidden flex items-center justify-center z-[200] fade-in px-4 py-6">
+        <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-full">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 flex-shrink-0">
+                <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+                    <i data-lucide="settings-2" class="w-5 h-5 text-blue-600"></i> รายละเอียดและการจัดการโครงการ
+                </h3>
+                <button onclick="closeManageModal()" class="text-slate-400 hover:text-red-500 bg-white rounded-full p-1 shadow-sm"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto" id="manage-modal-content"></div>
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3 flex-shrink-0">
+                <button onclick="closeManageModal()" class="px-5 py-2 border border-slate-300 rounded-lg text-sm font-bold text-slate-600 hover:bg-white shadow-sm transition">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-form-container" class="flex flex-col items-center w-full fade-in pb-10">
+        <div class="w-full max-w-4xl bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden z-10">
+            <div class="bg-blue-900 px-6 py-6 text-center border-b-4 border-yellow-500 relative">
+                <img src="https://planchan2.github.io/Dashboard/logo-photoroom.png" alt="โลโก้" class="h-16 mx-auto mb-3 bg-white rounded-full p-1 mt-2 shadow-sm">
+                <h1 class="text-xl md:text-2xl font-extrabold text-white tracking-wide">โครงการ ประจำปีงบประมาณ พ.ศ. 2569</h1>
+                <p class="text-white/80 text-sm md:text-base mt-2 font-medium">สำนักงานเขตพื้นที่การศึกษาประถมศึกษาจันทบุรี เขต 2</p>
+            </div>
+
+            <div class="bg-slate-50 px-8 py-5 border-b border-slate-200 flex items-center justify-center">
+                <div class="flex items-center w-full max-w-md mx-auto">
+                    <div class="flex flex-col items-center relative z-10 w-24">
+                        <div id="step-icon-1" class="step-circle active">1</div>
+                        <span id="step-text-1" class="text-xs font-bold text-blue-900 mt-2 text-center">ข้อมูลโครงการ</span>
+                    </div>
+                    <div id="step-connector" class="step-line"></div>
+                    <div class="flex flex-col items-center relative z-10 w-24">
+                        <div id="step-icon-2" class="step-circle inactive">2</div>
+                        <span id="step-text-2" class="text-xs font-bold text-slate-400 mt-2 text-center">แนบไฟล์ PDF</span>
+                    </div>
+                </div>
+            </div>
+
+            <form id="project-form" class="p-6 md:p-10 relative">
+                <input type="hidden" name="action" id="form-action" value="create">
+                <input type="hidden" name="row" id="form-row" value="">
+                <input type="hidden" name="existingFile1" id="existing-file1" value="">
+                <input type="hidden" name="existingFile2" id="existing-file2" value="">
+                <input type="hidden" name="existingFile3" id="existing-file3" value="">
+
+                <div id="form-step-1" class="space-y-6 block">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+                        <div>
+                            <label class="form-label">กลุ่ม/หน่วย</label>
+                            <select class="form-input" name="groupName" id="input-group">
+                                <option value="">-- เลือกกลุ่ม/หน่วย --</option>
+                                <option value="กลุ่มอำนวยการ">กลุ่มอำนวยการ</option>
+                                <option value="กลุ่มนโยบายและแผน">กลุ่มนโยบายและแผน</option>
+                                <option value="กลุ่มDLICT">กลุ่ม DLICT</option>
+                                <option value="กลุ่มบริหารการเงินและทรัพย์สิน">กลุ่มบริหารการเงินและทรัพย์สิน</option>
+                                <option value="กลุ่มบริหารงานบุคคล">กลุ่มบริหารงานบุคคล</option>
+                                <option value="กลุ่มพัฒนาครูและบุคลากรทางการศึกษา">กลุ่มพัฒนาครูและบุคลากรทางการศึกษา</option>
+                                <option value="กลุ่มนิเทศ ติดตาม ประเมินผล">กลุ่มนิเทศ ติดตาม ประเมินผล</option>
+                                <option value="กลุ่มส่งเสริมการจัดการศึกษา">กลุ่มส่งเสริมการจัดการศึกษา</option>
+                                <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
+                                <option value="กลุ่มกฏหมายและคดี">กลุ่มกฏหมายและคดี</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">ผู้รับผิดชอบโครงการ</label>
+                            <input type="text" class="form-input" name="responsibleName" id="name-input" placeholder="ระบุชื่อ-นามสกุล">
+                        </div>
+                        <div>
+                            <label class="form-label">ประเภทงบประมาณ</label>
+                            <select class="form-input" name="budgetType" id="input-budget-type">
+                                <option value="">-- เลือกประเภทงบประมาณ --</option>
+                                <option value="2">งบดำเนินงาน (2)</option>
+                                <option value="5">งบลงทุน (5)</option>
+                                <option value="6">งบเงินอุดหนุน (6)</option>
+                                <option value="9">งบรายจ่ายอื่น (7)</option>
+                                <option value="8">งบกลาง (8)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">แผนงาน</label>
+                            <select class="form-input" name="planName" id="input-plan">
+                                <option value="">-- เลือกแผนงาน --</option>
+                                <option value="พื้นฐานด้านการพัฒนาและเสริมสร้างศักยภาพทรัพยากรมนุษย์">พื้นฐานด้านการพัฒนาและเสริมสร้างศักยภาพทรัพยากรมนุษย์</option>
+                                <option value="ยุทธศาสตร์เพื่อพัฒนาคุณภาพการศึกษาและการเรียนรู้">ยุทธศาสตร์เพื่อพัฒนาคุณภาพการศึกษาและการเรียนรู้</option>
+                                <option value="บูรณาการต่อต้านการทุจริตและประพฤติมิชอบ">บูรณาการต่อต้านการทุจริตและประพฤติมิชอบ</option>
+                                <option value="ยุทธศาสตร์สร้างความเสมอภาค">ยุทธศาสตร์สร้างความเสมอภาค</option>
+                                <option value="บุคลากรภาครัฐ">บุคลากรภาครัฐ</option>
+                                <option value="บูรณาการป้องกัน ปราบปราม และแก้ไขปัญหายาเสพติด">บูรณาการป้องกัน ปราบปราม และแก้ไขปัญหายาเสพติด</option>
+                                <option value="บริหารเพื่อรองรับกรณีฉุกเฉินหรือจำเป็น">บริหารเพื่อรองรับกรณีฉุกเฉินหรือจำเป็น</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">จำนวนเงิน (บาท)</label>
+                            <div class="relative">
+                                <input type="text" id="money-input" name="moneyAmount" class="form-input pl-10 font-bold text-blue-900" placeholder="0.00">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <span class="text-slate-400 font-bold">฿</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-6 border-t border-slate-200 flex justify-end">
+                        <button type="button" onclick="nextStep()" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-extrabold rounded-lg shadow-lg transform hover:-translate-y-1 transition-all duration-200 flex items-center gap-2 text-base">
+                            ถัดไป (แนบเอกสาร) <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="form-step-2" class="hidden space-y-8">
+                    <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 flex gap-3 items-start">
+                        <i data-lucide="info" class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0"></i>
+                        <div>
+                            <p class="text-sm font-bold text-blue-900">อัปโหลดเอกสาร (PDF)</p>
+                            <p id="edit-notice" class="text-xs text-amber-600 font-bold mt-1 hidden">โหมดแก้ไข: คุณสามารถดูไฟล์เดิมได้ หากต้องการเปลี่ยนไฟล์ ให้กดลบแล้วเลือกไฟล์ใหม่</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-bold text-slate-800 mb-3 text-base">จัดสรร (PDF)</h3>
+                        <label id="upload-zone-1" class="upload-zone flex flex-col items-center justify-center py-12 px-6 rounded-xl cursor-pointer bg-white">
+                            <i data-lucide="upload-cloud" class="w-10 h-10 text-slate-400 mb-3"></i>
+                            <p class="font-bold text-slate-700">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์มาวางที่นี่</p>
+                            <span class="px-5 py-2 mt-3 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 transition">เลือกไฟล์ PDF</span>
+                            <input type="file" accept=".pdf" name="file1_data" class="hidden file-input-magic" data-id="1" id="file-input-1">
+                        </label>
+                        <div id="file-item-1" class="hidden mt-2 p-4 border border-slate-200 rounded-xl shadow-sm bg-white flex items-start justify-between">
+                            <div class="flex items-start gap-4 w-full">
+                                <div class="flex flex-col items-center justify-center w-10 h-12 border border-slate-200 rounded-md bg-slate-50 flex-shrink-0 relative">
+                                    <span class="bg-red-500 text-white text-[9px] font-black px-1 py-0.5 rounded-sm absolute bottom-1">PDF</span>
+                                </div>
+                                <div class="flex-1 w-full overflow-hidden">
+                                    <p id="file-name-1" class="font-bold text-slate-700 text-sm truncate w-full pr-4">filename.pdf</p>
+                                    <div id="status-container-1" class="text-xs mt-1 flex items-center gap-1"></div>
+                                    <div class="progress-bar w-full max-w-[200px]"><div class="progress-fill"></div></div>
+                                </div>
+                            </div>
+                            <button type="button" onclick="removeFile('1')" class="text-slate-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg flex-shrink-0"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-bold text-slate-800 mb-3 text-base">ใบงวด (PDF)</h3>
+                        <label id="upload-zone-2" class="upload-zone flex flex-col items-center justify-center py-12 px-6 rounded-xl cursor-pointer bg-white">
+                            <i data-lucide="upload-cloud" class="w-10 h-10 text-slate-400 mb-3"></i>
+                            <p class="font-bold text-slate-700">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์มาวางที่นี่</p>
+                            <span class="px-5 py-2 mt-3 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 transition">เลือกไฟล์ PDF</span>
+                            <input type="file" accept=".pdf" name="file2_data" class="hidden file-input-magic" data-id="2" id="file-input-2">
+                        </label>
+                        <div id="file-item-2" class="hidden mt-2 p-4 border border-slate-200 rounded-xl shadow-sm bg-white flex items-start justify-between">
+                            <div class="flex items-start gap-4 w-full">
+                                <div class="flex flex-col items-center justify-center w-10 h-12 border border-slate-200 rounded-md bg-slate-50 flex-shrink-0 relative">
+                                    <span class="bg-red-500 text-white text-[9px] font-black px-1 py-0.5 rounded-sm absolute bottom-1">PDF</span>
+                                </div>
+                                <div class="flex-1 w-full overflow-hidden">
+                                    <p id="file-name-2" class="font-bold text-slate-700 text-sm truncate w-full pr-4">filename.pdf</p>
+                                    <div id="status-container-2" class="text-xs mt-1 flex items-center gap-1"></div>
+                                    <div class="progress-bar w-full max-w-[200px]"><div class="progress-fill"></div></div>
+                                </div>
+                            </div>
+                            <button type="button" onclick="removeFile('2')" class="text-slate-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg flex-shrink-0"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-bold text-slate-800 mb-3 text-base">โครงการ (PDF) <span class="text-slate-400 text-xs font-normal">(สามารถแนบภายหลังได้)</span></h3>
+                        <label id="upload-zone-3" class="upload-zone flex flex-col items-center justify-center py-12 px-6 rounded-xl cursor-pointer bg-white">
+                            <i data-lucide="upload-cloud" class="w-10 h-10 text-slate-400 mb-3"></i>
+                            <p class="font-bold text-slate-700">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์มาวางที่นี่</p>
+                            <span class="px-5 py-2 mt-3 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 transition">เลือกไฟล์ PDF</span>
+                            <input type="file" accept=".pdf" name="file3_data" class="hidden file-input-magic" data-id="3" id="file-input-3">
+                        </label>
+                        <div id="file-item-3" class="hidden mt-2 p-4 border border-slate-200 rounded-xl shadow-sm bg-white flex items-start justify-between">
+                            <div class="flex items-start gap-4 w-full">
+                                <div class="flex flex-col items-center justify-center w-10 h-12 border border-slate-200 rounded-md bg-slate-50 flex-shrink-0 relative">
+                                    <span class="bg-red-500 text-white text-[9px] font-black px-1 py-0.5 rounded-sm absolute bottom-1">PDF</span>
+                                </div>
+                                <div class="flex-1 w-full overflow-hidden">
+                                    <p id="file-name-3" class="font-bold text-slate-700 text-sm truncate w-full pr-4">filename.pdf</p>
+                                    <div id="status-container-3" class="text-xs mt-1 flex items-center gap-1"></div>
+                                    <div class="progress-bar w-full max-w-[200px]"><div class="progress-fill"></div></div>
+                                </div>
+                            </div>
+                            <button type="button" onclick="removeFile('3')" class="text-slate-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg flex-shrink-0"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="pt-8 border-t border-slate-200 flex flex-col-reverse md:flex-row justify-between gap-4">
+                        <button type="button" onclick="prevStep()" class="px-5 py-2.5 bg-white border-2 border-slate-200 hover:bg-slate-50 text-slate-600 font-bold rounded-lg shadow-sm flex items-center justify-center gap-2 text-base w-full md:w-auto">
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i> ย้อนกลับ
+                        </button>
+                        <button type="submit" id="btn-submit" class="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:to-emerald-700 text-white font-extrabold rounded-lg shadow-lg flex items-center justify-center gap-2 text-base w-full md:w-auto transition">
+                            <i data-lucide="send" class="w-4 h-4"></i> <span id="submit-text">บันทึกและนำส่งข้อมูล</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <button type="button" onclick="toggleView('dashboard')" class="mt-8 px-4 py-2 border border-slate-300 bg-white hover:bg-slate-50 text-slate-500 hover:text-blue-700 font-bold rounded-full transition-all flex items-center gap-2 text-sm shadow-sm opacity-80 hover:opacity-100">
+            <i data-lucide="database" class="w-4 h-4"></i> เข้าสู่หน้าฐานข้อมูล (สำหรับเจ้าหน้าที่)
+        </button>
+    </div>
+
+    <div id="view-dashboard-container" class="hidden flex-col items-center w-full max-w-7xl fade-in pb-10">
+        <div class="w-full flex justify-between items-start mb-6">
+            <div>
+                <h1 class="text-2xl font-extrabold text-slate-900">ฐานข้อมูลโครงการ</h1>
+                <p class="text-sm text-slate-500 mt-1">จัดการและติดตามสถานะโครงการใบงวดทั้งหมด</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleView('form')" class="px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium rounded-lg shadow-sm flex items-center gap-2 text-sm transition">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> ย้อนกลับไปหน้าโครงการ
+                </button>
+            </div>
+        </div>
+
+        <div class="w-full bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                    <div class="relative w-full md:w-64">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+                        <input type="text" id="search-input" oninput="renderTable()" placeholder="ค้นหากลุ่ม/หน่วย, ผู้รับผิดชอบ..." class="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-blue-400 transition">
+                    </div>
+                    <select id="status-filter" onchange="renderTable()" class="px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 bg-white outline-none cursor-pointer">
+                        <option value="">สถานะ: ทั้งหมด</option>
+                        <option value="สมบูรณ์">สมบูรณ์</option>
+                        <option value="ไม่สมบูรณ์">ไม่สมบูรณ์</option>
+                    </select>
+                    <select id="group-filter" onchange="renderTable()" class="px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 bg-white outline-none cursor-pointer">
+                        <option value="">กลุ่ม/หน่วย: ทั้งหมด</option>
+                        <option value="กลุ่มอำนวยการ">กลุ่มอำนวยการ</option>
+                        <option value="กลุ่มนโยบายและแผน">กลุ่มนโยบายและแผน</option>
+                        <option value="กลุ่มDLICT">กลุ่ม DLICT</option>
+                        <option value="กลุ่มบริหารการเงินและทรัพย์สิน">กลุ่มบริหารการเงินและทรัพย์สิน</option>
+                        <option value="กลุ่มบริหารงานบุคคล">กลุ่มบริหารงานบุคคล</option>
+                        <option value="กลุ่มพัฒนาครูและบุคลากรทางการศึกษา">กลุ่มพัฒนาครูและบุคลากรทางการศึกษา</option>
+                        <option value="กลุ่มนิเทศ ติดตาม ประเมินผล">กลุ่มนิเทศ ติดตาม ประเมินผล</option>
+                        <option value="กลุ่มส่งเสริมการจัดการศึกษา">กลุ่มส่งเสริมการจัดการศึกษา</option>
+                        <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
+                        <option value="กลุ่มกฏหมายและคดี">กลุ่มกฏหมายและคดี</option>
+                    </select>
+                    <button class="px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-700 bg-white flex items-center gap-2 hover:bg-slate-50 transition" onclick="fetchData()">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i> รีเฟรช
+                    </button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-100">
+                            <th class="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-16 text-center">ลำดับ</th>
+                            <th class="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">กลุ่ม/หน่วย</th>
+                            <th class="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">ผู้รับผิดชอบ</th>
+                            <th class="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">วันที่ส่ง</th>
+                            <th class="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">งบประมาณ</th>
+                            <th class="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">สถานะ</th>
+                            <th class="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="text-sm text-slate-700">
+                        <tr class="border-b border-slate-100">
+                            <td colspan="7" class="py-10 text-center text-slate-400">
+                                <i data-lucide="loader-2" class="w-8 h-8 mx-auto mb-2 opacity-50 animate-spin"></i>
+                                กำลังโหลดข้อมูล...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-6 flex items-center justify-between text-sm text-slate-500">
+                <p id="data-count">กำลังคำนวณ...</p>
+            </div>
+        </div>
+    </div>
+
 
     <script>
         lucide.createIcons();
+        const API_URL = "https://script.google.com/macros/s/AKfycbxEyLr6S7Hkno9yD16wZ7K1Ut0S6Kby-LEwYp8VTZELk602_OoiAg6sq6mZOWKLLmPd/exec"; 
+        
+        let allProjectsData = []; 
+        let rowToDelete = null;
 
-        const yearSelect = document.getElementById('year-select');
-        const displayYear = document.getElementById('display-year');
-        yearSelect.addEventListener('change', function() { displayYear.textContent = this.value; });
+        function showCenterAlert(type, title, message) {
+            const modal = document.getElementById('center-alert');
+            const box = document.getElementById('center-alert-box');
+            const iconContainer = document.getElementById('alert-icon-container');
+            const titleEl = document.getElementById('alert-title');
+            const messageEl = document.getElementById('alert-message');
+            const btnEl = document.getElementById('alert-btn');
+
+            let iconHtml = '';
+            if (type === 'success') {
+                iconContainer.className = 'mx-auto flex items-center justify-center w-20 h-20 rounded-full mb-5 bg-emerald-100 text-emerald-500';
+                iconHtml = '<i data-lucide="check-circle" class="w-10 h-10"></i>';
+                btnEl.className = 'w-full py-3.5 rounded-xl font-bold text-white shadow-lg transition-transform hover:-translate-y-0.5 active:translate-y-0 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700';
+                btnEl.innerText = 'ตกลง';
+            } else if (type === 'error' || type === 'warning') {
+                iconContainer.className = 'mx-auto flex items-center justify-center w-20 h-20 rounded-full mb-5 bg-amber-100 text-amber-500';
+                iconHtml = '<i data-lucide="alert-triangle" class="w-10 h-10"></i>';
+                btnEl.className = 'w-full py-3.5 rounded-xl font-bold text-white shadow-lg transition-transform hover:-translate-y-0.5 active:translate-y-0 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700';
+                btnEl.innerText = 'ปิดหน้าต่าง';
+            }
+
+            iconContainer.innerHTML = iconHtml;
+            titleEl.innerText = title;
+            messageEl.innerText = message;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                box.classList.remove('scale-90');
+                box.classList.add('scale-100');
+            }, 10);
+            lucide.createIcons();
+        }
+
+        function closeCenterAlert() {
+            const modal = document.getElementById('center-alert');
+            const box = document.getElementById('center-alert-box');
+            modal.classList.add('opacity-0');
+            box.classList.remove('scale-100');
+            box.classList.add('scale-90');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        }
+
+        function getBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        document.getElementById('project-form').addEventListener('submit', async function(e) {
+            e.preventDefault(); 
+            
+            const btn = document.getElementById('btn-submit');
+            const btnText = document.getElementById('submit-text');
+            btn.disabled = true;
+            btn.classList.add('opacity-70', 'cursor-not-allowed');
+            btnText.innerHTML = "กำลังเตรียมข้อมูล...";
+            
+            document.getElementById('loading-overlay').classList.remove('hidden');
+            document.getElementById('loading-overlay').classList.add('flex');
+
+            try {
+                const fileInput1 = document.getElementById('file-input-1');
+                const fileInput2 = document.getElementById('file-input-2');
+                const fileInput3 = document.getElementById('file-input-3');
+                
+                let file1Data = {}, file2Data = {}, file3Data = {};
+                
+                if (fileInput1.files.length > 0) {
+                    file1Data = { name: fileInput1.files[0].name, mimeType: fileInput1.files[0].type, base64: await getBase64(fileInput1.files[0]) };
+                }
+                if (fileInput2.files.length > 0) {
+                    file2Data = { name: fileInput2.files[0].name, mimeType: fileInput2.files[0].type, base64: await getBase64(fileInput2.files[0]) };
+                }
+                if (fileInput3.files.length > 0) {
+                    file3Data = { name: fileInput3.files[0].name, mimeType: fileInput3.files[0].type, base64: await getBase64(fileInput3.files[0]) };
+                }
+                
+                const payload = {
+                    action: document.getElementById('form-action').value,
+                    row: document.getElementById('form-row').value,
+                    groupName: document.getElementById('input-group').value,
+                    responsibleName: document.getElementById('name-input').value,
+                    budgetType: document.getElementById('input-budget-type').value,
+                    planName: document.getElementById('input-plan').value,
+                    moneyAmount: document.getElementById('money-input').value,
+                    existingFile1: document.getElementById('existing-file1').value,
+                    existingFile2: document.getElementById('existing-file2').value,
+                    existingFile3: document.getElementById('existing-file3').value,
+                    file1: file1Data,
+                    file2: file2Data,
+                    file3: file3Data
+                };
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                document.getElementById('loading-overlay').classList.add('hidden');
+                document.getElementById('loading-overlay').classList.remove('flex');
+                btn.disabled = false;
+                btn.classList.remove('opacity-70', 'cursor-not-allowed');
+                btnText.innerHTML = "บันทึกและนำส่งข้อมูล";
+
+                if (result.status === 'success') {
+                    if(result.errors && result.errors.length > 0) {
+                        showCenterAlert('warning', 'อัปโหลดไฟล์บางส่วนไม่สำเร็จ', result.message);
+                    } else {
+                        showCenterAlert('success', 'บันทึกข้อมูลสำเร็จ!', 'ข้อมูลและเอกสารของคุณถูกจัดเก็บเข้าระบบเรียบร้อยแล้วครับ');
+                    }
+                    
+                    document.getElementById('project-form').reset();
+                    document.getElementById('form-action').value = 'create';
+                    document.getElementById('form-row').value = '';
+                    
+                    // รีเซ็ตไฟล์และค่าที่ซ่อนไว้
+                    removeFile('1'); removeFile('2'); removeFile('3');
+                    
+                    fetchData();
+                    setTimeout(() => { toggleView('dashboard'); }, 1500); 
+                } else {
+                    showCenterAlert('error', 'เกิดข้อผิดพลาดเซิร์ฟเวอร์', result.message);
+                }
+            } catch (err) {
+                document.getElementById('loading-overlay').classList.add('hidden');
+                document.getElementById('loading-overlay').classList.remove('flex');
+                btn.disabled = false;
+                btn.classList.remove('opacity-70', 'cursor-not-allowed');
+                btnText.innerHTML = "บันทึกและนำส่งข้อมูล";
+                
+                showCenterAlert('error', 'อัปโหลดไม่สำเร็จ!', 'ไฟล์ใหญ่เกินไป หรือการเชื่อมต่ออินเทอร์เน็ตมีปัญหาครับ');
+            }
+        });
+
+        async function fetchData() {
+            const tableBody = document.getElementById('table-body');
+            const dataCount = document.getElementById('data-count');
+            tableBody.innerHTML = `<tr><td colspan="7" class="py-10 text-center text-slate-400"><i data-lucide="loader-2" class="w-8 h-8 mx-auto mb-2 opacity-50 animate-spin"></i>กำลังโหลดข้อมูล...</td></tr>`;
+            lucide.createIcons();
+
+            try {
+                const response = await fetch(API_URL + "?action=getData");
+                const result = await response.json();
+
+                if (result.status === "success" && result.data.length > 0) {
+                    allProjectsData = result.data.map((row, index) => {
+                        row.sheetRow = index + 2; 
+                        return row;
+                    });
+                    renderTable(); 
+                } else {
+                    allProjectsData = [];
+                    tableBody.innerHTML = `<tr><td colspan="7" class="py-10 text-center text-slate-400">ยังไม่มีข้อมูลในระบบ</td></tr>`;
+                    dataCount.innerHTML = "ไม่มีข้อมูล";
+                }
+            } catch (error) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="py-12 text-center">
+                            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-500 mb-4">
+                                <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+                            </div>
+                            <p class="text-red-500 font-extrabold text-lg mb-1">เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล</p>
+                            <p class="text-slate-500 text-sm">กรุณาตั้งค่า Google Apps Script (Who has access) ให้เป็น "Anyone" หรือ "ทุกคน"</p>
+                        </td>
+                    </tr>
+                `;
+                lucide.createIcons();
+            }
+        }
+
+        function renderTable() {
+            const tableBody = document.getElementById('table-body');
+            const dataCount = document.getElementById('data-count');
+            
+            const searchText = document.getElementById('search-input').value.toLowerCase();
+            const statusFilter = document.getElementById('status-filter').value;
+            const groupFilter = document.getElementById('group-filter').value;
+
+            const filteredData = allProjectsData.filter(row => {
+                let currentStatus = (row[5] === "ตรวจสอบแล้ว" || row[5] === "สมบูรณ์") ? "สมบูรณ์" : "ไม่สมบูรณ์";
+                const matchSearch = row[1].toLowerCase().includes(searchText) || row[2].toLowerCase().includes(searchText);
+                const matchStatus = statusFilter === "" || currentStatus === statusFilter;
+                const matchGroup = groupFilter === "" || row[1] === groupFilter;
+                return matchSearch && matchStatus && matchGroup;
+            });
+
+            if (filteredData.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="7" class="py-10 text-center text-slate-400">ไม่พบข้อมูลที่ค้นหา</td></tr>`;
+                dataCount.innerHTML = "พบ 0 โครงการ";
+                return;
+            }
+
+            tableBody.innerHTML = "";
+            filteredData.forEach((row) => {
+                let statusDisplay = (row[5] === "ตรวจสอบแล้ว" || row[5] === "สมบูรณ์") ? "สมบูรณ์" : "ไม่สมบูรณ์";
+                let statusColor = statusDisplay === "สมบูรณ์" ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"; 
+
+                const rowDataStr = encodeURIComponent(JSON.stringify(row));
+                const manageBtn = `<button onclick="openManageModal(${row.sheetRow}, '${rowDataStr}')" class="p-2 border border-slate-200 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-white shadow-sm transition"><i data-lucide="more-horizontal" class="w-4 h-4"></i></button>`;
+
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-100 hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 text-center font-medium text-slate-400">${row[0]}</td>
+                    <td class="py-3 px-4 font-medium text-slate-800">${row[1]}</td>
+                    <td class="py-3 px-4 text-slate-600">${row[2]}</td>
+                    <td class="py-3 px-4 text-slate-600">${row[3]}</td>
+                    <td class="py-3 px-4 text-slate-600 font-bold">${row[4] ? row[4] + ' ฿' : '-'}</td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="inline-flex px-2 py-0.5 rounded text-[11px] font-bold ${statusColor}">${statusDisplay}</span>
+                    </td>
+                    <td class="py-3 px-4 text-center whitespace-nowrap">
+                        ${manageBtn}
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+            dataCount.innerHTML = `แสดงผล <span class="font-bold text-slate-800">${filteredData.length}</span> โครงการ`;
+            lucide.createIcons();
+        }
+
+        function openManageModal(sheetRow, rowDataStr) {
+            const data = JSON.parse(decodeURIComponent(rowDataStr));
+            const content = document.getElementById('manage-modal-content');
+            
+            const createDocCard = (url, title) => {
+                return `<a href="${url}" target="_blank" class="flex items-center gap-4 w-full p-3 border border-slate-200 rounded-xl shadow-sm bg-white hover:border-blue-400 hover:shadow-md transition group">
+                            <div class="flex flex-col items-center justify-center w-10 h-12 border border-slate-200 rounded-md bg-slate-50 flex-shrink-0 relative group-hover:bg-blue-50 transition">
+                                <span class="bg-red-500 text-white text-[9px] font-black px-1 py-0.5 rounded-sm absolute bottom-1">PDF</span>
+                            </div>
+                            <div class="flex-1 flex flex-col justify-center overflow-hidden">
+                                <p class="font-bold text-slate-700 text-sm group-hover:text-blue-700 transition truncate">${title}</p>
+                                <p class="text-xs text-slate-400 font-medium mt-1 flex items-center gap-1 group-hover:text-blue-500"><i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-500"></i> พร้อมเปิดดู</p>
+                            </div>
+                        </a>`;
+            };
+
+            const createMissingCard = (title) => {
+                return `<div class="flex items-center gap-4 w-full p-3 border border-dashed border-slate-200 rounded-xl bg-slate-50 opacity-70">
+                            <div class="flex flex-col items-center justify-center w-10 h-12 border border-slate-200 rounded-md bg-slate-100 flex-shrink-0 relative">
+                                <i data-lucide="file-x-2" class="w-5 h-5 text-slate-400"></i>
+                            </div>
+                            <div class="flex-1 flex flex-col justify-center">
+                                <p class="font-bold text-slate-500 text-sm">${title}</p>
+                                <p class="text-xs text-amber-500 font-medium mt-1 flex items-center gap-1"><i data-lucide="alert-circle" class="w-3 h-3"></i> ยังไม่ได้แนบไฟล์</p>
+                            </div>
+                        </div>`;
+            }
+
+            let file1Html = data[8] ? createDocCard(data[8], "ไฟล์จัดสรร.pdf") : createMissingCard("ไฟล์จัดสรร.pdf");
+            let file2Html = data[9] ? createDocCard(data[9], "ไฟล์ใบงวด.pdf") : createMissingCard("ไฟล์ใบงวด.pdf");
+            let file3Html = data[10] ? createDocCard(data[10], "ไฟล์โครงการ.pdf") : createMissingCard("ไฟล์โครงการ.pdf");
+
+            let currentStatus = (data[5] === "ตรวจสอบแล้ว" || data[5] === "สมบูรณ์") ? "สมบูรณ์" : "ไม่สมบูรณ์";
+            let statusColor = currentStatus === "สมบูรณ์" ? "text-emerald-700 bg-emerald-100" : "text-amber-700 bg-amber-100";
+            
+            let editBtn = `<button onclick="editProject(${sheetRow}, '${rowDataStr}'); closeManageModal();" class="w-full flex items-center justify-center gap-2 p-3 bg-white border-2 border-blue-400 text-blue-600 font-extrabold rounded-xl hover:bg-blue-50 shadow-sm transition"><i data-lucide="edit-3" class="w-5 h-5"></i> แก้ไขข้อมูล / แนบไฟล์เพิ่ม</button>`;
+            
+            content.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 space-y-4">
+                        <h4 class="font-extrabold text-blue-900 border-b border-slate-200 pb-2 mb-3 flex items-center gap-2"><i data-lucide="clipboard-list" class="w-5 h-5"></i> ข้อมูลโครงการ</h4>
+                        <div class="grid grid-cols-2 gap-y-4 gap-x-2">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">สถานะ</p>
+                                <span class="inline-flex px-2 py-0.5 rounded text-[11px] font-bold ${statusColor}">${currentStatus}</span>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">วันที่ส่ง</p>
+                                <p class="font-bold text-slate-800 text-sm truncate" title="${data[3] || '-'}">${data[3] || '-'}</p>
+                            </div>
+                            <div class="col-span-2">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">กลุ่ม/หน่วย</p>
+                                <p class="font-bold text-slate-800 text-sm break-words">${data[1] || '<span class="text-amber-500 text-xs font-medium bg-amber-50 px-2 py-0.5 rounded">- ยังไม่ได้ระบุ -</span>'}</p>
+                            </div>
+                            <div class="col-span-2">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">ผู้รับผิดชอบ</p>
+                                <p class="font-bold text-slate-800 text-sm break-words">${data[2] || '<span class="text-amber-500 text-xs font-medium bg-amber-50 px-2 py-0.5 rounded">- ยังไม่ได้ระบุ -</span>'}</p>
+                            </div>
+                            <div class="col-span-2">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">แผนงาน</p>
+                                <p class="font-bold text-slate-800 text-sm break-words">${data[6] || '<span class="text-amber-500 text-xs font-medium bg-amber-50 px-2 py-0.5 rounded">- ยังไม่ได้ระบุ -</span>'}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">ประเภทงบ</p>
+                                <p class="font-bold text-slate-800 text-sm">${data[7] ? 'งบ (' + data[7] + ')' : '<span class="text-amber-500 text-xs font-medium bg-amber-50 px-2 py-0.5 rounded">- ว่าง -</span>'}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">จำนวนเงิน</p>
+                                <p class="font-bold text-emerald-600 text-sm">${data[4] ? data[4] + ' ฿' : '<span class="text-amber-500 text-xs font-medium bg-amber-50 px-2 py-0.5 rounded">- ว่าง -</span>'}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col h-full justify-between gap-4">
+                        <div>
+                            <h4 class="font-extrabold text-blue-900 border-b border-slate-200 pb-2 mb-3 flex items-center gap-2"><i data-lucide="folder-open" class="w-5 h-5"></i> ไฟล์เอกสารแนบ</h4>
+                            <div class="flex flex-col gap-3">
+                                ${file1Html}
+                                ${file2Html}
+                                ${file3Html}
+                            </div>
+                        </div>
+                        <div class="border-t border-slate-100 pt-4 flex flex-col gap-3 mt-auto">
+                            ${editBtn}
+                            <button onclick="confirmDeleteProject(${sheetRow})" class="w-full flex items-center justify-center gap-2 p-3 bg-white text-red-500 hover:text-red-600 font-bold rounded-xl hover:bg-red-50 transition"><i data-lucide="trash-2" class="w-4 h-4"></i> ลบข้อมูลโครงการนี้</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('manage-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeManageModal() {
+            document.getElementById('manage-modal').classList.add('hidden');
+        }
+
+        function confirmDeleteProject(sheetRow) {
+            rowToDelete = sheetRow;
+            document.getElementById('delete-password-input').value = '';
+            document.getElementById('delete-error-msg').classList.add('hidden');
+            document.getElementById('delete-password-input').classList.remove('border-red-500', 'bg-red-50');
+            
+            const modal = document.getElementById('delete-confirm-modal');
+            const box = document.getElementById('delete-confirm-box');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                box.classList.remove('scale-90');
+                box.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeDeleteConfirm() {
+            const modal = document.getElementById('delete-confirm-modal');
+            const box = document.getElementById('delete-confirm-box');
+            modal.classList.add('opacity-0');
+            box.classList.remove('scale-100');
+            box.classList.add('scale-90');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
+            rowToDelete = null;
+        }
+
+        document.getElementById('confirm-delete-btn').addEventListener('click', async function() {
+            if (!rowToDelete) return;
+            const passInput = document.getElementById('delete-password-input');
+            const errMsg = document.getElementById('delete-error-msg');
+            
+            // 🔴 กำหนดรหัสผ่านสำหรับลบข้อมูลตรงนี้ 🔴
+            const SECRET_PASSWORD = "admin"; 
+            
+            if (passInput.value !== SECRET_PASSWORD) {
+                errMsg.classList.remove('hidden');
+                passInput.classList.add('border-red-500', 'bg-red-50');
+                setTimeout(() => {
+                    passInput.classList.remove('border-red-500', 'bg-red-50');
+                    errMsg.classList.add('hidden');
+                }, 3000);
+                return;
+            }
+
+            const sheetRow = rowToDelete;
+            closeDeleteConfirm();
+            closeManageModal();
+            
+            document.getElementById('loading-overlay').classList.remove('hidden');
+            document.getElementById('loading-overlay').classList.add('flex');
+            
+            try {
+                const payload = { action: 'delete', row: sheetRow };
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                
+                document.getElementById('loading-overlay').classList.add('hidden');
+                document.getElementById('loading-overlay').classList.remove('flex');
+                
+                if (result.status === 'success') {
+                    showCenterAlert('success', 'ลบข้อมูลสำเร็จ!', 'ลบข้อมูลโครงการออกจากระบบเรียบร้อยแล้ว');
+                    fetchData(); 
+                } else {
+                    showCenterAlert('error', 'ผิดพลาด!', result.message);
+                }
+            } catch (err) {
+                document.getElementById('loading-overlay').classList.add('hidden');
+                document.getElementById('loading-overlay').classList.remove('flex');
+                showCenterAlert('error', 'ข้อผิดพลาด!', 'การเชื่อมต่อล้มเหลว');
+            }
+        });
+
+        // 🔴 ฟังก์ชันโชว์ไฟล์เก่าในระบบตอนแก้ไขข้อมูล 🔴
+        function showExistingFile(id, url, defaultName) {
+            const uploadZone = document.getElementById('upload-zone-' + id);
+            const fileItem = document.getElementById('file-item-' + id);
+            const fileNameDisplay = document.getElementById('file-name-' + id);
+            const statusContainer = document.getElementById('status-container-' + id);
+            const progressFill = fileItem.querySelector('.progress-fill');
+            
+            if (url) {
+                fileNameDisplay.innerHTML = `<a href="${url}" target="_blank" class="text-blue-600 underline hover:text-blue-800 truncate block w-full pr-4">${defaultName} <i data-lucide="external-link" class="w-3 h-3 inline"></i></a>`;
+                uploadZone.style.display = 'none'; 
+                fileItem.style.display = 'flex';
+                statusContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-500"></i><span class="text-emerald-600 font-bold">มีไฟล์เดิมในระบบ</span>`;
+                progressFill.style.width = '100%';
+                lucide.createIcons();
+            } else {
+                removeFile(id); 
+            }
+        }
+
+        function editProject(rowIndex, rowDataStr) {
+            const data = JSON.parse(decodeURIComponent(rowDataStr));
+            document.getElementById('input-group').value = data[1] || "";
+            document.getElementById('name-input').value = data[2] || "";
+            document.getElementById('money-input').value = data[4] || "";
+            
+            document.getElementById('form-action').value = 'update';
+            document.getElementById('form-row').value = rowIndex;
+            
+            document.getElementById('existing-file1').value = data[8] || "";
+            document.getElementById('existing-file2').value = data[9] || "";
+            document.getElementById('existing-file3').value = data[10] || "";
+            
+            document.getElementById('input-budget-type').value = data[7] || "";
+            document.getElementById('input-plan').value = data[6] || "";
+            
+            // 🔴 โชว์ไฟล์เก่าที่เคยแนบ 🔴
+            showExistingFile('1', data[8], "จัดสรรเดิม.pdf");
+            showExistingFile('2', data[9], "ใบงวดเดิม.pdf");
+            showExistingFile('3', data[10], "โครงการเดิม.pdf");
+
+            document.getElementById('submit-text').innerHTML = "บันทึกการแก้ไขข้อมูล";
+            
+            toggleView('form');
+            
+            // 🔴 สั่งให้กระโดดไปหน้าแนบไฟล์ให้ทันที 🔴
+            nextStep();
+        }
+
+        function toggleView(view) {
+            const formContainer = document.getElementById('view-form-container');
+            const dashboardContainer = document.getElementById('view-dashboard-container');
+            if (view === 'dashboard') {
+                formContainer.classList.add('hidden'); formContainer.classList.remove('flex');
+                dashboardContainer.classList.remove('hidden'); dashboardContainer.classList.add('flex'); window.scrollTo(0, 0); 
+                fetchData(); 
+            } else {
+                dashboardContainer.classList.add('hidden'); dashboardContainer.classList.remove('flex');
+                formContainer.classList.remove('hidden'); formContainer.classList.add('flex'); window.scrollTo(0, 0);
+            }
+        }
 
         const moneyInput = document.getElementById('money-input');
-        moneyInput.addEventListener('input', function() {
-            let value = this.value.replace(/[^0-9.]/g, '');
-            const parts = value.split('.');
-            if (parts.length > 2) value = parts[0] + '.' + parts.slice(1).join('');
-            if (value) {
-                let numberParts = value.split('.');
-                numberParts[0] = numberParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                this.value = numberParts.join('.');
-            } else { this.value = ''; }
-        });
+        if(moneyInput) {
+            moneyInput.addEventListener('input', function() {
+                let value = this.value.replace(/[^0-9.]/g, '');
+                const parts = value.split('.');
+                if (parts.length > 2) value = parts[0] + '.' + parts.slice(1).join('');
+                if (value) {
+                    let numberParts = value.split('.');
+                    numberParts[0] = numberParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    this.value = numberParts.join('.');
+                } else { this.value = ''; }
+            });
+        }
 
         const step1Div = document.getElementById('form-step-1');
         const step2Div = document.getElementById('form-step-2');
@@ -367,66 +837,32 @@
         const text2 = document.getElementById('step-text-2');
 
         function nextStep() {
-            let isValid = true;
-            const requiredInputs = document.querySelectorAll('.step1-required');
-            requiredInputs.forEach(input => {
-                if (!input.checkValidity()) {
-                    input.reportValidity();
-                    isValid = false;
-                }
-            });
-
-            if (isValid) {
+            const nameInput = document.getElementById('name-input');
+            if (nameInput.value.trim() === "") {
+                step1Div.classList.remove('hidden'); step1Div.classList.add('block');
+                step2Div.classList.remove('block'); step2Div.classList.add('hidden');
+                showCenterAlert('warning', 'ข้อมูลไม่ครบถ้วน', 'กรุณาระบุชื่อผู้รับผิดชอบโครงการ');
+                nameInput.focus(); nameInput.classList.add('border-red-500');
+                setTimeout(() => nameInput.classList.remove('border-red-500'), 2000);
+            } else {
                 step1Div.classList.remove('block'); step1Div.classList.add('hidden');
                 step2Div.classList.remove('hidden'); step2Div.classList.add('block');
-                icon1.className = "step-circle completed";
-                icon1.innerHTML = `<i data-lucide="check" class="w-5 h-5"></i>`;
+                icon1.className = "step-circle completed"; icon1.innerHTML = `<i data-lucide="check" class="w-5 h-5"></i>`;
                 text1.className = "text-xs font-bold text-emerald-600 mt-2 text-center";
                 connector.classList.add('active');
-                icon2.className = "step-circle active";
-                text2.className = "text-xs font-bold text-blue-900 mt-2 text-center";
-                lucide.createIcons();
-                window.scrollTo(0, 0);
+                icon2.className = "step-circle active"; text2.className = "text-xs font-bold text-blue-900 mt-2 text-center";
+                lucide.createIcons(); window.scrollTo(0, 0);
             }
         }
 
         function prevStep() {
             step2Div.classList.remove('block'); step2Div.classList.add('hidden');
             step1Div.classList.remove('hidden'); step1Div.classList.add('block');
-            icon1.className = "step-circle active";
-            icon1.innerHTML = "1";
+            icon1.className = "step-circle active"; icon1.innerHTML = "1";
             text1.className = "text-xs font-bold text-blue-900 mt-2 text-center";
             connector.classList.remove('active');
-            icon2.className = "step-circle inactive";
-            text2.className = "text-xs font-bold text-slate-400 mt-2 text-center";
+            icon2.className = "step-circle inactive"; text2.className = "text-xs font-bold text-slate-400 mt-2 text-center";
             window.scrollTo(0, 0);
-        }
-
-        function showToast(message) {
-            const container = document.getElementById('toast-container');
-            if(!container) return;
-            
-            const toast = document.createElement('div');
-            toast.className = 'bg-white border border-slate-100 shadow-xl rounded-xl px-5 py-3 flex items-center gap-3 transform translate-x-full opacity-0 transition-all duration-300 ease-out border-b-4 border-b-emerald-500';
-            toast.innerHTML = `
-                <div class="bg-emerald-100 p-1 rounded-full">
-                    <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600"></i>
-                </div>
-                <p class="text-sm font-extrabold text-slate-700">${message}</p>
-            `;
-            container.appendChild(toast);
-            lucide.createIcons();
-
-            requestAnimationFrame(() => {
-                toast.classList.remove('translate-x-full', 'opacity-0');
-                toast.classList.add('translate-x-0', 'opacity-100');
-            });
-
-            setTimeout(() => {
-                toast.classList.remove('translate-x-0', 'opacity-100');
-                toast.classList.add('translate-x-full', 'opacity-0');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
         }
 
         document.querySelectorAll('.file-input-magic').forEach(input => {
@@ -435,34 +871,22 @@
                 const uploadZone = document.getElementById('upload-zone-' + id);
                 const fileItem = document.getElementById('file-item-' + id);
                 const fileNameDisplay = document.getElementById('file-name-' + id);
-                
                 const statusContainer = document.getElementById('status-container-' + id);
                 const progressFill = fileItem.querySelector('.progress-fill');
                 
                 if (this.files && this.files.length > 0) {
-                    const file = this.files[0];
-                    fileNameDisplay.textContent = file.name;
-                    uploadZone.style.display = 'none'; 
-                    fileItem.style.display = 'flex';   
+                    fileNameDisplay.textContent = this.files[0].name;
+                    uploadZone.style.display = 'none'; fileItem.style.display = 'flex';   
                     
-                    statusContainer.innerHTML = `
-                        <i data-lucide="loader-2" class="w-3 h-3 text-blue-500 animate-spin"></i> 
-                        <span class="text-blue-500 font-bold">กำลังอัปโหลด...</span>
-                    `;
+                    statusContainer.innerHTML = `<i data-lucide="loader-2" class="w-3 h-3 text-blue-500 animate-spin"></i><span class="text-blue-500 font-bold">เลือกไฟล์แล้ว</span>`;
                     lucide.createIcons();
-
-                    progressFill.style.animation = 'none';
-                    progressFill.offsetHeight; 
-                    progressFill.style.animation = 'loadProgress 1.5s ease-out forwards'; 
+                    progressFill.style.animation = 'none'; progressFill.offsetHeight; 
+                    progressFill.style.animation = 'loadProgress 0.5s ease-out forwards'; 
 
                     setTimeout(() => {
-                        statusContainer.innerHTML = `
-                            <i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-500"></i> 
-                            <span class="text-emerald-600 font-bold">อัปโหลดสำเร็จ</span>
-                        `;
+                        statusContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-500"></i><span class="text-emerald-600 font-bold">พร้อมอัปโหลด</span>`;
                         lucide.createIcons();
-                        showToast(`อัปโหลด ${file.name} เสร็จสมบูรณ์`);
-                    }, 1500);
+                    }, 500);
                 }
             });
         });
@@ -471,16 +895,9 @@
             const input = document.querySelector(`.file-input-magic[data-id="${id}"]`);
             const uploadZone = document.getElementById('upload-zone-' + id);
             const fileItem = document.getElementById('file-item-' + id);
-
-            input.value = ''; 
-            uploadZone.style.display = 'flex';
-            fileItem.style.display = 'none';
+            input.value = ''; uploadZone.style.display = 'flex'; fileItem.style.display = 'none';
+            document.getElementById('existing-file' + id).value = '';
         }
-
-        document.getElementById('project-form').addEventListener('submit', function(e){
-            e.preventDefault();
-        });
     </script>
 </body>
-
 </html>
