@@ -964,22 +964,14 @@
         const text2 = document.getElementById('step-text-2');
 
         function nextStep() {
-            const nameInput = document.getElementById('name-input');
-            if (nameInput.value.trim() === "") {
-                step1Div.classList.remove('hidden'); step1Div.classList.add('block');
-                step2Div.classList.remove('block'); step2Div.classList.add('hidden');
-                showCenterAlert('warning', 'ข้อมูลไม่ครบถ้วน', 'กรุณาระบุชื่อผู้รับผิดชอบโครงการ');
-                nameInput.focus(); nameInput.classList.add('border-red-500');
-                setTimeout(() => nameInput.classList.remove('border-red-500'), 2000);
-            } else {
-                step1Div.classList.remove('block'); step1Div.classList.add('hidden');
-                step2Div.classList.remove('hidden'); step2Div.classList.add('block');
-                icon1.className = "step-circle completed"; icon1.innerHTML = `<i data-lucide="check" class="w-5 h-5"></i>`;
-                text1.className = "text-xs font-bold text-emerald-600 mt-2 text-center";
-                connector.classList.add('active');
-                icon2.className = "step-circle active"; text2.className = "text-xs font-bold text-blue-900 mt-2 text-center";
-                lucide.createIcons(); window.scrollTo(0, 0);
-            }
+            function nextStep() {
+            step1Div.classList.remove('block'); step1Div.classList.add('hidden');
+            step2Div.classList.remove('hidden'); step2Div.classList.add('block');
+            icon1.className = "step-circle completed"; icon1.innerHTML = `<i data-lucide="check" class="w-5 h-5"></i>`;
+            text1.className = "text-xs font-bold text-emerald-600 mt-2 text-center";
+            connector.classList.add('active');
+            icon2.className = "step-circle active"; text2.className = "text-xs font-bold text-blue-900 mt-2 text-center";
+            lucide.createIcons(); window.scrollTo(0, 0);
         }
 
         function prevStep() {
