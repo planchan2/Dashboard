@@ -728,6 +728,16 @@
             let currentStatus = (data[5] === "ตรวจสอบแล้ว" || data[5] === "สมบูรณ์") ? "สมบูรณ์" : "ไม่สมบูรณ์";
             let statusColor = currentStatus === "สมบูรณ์" ? "text-emerald-700 bg-emerald-100" : "text-amber-700 bg-amber-100";
 
+            // 🔴 เพิ่มตัวแปลงชื่อประเภทงบประมาณตรงนี้ 🔴
+            const budgetMap = {
+                "2": "งบดำเนินงาน (2)",
+                "5": "งบลงทุน (5)",
+                "6": "งบเงินอุดหนุน (6)",
+                "9": "งบรายจ่ายอื่น (7)",
+                "8": "งบกลาง (8)"
+            };
+            let displayBudget = data[7] ? (budgetMap[data[7]] || data[7]) : '<span class="text-amber-500 text-xs font-medium bg-amber-50 px-2 py-0.5 rounded">- ว่าง -</span>';
+
             let editBtn = `<button onclick="editProject(${sheetRow}, '${rowDataStr}'); closeManageModal();" class="w-full flex items-center justify-center gap-2 p-3 bg-white border-2 border-blue-400 text-blue-600 font-extrabold rounded-xl hover:bg-blue-50 shadow-sm transition"><i data-lucide="edit-3" class="w-5 h-5"></i> แก้ไขข้อมูล / แนบไฟล์เพิ่ม</button>`;
 
             content.innerHTML = `
@@ -757,7 +767,7 @@
                             </div>
                             <div>
                                 <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">ประเภทงบ</p>
-                                <p class="font-bold text-slate-800 text-sm">${data[7] ? 'งบ (' + data[7] + ')' : '<span class="text-amber-500 text-xs font-medium bg-amber-50 px-2 py-0.5 rounded">- ว่าง -</span>'}</p>
+                                <p class="font-bold text-slate-800 text-sm">${displayBudget}</p>
                             </div>
                             <div>
                                 <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">จำนวนเงิน</p>
@@ -785,7 +795,6 @@
             document.getElementById('manage-modal').classList.remove('hidden');
             lucide.createIcons();
         }
-
         function closeManageModal() {
             document.getElementById('manage-modal').classList.add('hidden');
         }
