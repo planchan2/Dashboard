@@ -795,6 +795,7 @@
             document.getElementById('manage-modal').classList.remove('hidden');
             lucide.createIcons();
         }
+
         function closeManageModal() {
             document.getElementById('manage-modal').classList.add('hidden');
         }
@@ -964,7 +965,6 @@
         const text2 = document.getElementById('step-text-2');
 
         function nextStep() {
-            function nextStep() {
             step1Div.classList.remove('block'); step1Div.classList.add('hidden');
             step2Div.classList.remove('hidden'); step2Div.classList.add('block');
             icon1.className = "step-circle completed"; icon1.innerHTML = `<i data-lucide="check" class="w-5 h-5"></i>`;
