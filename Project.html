@@ -29,12 +29,14 @@
 </head>
 <body class="p-4 md:p-8 flex flex-col items-center justify-start min-h-screen relative overflow-x-hidden">
 
+    <!-- ส่วนแสดงผลหน้าจอโหลดข้อมูล (Loading Overlay) -->
     <div id="loading-overlay" class="fixed inset-0 bg-slate-900/80 z-[300] hidden flex-col items-center justify-center px-4 text-center backdrop-blur-sm">
         <i data-lucide="loader-2" class="w-16 h-16 text-blue-500 animate-spin mb-6"></i>
         <h2 class="text-2xl font-extrabold text-white mb-2" id="loading-title">กำลังอัปโหลดไฟล์ข้อมูล...</h2>
-        <p class="text-slate-300 text-sm" id="loading-subtitle">ไฟล์ขนาดใหญ่อาจใช้เวลาสักครู่</p>
+        <p class="text-slate-300 text-sm" id="loading-subtitle">ไฟล์ที่มีขนาดใหญ่อาจใช้เวลาสักครู่</p>
     </div>
 
+    <!-- หน้าต่างยืนยันการลบข้อมูลระดับรายการ (Single Record Delete Modal) -->
     <div id="delete-confirm-modal" class="fixed inset-0 bg-slate-900/60 z-[500] hidden flex items-center justify-center px-4 backdrop-blur-sm transition-opacity duration-300 opacity-0">
         <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center transform scale-90 transition-transform duration-300" id="delete-confirm-box">
             <div class="mx-auto flex items-center justify-center w-20 h-20 rounded-full mb-5 bg-red-100 text-red-500">
@@ -61,6 +63,34 @@
         </div>
     </div>
 
+    <!-- หน้าต่างยืนยันการลบข้อมูลทั้งหมด (Delete All Records Modal) -->
+    <div id="delete-all-confirm-modal" class="fixed inset-0 bg-slate-900/60 z-[500] hidden flex items-center justify-center px-4 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center transform scale-90 transition-transform duration-300" id="delete-all-confirm-box">
+            <div class="mx-auto flex items-center justify-center w-20 h-20 rounded-full mb-5 bg-red-100 text-red-500">
+                <i data-lucide="alert-octagon" class="w-10 h-10"></i>
+            </div>
+            <h3 class="text-2xl font-black text-red-600 mb-2">ลบข้อมูลทั้งหมด?</h3>
+            <p class="text-slate-500 font-medium mb-6 text-sm">ข้อมูลของปีงบประมาณ <span class="display-year font-bold"></span> จะถูกลบถาวรทั้งหมด ไม่สามารถกู้คืนได้ แน่ใจหรือไม่?</p>
+
+            <div class="mb-6 text-left bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-2 text-center">รหัสผ่านยืนยันสิทธิ์:</label>
+                <div class="relative w-full">
+                    <input type="password" id="delete-all-password-input" class="w-full pl-4 pr-10 py-3 border border-slate-300 rounded-lg text-center font-bold tracking-widest outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition text-lg placeholder:text-sm placeholder:font-normal" placeholder="ใส่รหัสผ่าน">
+                    <button type="button" id="toggle-all-password-btn" onclick="toggleAllPasswordVisibility()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition">
+                        <i data-lucide="eye" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <p id="delete-all-error-msg" class="text-red-500 text-xs mt-2 hidden font-bold text-center"><i data-lucide="x-circle" class="w-3 h-3 inline"></i> รหัสผ่านไม่ถูกต้อง!</p>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="closeDeleteAllConfirm()" class="flex-1 py-3 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition">ยกเลิก</button>
+                <button id="confirm-delete-all-btn" class="flex-1 py-3 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-500/30 transition">ดำเนินการลบ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- หน้าต่างแจ้งเตือนสถานะระบบ (System Alert Modal) -->
     <div id="center-alert" class="fixed inset-0 bg-slate-900/60 z-[400] hidden flex items-center justify-center px-4 backdrop-blur-sm transition-opacity duration-300 opacity-0">
         <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center transform scale-90 transition-transform duration-300" id="center-alert-box">
             <div id="alert-icon-container" class="mx-auto flex items-center justify-center w-20 h-20 rounded-full mb-5"></div>
@@ -70,6 +100,7 @@
         </div>
     </div>
 
+    <!-- หน้าต่างแสดงรายละเอียดและจัดการข้อมูล (Management Details Modal) -->
     <div id="manage-modal" class="fixed inset-0 bg-slate-900/60 hidden flex items-center justify-center z-[200] fade-in px-4 py-6">
         <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-full">
             <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 flex-shrink-0">
@@ -85,12 +116,15 @@
         </div>
     </div>
 
+    <!-- หน้าต่าง Iframe สำหรับกระบวนการ Background (Hidden Iframe) -->
     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="handleIframeLoad()"></iframe>
 
+    <!-- ==================== ส่วนติดต่อผู้ใช้งาน: หน้าลงทะเบียนข้อมูล (Form View) ==================== -->
     <div id="view-form-container" class="flex flex-col items-center w-full fade-in pb-10">
         <div class="w-full max-w-4xl bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden z-10">
+            
             <div class="bg-blue-900 px-6 py-6 text-center border-b-4 border-yellow-500 relative">
-                
+                <!-- ส่วนตัวเลือกปีงบประมาณ -->
                 <div class="absolute top-4 right-4 z-20">
                     <select id="year-selector" onchange="changeYear()" class="bg-blue-800/80 border border-blue-700/50 text-white hover:bg-blue-700 text-sm font-bold rounded-lg px-2 py-1.5 outline-none cursor-pointer shadow-sm transition-all focus:ring-2 focus:ring-yellow-400">
                         <option value="2569">2569</option>
@@ -196,8 +230,8 @@
                     <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 flex gap-3 items-start">
                         <i data-lucide="info" class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0"></i>
                         <div>
-                            <p class="text-sm font-bold text-blue-900">อัปโหลดเอกสาร (ทุกประเภท)</p>
-                            <p id="edit-notice" class="text-xs text-amber-600 font-bold mt-1 hidden">โหมดแก้ไข: คุณสามารถดูไฟล์เดิมได้ หากต้องการเปลี่ยนไฟล์ ให้กดลบแล้วเลือกไฟล์ใหม่</p>
+                            <p class="text-sm font-bold text-blue-900">อัปโหลดเอกสาร (รองรับทุกประเภทไฟล์)</p>
+                            <p id="edit-notice" class="text-xs text-amber-600 font-bold mt-1 hidden">สถานะการแก้ไข: ระบบแสดงข้อมูลไฟล์เดิมที่บันทึกไว้ หากประสงค์เปลี่ยนแปลงข้อมูลไฟล์ โปรดดำเนินการลบและอัปโหลดไฟล์ใหม่</p>
                         </div>
                     </div>
 
@@ -205,7 +239,7 @@
                         <h3 class="font-bold text-slate-800 mb-3 text-base">จัดสรร</h3>
                         <label id="upload-zone-1" class="upload-zone flex flex-col items-center justify-center py-12 px-6 rounded-xl cursor-pointer bg-white">
                             <i data-lucide="upload-cloud" class="w-10 h-10 text-slate-400 mb-3"></i>
-                            <p class="font-bold text-slate-700">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์มาวางที่นี่</p>
+                            <p class="font-bold text-slate-700">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์มาวางที่บริเวณนี้</p>
                             <span class="px-5 py-2 mt-3 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 transition">เลือกไฟล์เอกสาร</span>
                             <input type="file" class="hidden file-input-magic" data-id="1" id="file-input-1">
                         </label>
@@ -228,7 +262,7 @@
                         <h3 class="font-bold text-slate-800 mb-3 text-base">ใบงวด</h3>
                         <label id="upload-zone-2" class="upload-zone flex flex-col items-center justify-center py-12 px-6 rounded-xl cursor-pointer bg-white">
                             <i data-lucide="upload-cloud" class="w-10 h-10 text-slate-400 mb-3"></i>
-                            <p class="font-bold text-slate-700">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์มาวางที่นี่</p>
+                            <p class="font-bold text-slate-700">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์มาวางที่บริเวณนี้</p>
                             <span class="px-5 py-2 mt-3 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 transition">เลือกไฟล์เอกสาร</span>
                             <input type="file" class="hidden file-input-magic" data-id="2" id="file-input-2">
                         </label>
@@ -248,10 +282,10 @@
                     </div>
 
                     <div>
-                        <h3 class="font-bold text-slate-800 mb-3 text-base">โครงการ</h3>
+                        <h3 class="font-bold text-slate-800 mb-3 text-base">โครงการ <span class="text-slate-400 text-xs font-normal">(สามารถดำเนินการแนบภายหลังได้)</span></h3>
                         <label id="upload-zone-3" class="upload-zone flex flex-col items-center justify-center py-12 px-6 rounded-xl cursor-pointer bg-white">
                             <i data-lucide="upload-cloud" class="w-10 h-10 text-slate-400 mb-3"></i>
-                            <p class="font-bold text-slate-700">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์มาวางที่นี่</p>
+                            <p class="font-bold text-slate-700">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์มาวางที่บริเวณนี้</p>
                             <span class="px-5 py-2 mt-3 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 transition">เลือกไฟล์เอกสาร</span>
                             <input type="file" class="hidden file-input-magic" data-id="3" id="file-input-3">
                         </label>
@@ -287,43 +321,40 @@
         </button>
     </div>
 
-    <!-- 🔴 ตกแต่งหน้าฐานข้อมูลใหม่ทั้งหมด 🔴 -->
+    <!-- ==================== ส่วนติดต่อผู้ใช้งาน: หน้าฐานข้อมูล (Dashboard View) ==================== -->
     <div id="view-dashboard-container" class="hidden flex-col items-center w-full max-w-7xl fade-in pb-10 mt-4">
         
         <div class="w-full flex justify-between items-center mb-6 bg-blue-900 border-b-4 border-yellow-500 p-6 rounded-2xl shadow-lg relative">
             <div>
                 <h1 class="text-2xl font-extrabold text-white flex items-center gap-3">
-                    <img src="https://planchan2.github.io/Dashboard/logo-photoroom.png" alt="โลโก้" class="h-10 w-10 bg-white rounded-full p-0.5 shadow-sm">
-                     ฐานข้อมูลโครงการ พ.ศ. <span class="display-year">2569</span>
+                    <img src="https://planchan2.github.io/Dashboard/logo-photoroom.png" alt="โลโก้" class="h-10 w-10 bg-white rounded-full p-0.5 shadow-sm"> 
+                    ฐานข้อมูลโครงการ พ.ศ. <span class="display-year">2569</span>
                 </h1>
                 <p class="text-sm text-blue-100 mt-1">จัดการและติดตามสถานะโครงการทั้งหมด</p>
             </div>
             <div class="flex items-center gap-3">
-                <button onclick="toggleView('form')"
-                    class="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-xl shadow-sm flex items-center gap-2 text-sm transition backdrop-blur-sm">
-                    <i data-lucide="arrow-left" class="w-4 h-4"></i> ย้อนกลับไปหน้าเอกสาร
+                <button onclick="toggleView('form')" class="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-xl shadow-sm flex items-center gap-2 text-sm transition backdrop-blur-sm">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> ย้อนกลับไปหน้าลงทะเบียนเอกสาร
                 </button>
             </div>
         </div>
 
         <div class="w-full bg-white rounded-2xl p-1 shadow-xl border border-slate-200 overflow-hidden">
             
+            <!-- ส่วนตัวกรองข้อมูลและเครื่องมือควบคุม -->
             <div class="bg-slate-50 border-b border-slate-200 p-5 flex flex-wrap items-center justify-between gap-4 rounded-t-xl">
+                
                 <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
                     <div class="relative w-full md:w-64">
                         <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
-                        <input type="text" id="search-input" oninput="renderTable()"
-                            placeholder="ค้นหากลุ่ม/หน่วย, ผู้รับผิดชอบ..."
-                            class="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition shadow-sm">
+                        <input type="text" id="search-input" oninput="renderTable()" placeholder="ค้นหากลุ่ม/หน่วย, ผู้รับผิดชอบ..." class="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition shadow-sm">
                     </div>
-                    <select id="status-filter" onchange="renderTable()"
-                        class="px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 bg-white outline-none cursor-pointer shadow-sm hover:border-blue-400 transition">
+                    <select id="status-filter" onchange="renderTable()" class="px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 bg-white outline-none cursor-pointer shadow-sm hover:border-blue-400 transition">
                         <option value="">สถานะ: ทั้งหมด</option>
                         <option value="สมบูรณ์">สมบูรณ์</option>
                         <option value="ไม่สมบูรณ์">ไม่สมบูรณ์</option>
                     </select>
-                    <select id="group-filter" onchange="renderTable()"
-                        class="px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 bg-white outline-none cursor-pointer shadow-sm hover:border-blue-400 transition max-w-[200px] truncate">
+                    <select id="group-filter" onchange="renderTable()" class="px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 bg-white outline-none cursor-pointer shadow-sm hover:border-blue-400 transition max-w-[200px] truncate">
                         <option value="">กลุ่ม/หน่วย: ทั้งหมด</option>
                         <option value="กลุ่มอำนวยการ">กลุ่มอำนวยการ</option>
                         <option value="กลุ่มนโยบายและแผน">กลุ่มนโยบายและแผน</option>
@@ -336,14 +367,27 @@
                         <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
                         <option value="กลุ่มกฏหมายและคดี">กลุ่มกฏหมายและคดี</option>
                     </select>
-                    <button
-                        class="px-4 py-2 border border-slate-300 rounded-lg text-sm font-bold text-slate-700 bg-white flex items-center gap-2 hover:bg-slate-100 shadow-sm transition active:scale-95"
-                        onclick="fetchData()">
-                        <i data-lucide="refresh-cw" class="w-4 h-4 text-blue-600"></i> รีเฟรช
+                    <button class="px-4 py-2 border border-slate-300 rounded-lg text-sm font-bold text-slate-700 bg-white flex items-center gap-2 hover:bg-slate-100 shadow-sm transition active:scale-95" onclick="fetchData()">
+                        <i data-lucide="refresh-cw" class="w-4 h-4 text-blue-600"></i> รีเฟรชข้อมูล
                     </button>
+                    <!-- ตัวเลือกปีงบประมาณสำหรับการดึงข้อมูล -->
+                    <select id="year-selector-dashboard" onchange="changeYearDashboard()" class="px-3 py-2 border border-slate-300 rounded-lg text-sm font-black text-blue-700 bg-blue-50 outline-none cursor-pointer shadow-sm hover:border-blue-400 transition">
+                        <option value="2569">ปี 2569</option>
+                        <option value="2570">ปี 2570</option>
+                        <option value="2571">ปี 2571</option>
+                        <option value="2572">ปี 2572</option>
+                        <option value="2573">ปี 2573</option>
+                    </select>
                 </div>
+
+                <!-- ปุ่มดำเนินการลบข้อมูลทั้งหมดในระบบ -->
+                <button onclick="confirmDeleteAll()" class="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 rounded-lg text-sm font-bold flex items-center gap-2 shadow-sm transition active:scale-95 whitespace-nowrap ml-auto">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i> ลบข้อมูลทั้งหมด
+                </button>
+
             </div>
 
+            <!-- ส่วนตารางแสดงผลข้อมูล -->
             <div class="overflow-x-auto p-4">
                 <table class="w-full text-left border-collapse rounded-lg overflow-hidden">
                     <thead class="bg-blue-50/80 border-b-2 border-blue-100">
@@ -351,7 +395,7 @@
                             <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider w-16 text-center">ลำดับ</th>
                             <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">กลุ่ม/หน่วย</th>
                             <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">ผู้รับผิดชอบ</th>
-                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">วันที่ส่ง</th>
+                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">วันที่นำส่ง</th>
                             <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">งบประมาณ</th>
                             <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider text-center">สถานะ</th>
                             <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider text-center">จัดการ</th>
@@ -361,7 +405,7 @@
                         <tr>
                             <td colspan="7" class="py-12 text-center text-slate-400 bg-white">
                                 <i data-lucide="loader-2" class="w-8 h-8 mx-auto mb-2 opacity-50 animate-spin"></i>
-                                กำลังโหลดข้อมูล...
+                                กำลังดำเนินการเรียกข้อมูล...
                             </td>
                         </tr>
                     </tbody>
@@ -369,27 +413,43 @@
             </div>
 
             <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-sm text-slate-500 rounded-b-xl">
-                <p id="data-count" class="font-medium">กำลังคำนวณ...</p>
+                <p id="data-count" class="font-medium">กำลังคำนวณจำนวนรายการ...</p>
             </div>
         </div>
     </div>
 
-
+    <!-- ==================== ส่วนประมวลผลการทำงาน (JavaScript Application Logic) ==================== -->
     <script>
         lucide.createIcons();
+        
+        // กำหนด Endpoint ของ Web App (Google Apps Script)
         const API_URL = "https://script.google.com/macros/s/AKfycbxEyLr6S7Hkno9yD16wZ7K1Ut0S6Kby-LEwYp8VTZELk602_OoiAg6sq6mZOWKLLmPd/exec";
 
         let allProjectsData = [];
         let rowToDelete = null;
 
+        // ฟังก์ชันซิงโครไนซ์การเลือกปีงบประมาณจากหน้าแบบฟอร์ม
         function changeYear() {
             const selectedYear = document.getElementById('year-selector').value;
+            const dashboardSelector = document.getElementById('year-selector-dashboard');
+            if(dashboardSelector) dashboardSelector.value = selectedYear; 
+            
             document.querySelectorAll('.display-year').forEach(el => el.innerText = selectedYear);
             if (!document.getElementById('view-dashboard-container').classList.contains('hidden')) {
                 fetchData();
             }
         }
 
+        // ฟังก์ชันซิงโครไนซ์การเลือกปีงบประมาณจากหน้าตารางข้อมูล
+        function changeYearDashboard() {
+            const selectedYear = document.getElementById('year-selector-dashboard').value;
+            document.getElementById('year-selector').value = selectedYear; 
+            
+            document.querySelectorAll('.display-year').forEach(el => el.innerText = selectedYear);
+            fetchData();
+        }
+
+        // ฟังก์ชันแสดงหน้าต่างแจ้งเตือนสถานะการทำงาน
         function showCenterAlert(type, title, message) {
             const modal = document.getElementById('center-alert');
             const box = document.getElementById('center-alert-box');
@@ -424,6 +484,7 @@
             lucide.createIcons();
         }
 
+        // ฟังก์ชันปิดหน้าต่างแจ้งเตือนสถานะการทำงาน
         function closeCenterAlert() {
             const modal = document.getElementById('center-alert');
             const box = document.getElementById('center-alert-box');
@@ -433,6 +494,7 @@
             setTimeout(() => { modal.classList.add('hidden'); }, 300);
         }
 
+        // ฟังก์ชันแสดง/ซ่อนรหัสผ่านในหน้าต่างลบข้อมูลระดับรายการ
         function togglePasswordVisibility() {
             const input = document.getElementById('delete-password-input');
             const btn = document.getElementById('toggle-password-btn');
@@ -447,6 +509,21 @@
             lucide.createIcons();
         }
 
+        // ฟังก์ชันแสดง/ซ่อนรหัสผ่านในหน้าต่างลบข้อมูลทั้งหมด
+        function toggleAllPasswordVisibility() {
+            const input = document.getElementById('delete-all-password-input');
+            const btn = document.getElementById('toggle-all-password-btn');
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerHTML = '<i data-lucide="eye-off" class="w-5 h-5"></i>';
+            } else {
+                input.type = 'password';
+                btn.innerHTML = '<i data-lucide="eye" class="w-5 h-5"></i>';
+            }
+            lucide.createIcons();
+        }
+
+        // ฟังก์ชันแปลงไฟล์เป็นรูปแบบ Base64 สำหรับเตรียมนำส่งผ่าน API
         function getBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -456,6 +533,7 @@
             });
         }
 
+        // กระบวนการนำส่งฟอร์มข้อมูลและการจัดการการอัปโหลดไฟล์
         document.getElementById('project-form').addEventListener('submit', async function (e) {
             e.preventDefault();
 
@@ -463,11 +541,10 @@
             const btnText = document.getElementById('submit-text');
             btn.disabled = true;
             btn.classList.add('opacity-70', 'cursor-not-allowed');
-            btnText.innerHTML = "กำลังประมวลผล โปรดรอสักครู่...";
-
-            const loadingTitle = document.getElementById('loading-title');
-            const loadingSubtitle = document.getElementById('loading-subtitle');
+            btnText.innerHTML = "กำลังบีบอัดไฟล์ โปรดรอสักครู่...";
             
+            document.getElementById('loading-title').innerText = "กำลังอัปโหลดไฟล์ข้อมูล...";
+            document.getElementById('loading-subtitle').innerText = "ไฟล์ที่มีขนาดใหญ่อาจใช้เวลาสักครู่";
             document.getElementById('loading-overlay').classList.remove('hidden');
             document.getElementById('loading-overlay').classList.add('flex');
 
@@ -483,10 +560,8 @@
                 const responsibleName = document.getElementById('name-input').value || "ไม่ระบุชื่อ";
                 const selectedYear = document.getElementById('year-selector').value;
 
+                // ฟังก์ชันย่อยสำหรับการดำเนินการอัปโหลดทีละไฟล์
                 async function uploadSingleFile(fileInput, prefix) {
-                    loadingTitle.innerText = `กำลังอัปโหลด: ไฟล์${prefix}...`;
-                    loadingSubtitle.innerText = "ไฟล์มีขนาดใหญ่ กรุณารอสักครู่ (ห้ามปิดหน้าต่างนี้)";
-                    
                     const base64Data = await getBase64(fileInput.files[0]);
                     const payload = {
                         action: 'upload_file',
@@ -509,13 +584,12 @@
                     else throw new Error(result.message);
                 }
 
+                // กระบวนการอัปโหลดตามลำดับ
                 if (fileInput1.files.length > 0) file1Url = await uploadSingleFile(fileInput1, "จัดสรร");
                 if (fileInput2.files.length > 0) file2Url = await uploadSingleFile(fileInput2, "ใบงวด");
                 if (fileInput3.files.length > 0) file3Url = await uploadSingleFile(fileInput3, "โครงการ");
 
-                loadingTitle.innerText = "กำลังบันทึกข้อมูลลงฐานข้อมูล...";
-                loadingSubtitle.innerText = "ใกล้เสร็จแล้วครับ...";
-
+                // จัดเตรียมชุดข้อมูล (Payload) สำหรับบันทึกลงฐานข้อมูล
                 const finalPayload = {
                     action: document.getElementById('form-action').value,
                     row: document.getElementById('form-row').value,
@@ -530,6 +604,7 @@
                     existingFile3: file3Url
                 };
 
+                // ส่งคำร้องขอบันทึกข้อมูลไปยังเซิร์ฟเวอร์
                 const response = await fetch(API_URL + "?t=" + new Date().getTime(), {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -545,7 +620,11 @@
                 btnText.innerHTML = "บันทึกและนำส่งข้อมูล";
 
                 if (result.status === 'success') {
-                    showCenterAlert('success', 'บันทึกข้อมูลสำเร็จ!', 'ข้อมูลถูกจัดเก็บในชีตปี ' + selectedYear + ' เรียบร้อยแล้วครับ');
+                    if (result.errors && result.errors.length > 0) {
+                        showCenterAlert('warning', 'การอัปโหลดไฟล์บางส่วนไม่สำเร็จ', result.message);
+                    } else {
+                        showCenterAlert('success', 'บันทึกข้อมูลสำเร็จ', 'ข้อมูลถูกจัดเก็บในฐานข้อมูลประจำปี ' + selectedYear + ' เรียบร้อยแล้ว');
+                    }
 
                     document.getElementById('project-form').reset();
                     document.getElementById('form-action').value = 'create';
@@ -556,7 +635,7 @@
                     fetchData();
                     setTimeout(() => { toggleView('dashboard'); }, 1500);
                 } else {
-                    showCenterAlert('error', 'เกิดข้อผิดพลาดเซิร์ฟเวอร์', result.message);
+                    showCenterAlert('error', 'ข้อผิดพลาดจากเซิร์ฟเวอร์', result.message);
                 }
             } catch (err) {
                 document.getElementById('loading-overlay').classList.add('hidden');
@@ -565,14 +644,15 @@
                 btn.classList.remove('opacity-70', 'cursor-not-allowed');
                 btnText.innerHTML = "บันทึกและนำส่งข้อมูล";
 
-                showCenterAlert('error', 'อัปโหลดไม่สำเร็จ!', 'ไฟล์ใหญ่เกินไป หรือการเชื่อมต่ออินเทอร์เน็ตมีปัญหาครับ');
+                showCenterAlert('error', 'การประมวลผลล้มเหลว', 'เกิดข้อผิดพลาดในการเชื่อมต่อเครือข่าย หรือขนาดไฟล์เกินข้อจำกัดระบบ');
             }
         });
 
+        // ฟังก์ชันดึงข้อมูลจาก API เพื่อแสดงผลในตาราง
         async function fetchData() {
             const tableBody = document.getElementById('table-body');
             const dataCount = document.getElementById('data-count');
-            tableBody.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-slate-400 bg-white"><i data-lucide="loader-2" class="w-8 h-8 mx-auto mb-2 opacity-50 animate-spin"></i>กำลังโหลดข้อมูล...</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-slate-400 bg-white"><i data-lucide="loader-2" class="w-8 h-8 mx-auto mb-2 opacity-50 animate-spin"></i>กำลังดำเนินการเรียกข้อมูล...</td></tr>`;
             lucide.createIcons();
 
             const selectedYear = document.getElementById('year-selector').value;
@@ -589,8 +669,8 @@
                     renderTable();
                 } else {
                     allProjectsData = [];
-                    tableBody.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-slate-400 bg-white">ยังไม่มีข้อมูลสำหรับปีงบประมาณ ${selectedYear}</td></tr>`;
-                    dataCount.innerHTML = "ไม่มีข้อมูล";
+                    tableBody.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-slate-400 bg-white">ยังไม่มีรายการข้อมูลสำหรับปีงบประมาณ ${selectedYear}</td></tr>`;
+                    dataCount.innerHTML = "ไม่พบรายการข้อมูล";
                 }
             } catch (error) {
                 tableBody.innerHTML = `
@@ -599,8 +679,8 @@
                             <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-500 mb-4">
                                 <i data-lucide="alert-triangle" class="w-8 h-8"></i>
                             </div>
-                            <p class="text-red-500 font-extrabold text-lg mb-1">เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล</p>
-                            <p class="text-slate-500 text-sm">กรุณากดปุ่มรีเฟรชอีกครั้ง หรือตรวจสอบการเชื่อมต่ออินเทอร์เน็ต</p>
+                            <p class="text-red-500 font-extrabold text-lg mb-1">ข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล</p>
+                            <p class="text-slate-500 text-sm">กรุณาตรวจสอบการตั้งค่าสิทธิ์การเข้าถึงของ Google Apps Script หรือการเชื่อมต่อเครือข่ายอินเทอร์เน็ต</p>
                         </td>
                     </tr>
                 `;
@@ -608,6 +688,7 @@
             }
         }
 
+        // ฟังก์ชันนำข้อมูลมาสร้างโครงสร้างตาราง (Render Table)
         function renderTable() {
             const tableBody = document.getElementById('table-body');
             const dataCount = document.getElementById('data-count');
@@ -625,8 +706,8 @@
             });
 
             if (filteredData.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-slate-400 bg-white">ไม่พบข้อมูลที่ค้นหา</td></tr>`;
-                dataCount.innerHTML = "พบ 0 โครงการ";
+                tableBody.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-slate-400 bg-white">ไม่พบรายการข้อมูลที่ตรงกับเงื่อนไขการค้นหา</td></tr>`;
+                dataCount.innerHTML = "พบ 0 รายการ";
                 return;
             }
 
@@ -655,15 +736,15 @@
                 `;
                 tableBody.appendChild(tr);
             });
-            dataCount.innerHTML = `แสดงผล <span class="font-bold text-blue-600">${filteredData.length}</span> โครงการ`;
+            dataCount.innerHTML = `แสดงผลข้อมูล <span class="font-bold text-blue-600">${filteredData.length}</span> รายการ`;
             lucide.createIcons();
         }
 
+        // ฟังก์ชันเรียกหน้าต่างแสดงรายละเอียดรายการข้อมูล
         function openManageModal(sheetRow, rowDataStr) {
             const data = JSON.parse(decodeURIComponent(rowDataStr));
             const content = document.getElementById('manage-modal-content');
 
-            // 🔴 เปลี่ยนคำอธิบายในบัตรแสดงผล 🔴
             const createDocCard = (url, title) => {
                 return `<a href="${url}" target="_blank" class="flex items-center gap-4 w-full p-3 border border-slate-200 rounded-xl shadow-sm bg-white hover:border-blue-400 hover:shadow-md transition group">
                             <div class="flex flex-col items-center justify-center w-10 h-12 border border-slate-200 rounded-md bg-slate-50 flex-shrink-0 relative group-hover:bg-blue-50 transition">
@@ -671,7 +752,7 @@
                             </div>
                             <div class="flex-1 flex flex-col justify-center overflow-hidden">
                                 <p class="font-bold text-slate-700 text-sm group-hover:text-blue-700 transition truncate">${title}</p>
-                                <p class="text-xs text-slate-400 font-medium mt-1 flex items-center gap-1 group-hover:text-blue-500"><i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-500"></i> พร้อมเปิดดู</p>
+                                <p class="text-xs text-slate-400 font-medium mt-1 flex items-center gap-1 group-hover:text-blue-500"><i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-500"></i> พร้อมสำหรับเปิดเอกสาร</p>
                             </div>
                         </a>`;
             };
@@ -683,7 +764,7 @@
                             </div>
                             <div class="flex-1 flex flex-col justify-center">
                                 <p class="font-bold text-slate-500 text-sm">${title}</p>
-                                <p class="text-xs text-amber-500 font-medium mt-1 flex items-center gap-1"><i data-lucide="alert-circle" class="w-3 h-3"></i> ยังไม่ได้แนบไฟล์</p>
+                                <p class="text-xs text-amber-500 font-medium mt-1 flex items-center gap-1"><i data-lucide="alert-circle" class="w-3 h-3"></i> ยังไม่มีเอกสารแนบ</p>
                             </div>
                         </div>`;
             }
@@ -704,7 +785,7 @@
             };
             let displayBudget = data[7] ? (budgetMap[data[7]] || data[7]) : '<span class="text-amber-500 text-xs font-medium bg-amber-50 px-2 py-0.5 rounded">- ว่าง -</span>';
 
-            let editBtn = `<button onclick="editProject(${sheetRow}, '${rowDataStr}'); closeManageModal();" class="w-full flex items-center justify-center gap-2 p-3 bg-white border-2 border-blue-400 text-blue-600 font-extrabold rounded-xl hover:bg-blue-50 shadow-sm transition"><i data-lucide="edit-3" class="w-5 h-5"></i> แก้ไขข้อมูล / แนบไฟล์เพิ่ม</button>`;
+            let editBtn = `<button onclick="editProject(${sheetRow}, '${rowDataStr}'); closeManageModal();" class="w-full flex items-center justify-center gap-2 p-3 bg-white border-2 border-blue-400 text-blue-600 font-extrabold rounded-xl hover:bg-blue-50 shadow-sm transition"><i data-lucide="edit-3" class="w-5 h-5"></i> แก้ไขข้อมูล / อัปโหลดไฟล์เพิ่มเติม</button>`;
 
             content.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -716,7 +797,7 @@
                                 <span class="inline-flex px-2 py-0.5 rounded text-[11px] font-bold ${statusColor}">${currentStatus}</span>
                             </div>
                             <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">วันที่ส่ง</p>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">วันที่นำส่งข้อมูล</p>
                                 <p class="font-bold text-slate-800 text-sm truncate" title="${data[3] || '-'}">${data[3] || '-'}</p>
                             </div>
                             <div class="col-span-2">
@@ -732,7 +813,7 @@
                                 <p class="font-bold text-slate-800 text-sm break-words">${data[6] || '<span class="text-amber-500 text-xs font-medium bg-amber-50 px-2 py-0.5 rounded">- ยังไม่ได้ระบุ -</span>'}</p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">ประเภทงบ</p>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">ประเภทงบประมาณ</p>
                                 <p class="font-bold text-slate-800 text-sm">${displayBudget}</p>
                             </div>
                             <div>
@@ -753,7 +834,7 @@
                         </div>
                         <div class="border-t border-slate-100 pt-4 flex flex-col gap-3 mt-auto">
                             ${editBtn}
-                            <button onclick="confirmDeleteProject(${sheetRow})" class="w-full flex items-center justify-center gap-2 p-3 bg-white text-red-500 hover:text-red-600 font-bold rounded-xl hover:bg-red-50 transition"><i data-lucide="trash-2" class="w-4 h-4"></i> ลบข้อมูลโครงการนี้</button>
+                            <button onclick="confirmDeleteProject(${sheetRow})" class="w-full flex items-center justify-center gap-2 p-3 bg-white text-red-500 hover:text-red-600 font-bold rounded-xl hover:bg-red-50 transition"><i data-lucide="trash-2" class="w-4 h-4"></i> ลบข้อมูลรายการนี้</button>
                         </div>
                     </div>
                 </div>
@@ -762,10 +843,12 @@
             lucide.createIcons();
         }
 
+        // ฟังก์ชันซ่อนหน้าต่างแสดงรายละเอียดรายการข้อมูล
         function closeManageModal() {
             document.getElementById('manage-modal').classList.add('hidden');
         }
 
+        // ฟังก์ชันแสดงหน้าต่างยืนยันการลบข้อมูล (ระดับรายการ)
         function confirmDeleteProject(sheetRow) {
             rowToDelete = sheetRow;
             const passInput = document.getElementById('delete-password-input');
@@ -789,6 +872,7 @@
             lucide.createIcons();
         }
 
+        // ฟังก์ชันซ่อนหน้าต่างยืนยันการลบข้อมูล (ระดับรายการ)
         function closeDeleteConfirm() {
             const modal = document.getElementById('delete-confirm-modal');
             const box = document.getElementById('delete-confirm-box');
@@ -799,6 +883,7 @@
             rowToDelete = null;
         }
 
+        // กระบวนการดำเนินการเมื่อผู้ใช้ยืนยันการลบข้อมูล (ระดับรายการ)
         document.getElementById('confirm-delete-btn').addEventListener('click', async function () {
             if (!rowToDelete) return;
             const passInput = document.getElementById('delete-password-input');
@@ -820,8 +905,8 @@
             closeDeleteConfirm();
             closeManageModal();
 
-            document.getElementById('loading-title').innerText = "กำลังลบข้อมูล...";
-            document.getElementById('loading-subtitle').innerText = "กรุณารอสักครู่ ระบบกำลังลบข้อมูลออกจากฐานข้อมูล";
+            document.getElementById('loading-title').innerText = "กำลังดำเนินการลบข้อมูล...";
+            document.getElementById('loading-subtitle').innerText = "โปรดรอสักครู่ ระบบกำลังนำข้อมูลออกจากฐานข้อมูล";
 
             document.getElementById('loading-overlay').classList.remove('hidden');
             document.getElementById('loading-overlay').classList.add('flex');
@@ -841,18 +926,103 @@
                 document.getElementById('loading-overlay').classList.remove('flex');
 
                 if (result.status === 'success') {
-                    showCenterAlert('success', 'ลบข้อมูลสำเร็จ!', 'ลบข้อมูลโครงการออกจากระบบเรียบร้อยแล้ว');
+                    showCenterAlert('success', 'ลบข้อมูลเสร็จสิ้น', 'รายการโครงการดังกล่าวถูกลบออกจากระบบเรียบร้อยแล้ว');
                     fetchData();
                 } else {
-                    showCenterAlert('error', 'ผิดพลาด!', result.message);
+                    showCenterAlert('error', 'การลบข้อมูลล้มเหลว', result.message);
                 }
             } catch (err) {
                 document.getElementById('loading-overlay').classList.add('hidden');
                 document.getElementById('loading-overlay').classList.remove('flex');
-                showCenterAlert('error', 'ข้อผิดพลาด!', 'การเชื่อมต่อล้มเหลว');
+                showCenterAlert('error', 'ข้อผิดพลาดระบบ', 'การเชื่อมต่อขัดข้อง ไม่สามารถดำเนินการลบข้อมูลได้');
             }
         });
 
+        // ฟังก์ชันแสดงหน้าต่างยืนยันการลบข้อมูลทั้งหมดในระบบประจำปีนั้น
+        function confirmDeleteAll() {
+            const passInput = document.getElementById('delete-all-password-input');
+            const eyeBtn = document.getElementById('toggle-all-password-btn');
+
+            passInput.value = '';
+            passInput.type = 'password';
+            eyeBtn.innerHTML = '<i data-lucide="eye" class="w-5 h-5"></i>';
+
+            document.getElementById('delete-all-error-msg').classList.add('hidden');
+            passInput.classList.remove('border-red-500', 'bg-red-50');
+
+            const modal = document.getElementById('delete-all-confirm-modal');
+            const box = document.getElementById('delete-all-confirm-box');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                box.classList.remove('scale-90');
+                box.classList.add('scale-100');
+            }, 10);
+            lucide.createIcons();
+        }
+
+        // ฟังก์ชันซ่อนหน้าต่างยืนยันการลบข้อมูลทั้งหมดในระบบ
+        function closeDeleteAllConfirm() {
+            const modal = document.getElementById('delete-all-confirm-modal');
+            const box = document.getElementById('delete-all-confirm-box');
+            modal.classList.add('opacity-0');
+            box.classList.remove('scale-100');
+            box.classList.add('scale-90');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        }
+
+        // กระบวนการดำเนินการลบข้อมูลทั้งหมดในระบบเมื่อผู้ใช้ยืนยันรหัสผ่านถูกต้อง
+        document.getElementById('confirm-delete-all-btn').addEventListener('click', async function () {
+            const passInput = document.getElementById('delete-all-password-input');
+            const errMsg = document.getElementById('delete-all-error-msg');
+
+            const SECRET_PASSWORD = "Plan@chan2";
+
+            if (passInput.value !== SECRET_PASSWORD) {
+                errMsg.classList.remove('hidden');
+                passInput.classList.add('border-red-500', 'bg-red-50');
+                setTimeout(() => {
+                    passInput.classList.remove('border-red-500', 'bg-red-50');
+                    errMsg.classList.add('hidden');
+                }, 3000);
+                return;
+            }
+
+            closeDeleteAllConfirm();
+
+            document.getElementById('loading-title').innerText = "กำลังดำเนินการล้างข้อมูลระบบ...";
+            document.getElementById('loading-subtitle').innerText = "โปรดรอสักครู่ ระบบกำลังลบข้อมูลทั้งหมดประจำปีนี้";
+            document.getElementById('loading-overlay').classList.remove('hidden');
+            document.getElementById('loading-overlay').classList.add('flex');
+
+            try {
+                const selectedYear = document.getElementById('year-selector').value;
+                const payload = { action: 'deleteAll', year: selectedYear };
+                
+                const response = await fetch(API_URL + "?t=" + new Date().getTime(), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                document.getElementById('loading-overlay').classList.add('hidden');
+                document.getElementById('loading-overlay').classList.remove('flex');
+
+                if (result.status === 'success') {
+                    showCenterAlert('success', 'การล้างข้อมูลเสร็จสิ้น', 'ข้อมูลทั้งหมดประจำปีงบประมาณ ' + selectedYear + ' ถูกลบออกจากระบบเรียบร้อยแล้ว');
+                    fetchData();
+                } else {
+                    showCenterAlert('error', 'การล้างข้อมูลล้มเหลว', result.message);
+                }
+            } catch (err) {
+                document.getElementById('loading-overlay').classList.add('hidden');
+                document.getElementById('loading-overlay').classList.remove('flex');
+                showCenterAlert('error', 'ข้อผิดพลาดระบบ', 'การเชื่อมต่อขัดข้อง ไม่สามารถดำเนินการได้');
+            }
+        });
+
+        // ฟังก์ชันจัดการแสดงผลสถานะเอกสารเมื่อเรียกดูข้อมูลเก่าในโหมดแก้ไข
         function showExistingFile(id, url, defaultName) {
             const uploadZone = document.getElementById('upload-zone-' + id);
             const fileItem = document.getElementById('file-item-' + id);
@@ -864,7 +1034,7 @@
                 fileNameDisplay.innerHTML = `<a href="${url}" target="_blank" class="text-blue-600 underline hover:text-blue-800 truncate block w-full pr-4">${defaultName} <i data-lucide="external-link" class="w-3 h-3 inline"></i></a>`;
                 uploadZone.style.display = 'none';
                 fileItem.style.display = 'flex';
-                statusContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-500"></i><span class="text-emerald-600 font-bold">มีไฟล์เดิมในระบบ</span>`;
+                statusContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-500"></i><span class="text-emerald-600 font-bold">เอกสารเดิมถูกจัดเก็บไว้ในระบบ</span>`;
                 progressFill.style.width = '100%';
                 lucide.createIcons();
             } else {
@@ -872,6 +1042,7 @@
             }
         }
 
+        // ฟังก์ชันเตรียมข้อมูลสำหรับโหมดแก้ไขเมื่อผู้ใช้กดปุ่มแก้ไขจากหน้าจัดการ
         function editProject(rowIndex, rowDataStr) {
             const data = JSON.parse(decodeURIComponent(rowDataStr));
             document.getElementById('input-group').value = data[1] || "";
@@ -887,17 +1058,16 @@
             document.getElementById('input-budget-type').value = data[7] || "";
             document.getElementById('input-plan').value = data[6] || "";
 
-            // 🔴 เปลี่ยนคำอธิบาย 🔴
-            showExistingFile('1', data[8], "เอกสารจัดสรรเดิม");
-            showExistingFile('2', data[9], "เอกสารใบงวดเดิม");
-            showExistingFile('3', data[10], "เอกสารโครงการเดิม");
+            showExistingFile('1', data[8], "ไฟล์เอกสารจัดสรรเดิม");
+            showExistingFile('2', data[9], "ไฟล์เอกสารใบงวดเดิม");
+            showExistingFile('3', data[10], "ไฟล์เอกสารโครงการเดิม");
 
-            document.getElementById('submit-text').innerHTML = "บันทึกการแก้ไขข้อมูล";
+            document.getElementById('submit-text').innerHTML = "บันทึกการปรับปรุงข้อมูล";
 
             toggleView('form');
-            nextStep();
         }
 
+        // ฟังก์ชันสลับการแสดงผลหน้าจอระหว่างฟอร์มและตารางฐานข้อมูล
         function toggleView(view) {
             const formContainer = document.getElementById('view-form-container');
             const dashboardContainer = document.getElementById('view-dashboard-container');
@@ -911,6 +1081,7 @@
             }
         }
 
+        // ฟังก์ชันการจัดการรูปแบบการแสดงผลของตัวเลขจำนวนเงิน
         const moneyInput = document.getElementById('money-input');
         if (moneyInput) {
             moneyInput.addEventListener('input', function () {
@@ -933,6 +1104,7 @@
         const icon2 = document.getElementById('step-icon-2');
         const text2 = document.getElementById('step-text-2');
 
+        // ฟังก์ชันเลื่อนสถานะหน้าฟอร์มไปยังขั้นตอนถัดไป (ส่วนที่ 2)
         function nextStep() {
             step1Div.classList.remove('block'); step1Div.classList.add('hidden');
             step2Div.classList.remove('hidden'); step2Div.classList.add('block');
@@ -943,6 +1115,7 @@
             lucide.createIcons(); window.scrollTo(0, 0);
         }
 
+        // ฟังก์ชันย้อนกลับสถานะหน้าฟอร์มมายังขั้นตอนแรก (ส่วนที่ 1)
         function prevStep() {
             step2Div.classList.remove('block'); step2Div.classList.add('hidden');
             step1Div.classList.remove('hidden'); step1Div.classList.add('block');
@@ -953,6 +1126,7 @@
             window.scrollTo(0, 0);
         }
 
+        // กระบวนการตรวจสอบเมื่อมีการเปลี่ยนแปลงข้อมูลไฟล์อัปโหลดในระบบ
         document.querySelectorAll('.file-input-magic').forEach(input => {
             input.addEventListener('change', function () {
                 const id = this.getAttribute('data-id');
@@ -966,23 +1140,25 @@
                     fileNameDisplay.textContent = this.files[0].name;
                     uploadZone.style.display = 'none'; fileItem.style.display = 'flex';
 
+                    // แสดงนามสกุลไฟล์ที่อัปโหลด
                     let fileExt = this.files[0].name.split('.').pop().toUpperCase();
-                    if(fileExt.length > 4) fileExt = "FILE"; // ถ้าชื่อยาวไปให้ใช้คำว่า FILE
+                    if(fileExt.length > 4) fileExt = "FILE";
                     document.getElementById('badge-' + id).innerText = fileExt;
 
-                    statusContainer.innerHTML = `<i data-lucide="loader-2" class="w-3 h-3 text-blue-500 animate-spin"></i><span class="text-blue-500 font-bold">เลือกไฟล์แล้ว</span>`;
+                    statusContainer.innerHTML = `<i data-lucide="loader-2" class="w-3 h-3 text-blue-500 animate-spin"></i><span class="text-blue-500 font-bold">ดำเนินการเลือกไฟล์สำเร็จ</span>`;
                     lucide.createIcons();
                     progressFill.style.animation = 'none'; progressFill.offsetHeight;
                     progressFill.style.animation = 'loadProgress 0.5s ease-out forwards';
 
                     setTimeout(() => {
-                        statusContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-500"></i><span class="text-emerald-600 font-bold">พร้อมอัปโหลด</span>`;
+                        statusContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-500"></i><span class="text-emerald-600 font-bold">เตรียมพร้อมสำหรับการอัปโหลด</span>`;
                         lucide.createIcons();
                     }, 500);
                 }
             });
         });
 
+        // ฟังก์ชันยกเลิกและนำไฟล์ที่เลือกไว้ออกจากการเตรียมตัวอัปโหลด
         function removeFile(id) {
             const input = document.querySelector(`.file-input-magic[data-id="${id}"]`);
             const uploadZone = document.getElementById('upload-zone-' + id);
@@ -992,5 +1168,4 @@
         }
     </script>
 </body>
-
 </html>
