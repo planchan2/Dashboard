@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
     <style>
-        body { font-family: 'Sarabun', sans-serif; background-color: #f1f5f9; }
+        body { font-family: 'Sarabun', sans-serif; background-color: #f1f5f9; scroll-behavior: smooth; }
         .form-input { width: 100%; padding: 0.625rem 1rem; background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.95rem; color: #334155; transition: all 0.2s; outline: none; }
         .form-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
         .form-label { display: block; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem; font-size: 0.95rem; }
@@ -119,8 +119,111 @@
     <!-- หน้าต่าง Iframe สำหรับกระบวนการ Background (Hidden Iframe) -->
     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="handleIframeLoad()"></iframe>
 
-    <!-- ==================== ส่วนติดต่อผู้ใช้งาน: หน้าลงทะเบียนข้อมูล (Form View) ==================== -->
-    <div id="view-form-container" class="flex flex-col items-center w-full fade-in pb-10">
+
+    <!-- ==================== ส่วนติดต่อผู้ใช้งาน: หน้าฐานข้อมูล (Dashboard Section - หน้าหลัก) ==================== -->
+    <!-- 🔴 นำคลาส hidden ออก เพื่อให้แสดงผลเป็นหน้าแรก 🔴 -->
+    <div id="view-dashboard-container" class="flex flex-col items-center w-full max-w-7xl fade-in pb-10 mt-4">
+        
+        <div class="w-full flex justify-between items-center mb-6 bg-blue-900 border-b-4 border-yellow-500 p-6 rounded-2xl shadow-lg relative">
+            <div>
+                <h1 class="text-2xl font-extrabold text-white flex items-center gap-3">
+                    <img src="https://planchan2.github.io/Dashboard/logo-photoroom.png" alt="โลโก้" class="h-10 w-10 bg-white rounded-full p-0.5 shadow-sm"> 
+                    ข้อมูลโครงการ ประจำปีงบประมาณ พ.ศ. <span class="display-year">2569</span>
+                </h1>
+                <p class="text-sm text-blue-100 mt-1">จัดการและติดตามสถานะโครงการทั้งหมด</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <!-- 🔴 เปลี่ยนปุ่มเป็น "เพิ่มโครงการใหม่" เพื่อเข้าสู่หน้ากรอกข้อมูล 🔴 -->
+                <button onclick="toggleView('form')" class="px-5 py-2.5 bg-yellow-400 hover:bg-yellow-500 border border-yellow-500 text-blue-900 font-extrabold rounded-xl shadow-md flex items-center gap-2 text-sm transition transform hover:-translate-y-0.5">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i> เพิ่มโครงการใหม่
+                </button>
+            </div>
+        </div>
+
+        <div class="w-full bg-white rounded-2xl p-1 shadow-xl border border-slate-200 overflow-hidden">
+            
+            <!-- ส่วนตัวกรองข้อมูลและเครื่องมือควบคุม -->
+            <div class="bg-slate-50 border-b border-slate-200 p-5 flex flex-wrap items-center justify-between gap-4 rounded-t-xl">
+                
+                <!-- ชุดค้นหา, ตัวกรอง, รีเฟรช และเลือกปี -->
+                <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                    <div class="relative w-full md:w-64">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+                        <input type="text" id="search-input" oninput="renderTable()" placeholder="ค้นหากลุ่ม/หน่วย, ผู้รับผิดชอบ..." class="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition shadow-sm">
+                    </div>
+                    <select id="status-filter" onchange="renderTable()" class="px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 bg-white outline-none cursor-pointer shadow-sm hover:border-blue-400 transition">
+                        <option value="">สถานะ: ทั้งหมด</option>
+                        <option value="สมบูรณ์">สมบูรณ์</option>
+                        <option value="ไม่สมบูรณ์">ไม่สมบูรณ์</option>
+                    </select>
+                    <select id="group-filter" onchange="renderTable()" class="px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 bg-white outline-none cursor-pointer shadow-sm hover:border-blue-400 transition max-w-[200px] truncate">
+                        <option value="">กลุ่ม/หน่วย: ทั้งหมด</option>
+                        <option value="กลุ่มอำนวยการ">กลุ่มอำนวยการ</option>
+                        <option value="กลุ่มนโยบายและแผน">กลุ่มนโยบายและแผน</option>
+                        <option value="กลุ่มDLICT">กลุ่ม DLICT</option>
+                        <option value="กลุ่มบริหารงานการเงินและสินทรัพย์">กลุ่มบริหารงานการเงินและสินทรัพย์</option>
+                        <option value="กลุ่มบริหารงานบุคคล">กลุ่มบริหารงานบุคคล</option>
+                        <option value="กลุ่มพัฒนาครูและบุคลากรทางการศึกษา">กลุ่มพัฒนาครูและบุคลากรทางการศึกษา</option>
+                        <option value="กลุ่มนิเทศ ติดตามและประเมินผลการจัดการศึกษา">กลุ่มนิเทศ ติดตามและประเมินผลการจัดการศึกษา</option>
+                        <option value="กลุ่มส่งเสริมการจัดการศึกษา">กลุ่มส่งเสริมการจัดการศึกษา</option>
+                        <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
+                        <option value="กลุ่มกฏหมายและคดี">กลุ่มกฏหมายและคดี</option>
+                    </select>
+                    <button class="px-4 py-2 border border-slate-300 rounded-lg text-sm font-bold text-slate-700 bg-white flex items-center gap-2 hover:bg-slate-100 shadow-sm transition active:scale-95" onclick="fetchData()">
+                        <i data-lucide="refresh-cw" class="w-4 h-4 text-blue-600"></i> รีเฟรชข้อมูล
+                    </button>
+                    <!-- ตัวเลือกปีงบประมาณสำหรับการดึงข้อมูล -->
+                    <select id="year-selector-dashboard" onchange="changeYearDashboard()" class="px-3 py-2 border border-slate-300 rounded-lg text-sm font-black text-blue-700 bg-blue-50 outline-none cursor-pointer shadow-sm hover:border-blue-400 transition">
+                        <option value="2569">ปี 2569</option>
+                        <option value="2570">ปี 2570</option>
+                        <option value="2571">ปี 2571</option>
+                        <option value="2572">ปี 2572</option>
+                        <option value="2573">ปี 2573</option>
+                    </select>
+                </div>
+
+                <!-- ปุ่มดำเนินการลบข้อมูลทั้งหมดในระบบ -->
+                <button onclick="confirmDeleteAll()" class="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 rounded-lg text-sm font-bold flex items-center gap-2 shadow-sm transition active:scale-95 whitespace-nowrap ml-auto">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i> ลบข้อมูลทั้งหมด
+                </button>
+
+            </div>
+
+            <!-- ส่วนตารางแสดงผลข้อมูล -->
+            <div class="overflow-x-auto p-4">
+                <table class="w-full text-left border-collapse rounded-lg overflow-hidden">
+                    <thead class="bg-blue-50/80 border-b-2 border-blue-100">
+                        <tr>
+                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider w-16 text-center">ลำดับ</th>
+                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">กลุ่ม/หน่วย</th>
+                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">ผู้รับผิดชอบ</th>
+                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">วันที่นำส่ง</th>
+                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">งบประมาณ</th>
+                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider text-center">สถานะ</th>
+                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider text-center">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="text-sm text-slate-700 divide-y divide-slate-100">
+                        <tr>
+                            <td colspan="7" class="py-12 text-center text-slate-400 bg-white">
+                                <i data-lucide="loader-2" class="w-8 h-8 mx-auto mb-2 opacity-50 animate-spin"></i>
+                                กำลังดำเนินการเรียกข้อมูล...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-sm text-slate-500 rounded-b-xl">
+                <p id="data-count" class="font-medium">กำลังคำนวณจำนวนรายการ...</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== ส่วนติดต่อผู้ใช้งาน: หน้าลงทะเบียนข้อมูล (Form Section - ถูกซ่อนเป็นค่าเริ่มต้น) ==================== -->
+    <!-- 🔴 ใส่คลาส hidden เพื่อซ่อนหน้านี้เป็นค่าเริ่มต้น 🔴 -->
+    <div id="view-form-container" class="hidden flex-col items-center w-full fade-in pb-10">
         <div class="w-full max-w-4xl bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden z-10">
             
             <div class="bg-blue-900 px-6 py-6 text-center border-b-4 border-yellow-500 relative">
@@ -136,7 +239,7 @@
                 </div>
 
                 <img src="https://planchan2.github.io/Dashboard/logo-photoroom.png" alt="โลโก้" class="h-16 mx-auto mb-3 bg-white rounded-full p-1 mt-2 shadow-sm">
-                <h1 class="text-xl md:text-2xl font-extrabold text-white tracking-wide">โครงการ ประจำปีงบประมาณ พ.ศ. <span class="display-year">2569</span></h1>
+                <h1 class="text-xl md:text-2xl font-extrabold text-white tracking-wide">โครงการ ประจำปีงบประมาณ พ.ศ.<span class="display-year">2569</span></h1>
                 <p class="text-white/80 text-sm md:text-base mt-2 font-medium">กลุ่มนโยบายและแผน</p>
                 <p class="text-white/80 text-sm md:text-base mt-2 font-medium">สำนักงานเขตพื้นที่การศึกษาประถมศึกษาจันทบุรี เขต 2</p>
             </div>
@@ -282,7 +385,7 @@
                     </div>
 
                     <div>
-                        <h3 class="font-bold text-slate-800 mb-3 text-base">โครงการ</h3>
+                        <h3 class="font-bold text-slate-800 mb-3 text-base">โครงการ <span class="text-slate-400 text-xs font-normal">(สามารถดำเนินการแนบภายหลังได้)</span></h3>
                         <label id="upload-zone-3" class="upload-zone flex flex-col items-center justify-center py-12 px-6 rounded-xl cursor-pointer bg-white">
                             <i data-lucide="upload-cloud" class="w-10 h-10 text-slate-400 mb-3"></i>
                             <p class="font-bold text-slate-700">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์มาวางที่บริเวณนี้</p>
@@ -316,106 +419,10 @@
             </form>
         </div>
 
-        <button type="button" onclick="toggleView('dashboard')" class="mt-8 px-4 py-2 border border-slate-300 bg-white hover:bg-slate-50 text-slate-500 hover:text-blue-700 font-bold rounded-full transition-all flex items-center gap-2 text-sm shadow-sm opacity-80 hover:opacity-100">
-            <i data-lucide="database" class="w-4 h-4"></i> ฐานข้อมูล (สำหรับดูและแก้ไขข้อมูล)
+        <!-- 🔴 ปุ่มยกเลิกกลับไปหน้าฐานข้อมูล 🔴 -->
+        <button type="button" onclick="toggleView('dashboard')" class="mt-8 px-6 py-3 border border-slate-300 bg-white hover:bg-slate-50 text-slate-600 font-bold rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-sm hover:text-blue-700 w-full max-w-4xl">
+            <i data-lucide="arrow-left" class="w-5 h-5"></i> ยกเลิก / ย้อนกลับไปหน้าฐานข้อมูล
         </button>
-    </div>
-
-    <!-- ==================== ส่วนติดต่อผู้ใช้งาน: หน้าฐานข้อมูล (Dashboard View) ==================== -->
-    <div id="view-dashboard-container" class="hidden flex-col items-center w-full max-w-7xl fade-in pb-10 mt-4">
-        
-        <div class="w-full flex justify-between items-center mb-6 bg-blue-900 border-b-4 border-yellow-500 p-6 rounded-2xl shadow-lg relative">
-            <div>
-                <h1 class="text-2xl font-extrabold text-white flex items-center gap-3">
-                    <img src="https://planchan2.github.io/Dashboard/logo-photoroom.png" alt="โลโก้" class="h-10 w-10 bg-white rounded-full p-0.5 shadow-sm"> 
-                    ฐานข้อมูลโครงการ พ.ศ. <span class="display-year">2569</span>
-                </h1>
-                <p class="text-sm text-blue-100 mt-1">จัดการและติดตามสถานะโครงการทั้งหมด</p>
-            </div>
-            <div class="flex items-center gap-3">
-                <button onclick="toggleView('form')" class="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-xl shadow-sm flex items-center gap-2 text-sm transition backdrop-blur-sm">
-                    <i data-lucide="arrow-left" class="w-4 h-4"></i> ย้อนกลับไปหน้าลงทะเบียนเอกสาร
-                </button>
-            </div>
-        </div>
-
-        <div class="w-full bg-white rounded-2xl p-1 shadow-xl border border-slate-200 overflow-hidden">
-            
-            <!-- ส่วนตัวกรองข้อมูลและเครื่องมือควบคุม -->
-            <div class="bg-slate-50 border-b border-slate-200 p-5 flex flex-wrap items-center justify-between gap-4 rounded-t-xl">
-                
-                <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-                    <div class="relative w-full md:w-64">
-                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
-                        <input type="text" id="search-input" oninput="renderTable()" placeholder="ค้นหากลุ่ม/หน่วย, ผู้รับผิดชอบ..." class="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition shadow-sm">
-                    </div>
-                    <select id="status-filter" onchange="renderTable()" class="px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 bg-white outline-none cursor-pointer shadow-sm hover:border-blue-400 transition">
-                        <option value="">สถานะ: ทั้งหมด</option>
-                        <option value="สมบูรณ์">สมบูรณ์</option>
-                        <option value="ไม่สมบูรณ์">ไม่สมบูรณ์</option>
-                    </select>
-                    <select id="group-filter" onchange="renderTable()" class="px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 bg-white outline-none cursor-pointer shadow-sm hover:border-blue-400 transition max-w-[200px] truncate">
-                        <option value="">กลุ่ม/หน่วย: ทั้งหมด</option>
-                        <option value="กลุ่มอำนวยการ">กลุ่มอำนวยการ</option>
-                        <option value="กลุ่มนโยบายและแผน">กลุ่มนโยบายและแผน</option>
-                        <option value="กลุ่มDLICT">กลุ่ม DLICT</option>
-                        <option value="กลุ่มบริหารงานการเงินและสินทรัพย์">กลุ่มบริหารงานการเงินและสินทรัพย์</option>
-                        <option value="กลุ่มบริหารงานบุคคล">กลุ่มบริหารงานบุคคล</option>
-                        <option value="กลุ่มพัฒนาครูและบุคลากรทางการศึกษา">กลุ่มพัฒนาครูและบุคลากรทางการศึกษา</option>
-                        <option value="กลุ่มนิเทศ ติดตาม ประเมินผล">กลุ่มนิเทศ ติดตาม ประเมินผล</option>
-                        <option value="กลุ่มส่งเสริมการจัดการศึกษา">กลุ่มส่งเสริมการจัดการศึกษา</option>
-                        <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
-                        <option value="กลุ่มกฏหมายและคดี">กลุ่มกฏหมายและคดี</option>
-                    </select>
-                    <button class="px-4 py-2 border border-slate-300 rounded-lg text-sm font-bold text-slate-700 bg-white flex items-center gap-2 hover:bg-slate-100 shadow-sm transition active:scale-95" onclick="fetchData()">
-                        <i data-lucide="refresh-cw" class="w-4 h-4 text-blue-600"></i> รีเฟรชข้อมูล
-                    </button>
-                    <!-- ตัวเลือกปีงบประมาณสำหรับการดึงข้อมูล -->
-                    <select id="year-selector-dashboard" onchange="changeYearDashboard()" class="px-3 py-2 border border-slate-300 rounded-lg text-sm font-black text-blue-700 bg-blue-50 outline-none cursor-pointer shadow-sm hover:border-blue-400 transition">
-                        <option value="2569">ปี 2569</option>
-                        <option value="2570">ปี 2570</option>
-                        <option value="2571">ปี 2571</option>
-                        <option value="2572">ปี 2572</option>
-                        <option value="2573">ปี 2573</option>
-                    </select>
-                </div>
-
-                <!-- ปุ่มดำเนินการลบข้อมูลทั้งหมดในระบบ -->
-                <button onclick="confirmDeleteAll()" class="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 rounded-lg text-sm font-bold flex items-center gap-2 shadow-sm transition active:scale-95 whitespace-nowrap ml-auto">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i> ลบข้อมูลทั้งหมด
-                </button>
-
-            </div>
-
-            <!-- ส่วนตารางแสดงผลข้อมูล -->
-            <div class="overflow-x-auto p-4">
-                <table class="w-full text-left border-collapse rounded-lg overflow-hidden">
-                    <thead class="bg-blue-50/80 border-b-2 border-blue-100">
-                        <tr>
-                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider w-16 text-center">ลำดับ</th>
-                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">กลุ่ม/หน่วย</th>
-                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">ผู้รับผิดชอบ</th>
-                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">วันที่นำส่ง</th>
-                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">งบประมาณ</th>
-                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider text-center">สถานะ</th>
-                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider text-center">จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body" class="text-sm text-slate-700 divide-y divide-slate-100">
-                        <tr>
-                            <td colspan="7" class="py-12 text-center text-slate-400 bg-white">
-                                <i data-lucide="loader-2" class="w-8 h-8 mx-auto mb-2 opacity-50 animate-spin"></i>
-                                กำลังดำเนินการเรียกข้อมูล...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-sm text-slate-500 rounded-b-xl">
-                <p id="data-count" class="font-medium">กำลังคำนวณจำนวนรายการ...</p>
-            </div>
-        </div>
     </div>
 
     <!-- ==================== ส่วนประมวลผลการทำงาน (JavaScript Application Logic) ==================== -->
@@ -427,6 +434,11 @@
 
         let allProjectsData = [];
         let rowToDelete = null;
+
+        // ดึงข้อมูลอัตโนมัติเมื่อเปิดหน้าเว็บ (เริ่มที่หน้า Dashboard)
+        window.onload = () => {
+            fetchData();
+        };
 
         // ฟังก์ชันซิงโครไนซ์การเลือกปีงบประมาณจากหน้าแบบฟอร์ม
         function changeYear() {
@@ -631,8 +643,9 @@
                     document.getElementById('form-row').value = '';
 
                     removeFile('1'); removeFile('2'); removeFile('3');
+                    prevStep(); // รีเซ็ตฟอร์มกลับไปหน้าแรก
 
-                    fetchData();
+                    // 🔴 กลับไปหน้าฐานข้อมูลอัตโนมัติ 🔴
                     setTimeout(() => { toggleView('dashboard'); }, 1500);
                 } else {
                     showCenterAlert('error', 'ข้อผิดพลาดจากเซิร์ฟเวอร์', result.message);
@@ -655,7 +668,7 @@
             tableBody.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-slate-400 bg-white"><i data-lucide="loader-2" class="w-8 h-8 mx-auto mb-2 opacity-50 animate-spin"></i>กำลังดำเนินการเรียกข้อมูล...</td></tr>`;
             lucide.createIcons();
 
-            const selectedYear = document.getElementById('year-selector').value;
+            const selectedYear = document.getElementById('year-selector-dashboard').value;
 
             try {
                 const response = await fetch(API_URL + "?action=getData&year=" + selectedYear + "&t=" + new Date().getTime());
@@ -1064,20 +1077,27 @@
 
             document.getElementById('submit-text').innerHTML = "บันทึกการปรับปรุงข้อมูล";
 
+            // สลับไปยังหน้าฟอร์มเพื่อแก้ไข
             toggleView('form');
         }
 
-        // ฟังก์ชันสลับการแสดงผลหน้าจอระหว่างฟอร์มและตารางฐานข้อมูล
+        // 🔴 ฟังก์ชันสลับการแสดงผลหน้าจอระหว่างฟอร์มและตารางฐานข้อมูล 🔴
         function toggleView(view) {
             const formContainer = document.getElementById('view-form-container');
             const dashboardContainer = document.getElementById('view-dashboard-container');
             if (view === 'dashboard') {
-                formContainer.classList.add('hidden'); formContainer.classList.remove('flex');
-                dashboardContainer.classList.remove('hidden'); dashboardContainer.classList.add('flex'); window.scrollTo(0, 0);
+                formContainer.classList.add('hidden'); 
+                formContainer.classList.remove('flex');
+                dashboardContainer.classList.remove('hidden'); 
+                dashboardContainer.classList.add('flex'); 
+                window.scrollTo({ top: 0, behavior: 'smooth' });
                 fetchData();
             } else {
-                dashboardContainer.classList.add('hidden'); dashboardContainer.classList.remove('flex');
-                formContainer.classList.remove('hidden'); formContainer.classList.add('flex'); window.scrollTo(0, 0);
+                dashboardContainer.classList.add('hidden'); 
+                dashboardContainer.classList.remove('flex');
+                formContainer.classList.remove('hidden'); 
+                formContainer.classList.add('flex'); 
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
@@ -1112,7 +1132,7 @@
             text1.className = "text-xs font-bold text-emerald-600 mt-2 text-center";
             connector.classList.add('active');
             icon2.className = "step-circle active"; text2.className = "text-xs font-bold text-blue-900 mt-2 text-center";
-            lucide.createIcons(); window.scrollTo(0, 0);
+            lucide.createIcons(); window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // ฟังก์ชันย้อนกลับสถานะหน้าฟอร์มมายังขั้นตอนแรก (ส่วนที่ 1)
@@ -1123,7 +1143,7 @@
             text1.className = "text-xs font-bold text-blue-900 mt-2 text-center";
             connector.classList.remove('active');
             icon2.className = "step-circle inactive"; text2.className = "text-xs font-bold text-slate-400 mt-2 text-center";
-            window.scrollTo(0, 0);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // กระบวนการตรวจสอบเมื่อมีการเปลี่ยนแปลงข้อมูลไฟล์อัปโหลดในระบบ
