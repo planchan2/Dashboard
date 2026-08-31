@@ -36,7 +36,7 @@
         <p class="text-slate-300 text-sm" id="loading-subtitle">ไฟล์ที่มีขนาดใหญ่อาจใช้เวลาสักครู่</p>
     </div>
 
-    <!-- หน้าต่างยืนยันการลบข้อมูลระดับรายการ (Single Record Delete Modal) -->
+    <!-- หน้าต่างยืนยันการลบข้อมูลระดับรายการ -->
     <div id="delete-confirm-modal" class="fixed inset-0 bg-slate-900/60 z-[500] hidden flex items-center justify-center px-4 backdrop-blur-sm transition-opacity duration-300 opacity-0">
         <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center transform scale-90 transition-transform duration-300" id="delete-confirm-box">
             <div class="mx-auto flex items-center justify-center w-20 h-20 rounded-full mb-5 bg-red-100 text-red-500">
@@ -216,7 +216,6 @@
 
 
     <!-- ==================== ส่วนติดต่อผู้ใช้งาน: หน้าลงทะเบียนข้อมูล (Form Section - ถูกซ่อนเป็นค่าเริ่มต้น) ==================== -->
-    <!-- 🔴 ใส่คลาส hidden เพื่อซ่อนหน้านี้เป็นค่าเริ่มต้น 🔴 -->
     <div id="view-form-container" class="hidden flex-col items-center w-full fade-in pb-10">
         <div class="w-full max-w-4xl bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden z-10">
             
@@ -413,7 +412,7 @@
             </form>
         </div>
 
-        <!-- 🔴 ปุ่มยกเลิกกลับไปหน้าฐานข้อมูล 🔴 -->
+        <!--  ปุ่มยกเลิกกลับไปหน้าฐานข้อมูล  -->
         <button type="button" onclick="toggleView('dashboard')" class="mt-8 px-6 py-3 border border-slate-300 bg-white hover:bg-slate-50 text-slate-600 font-bold rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-sm hover:text-blue-700 w-full max-w-4xl">
             <i data-lucide="arrow-left" class="w-5 h-5"></i> ยกเลิก / ย้อนกลับไปหน้าฐานข้อมูล
         </button>
@@ -422,9 +421,8 @@
     <!-- ==================== ส่วนประมวลผลการทำงาน (JavaScript Application Logic) ==================== -->
     <script>
         lucide.createIcons();
-        
-        // กำหนด Endpoint ของ Web App (Google Apps Script)
-        const API_URL = "https://script.google.com/macros/s/AKfycbzAeulLfm_P9gZaNqHKzFskwSyLAQSbQpqGbGM1orDUvqgPG8NMuwEZOwdzgF_1dc_x/exec";
+ 
+        const API_URL = "https://script.google.com/macros/s/AKfycbxEyLr6S7Hkno9yD16wZ7K1Ut0S6Kby-LEwYp8VTZELk602_OoiAg6sq6mZOWKLLmPd/exec";
 
         let allProjectsData = [];
         let rowToDelete = null;
@@ -639,7 +637,7 @@
                     removeFile('1'); removeFile('2'); removeFile('3');
                     prevStep(); // รีเซ็ตฟอร์มกลับไปหน้าแรก
 
-                    // 🔴 กลับไปหน้าฐานข้อมูลอัตโนมัติ 🔴
+                    //  กลับไปหน้าฐานข้อมูลอัตโนมัติ 
                     setTimeout(() => { toggleView('dashboard'); }, 1500);
                 } else {
                     showCenterAlert('error', 'ข้อผิดพลาดจากเซิร์ฟเวอร์', result.message);
@@ -1075,7 +1073,7 @@
             toggleView('form');
         }
 
-        // 🔴 ฟังก์ชันสลับการแสดงผลหน้าจอระหว่างฟอร์มและตารางฐานข้อมูล 🔴
+        //  ฟังก์ชันสลับการแสดงผลหน้าจอระหว่างฟอร์มและตารางฐานข้อมูล 
         function toggleView(view) {
             const formContainer = document.getElementById('view-form-container');
             const dashboardContainer = document.getElementById('view-dashboard-container');
