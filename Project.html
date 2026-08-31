@@ -120,24 +120,15 @@
     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="handleIframeLoad()"></iframe>
 
 
-    <!-- ==================== ส่วนติดต่อผู้ใช้งาน: หน้าฐานข้อมูล (Dashboard Section - หน้าหลัก) ==================== -->
-    <!-- 🔴 นำคลาส hidden ออก เพื่อให้แสดงผลเป็นหน้าแรก 🔴 -->
+ 
     <div id="view-dashboard-container" class="flex flex-col items-center w-full max-w-7xl fade-in pb-10 mt-4">
-        
-        <div class="w-full flex justify-between items-center mb-6 bg-blue-900 border-b-4 border-yellow-500 p-6 rounded-2xl shadow-lg relative">
-            <div>
-                <div class="flex items-center gap-4">
-                <img src="https://planchan2.github.io/Dashboard/logo-photoroom.png" alt="โลโก้" class="h-12 w-12 bg-white rounded-full p-0.5 shadow-sm"> 
-                <div>
-                    <h1 class="text-2xl font-extrabold text-white">PROJECT HUB | ระบบบริหารจัดการโครงการ</h1>
-                    <p class="text-sm text-blue-100 mt-1">กลุ่มนโยบายและแผน</p>
-                    <p class="text-sm text-blue-100">สำนักงานเขตพื้นที่การศึกษาประถมศึกษาจันทบุรี เขต 2</p>
-                </div>
-            </div>
-            </div>
-            <div class="flex items-center gap-3">
-                <!-- 🔴 เปลี่ยนปุ่มเป็น "เพิ่มโครงการใหม่" เพื่อเข้าสู่หน้ากรอกข้อมูล 🔴 -->
-                <button onclick="toggleView('form')" class="px-5 py-2.5 bg-yellow-400 hover:bg-yellow-500 border border-yellow-500 text-blue-900 font-extrabold rounded-xl shadow-md flex items-center gap-2 text-sm transition transform hover:-translate-y-0.5">
+  
+        <div class="w-full mb-6 relative flex items-center justify-center">
+          
+            <img src="https://planchan2.github.io/Dashboard/Poster2.png" alt="แบนเนอร์โครงการ" class="w-full max-h-[120px] md:max-h-[350px] object-contain drop-shadow-md">
+    
+            <div class="absolute right-4 md:right-8 z-10 flex items-center gap-3">
+                <button onclick="toggleView('form')" class="px-5 py-2.5 bg-yellow-400 hover:bg-yellow-500 border border-yellow-500 text-blue-900 font-extrabold rounded-xl shadow-lg flex items-center gap-2 text-sm transition transform hover:-translate-y-0.5">
                     <i data-lucide="plus-circle" class="w-5 h-5"></i> เพิ่มโครงการใหม่
                 </button>
             </div>
