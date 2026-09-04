@@ -142,7 +142,7 @@
                 <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
                     <div class="relative w-full md:w-64">
                         <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
-                        <input type="text" id="search-input" oninput="renderTable()" placeholder="ค้นหากลุ่ม/หน่วย, ผู้รับผิดชอบ..." class="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition shadow-sm">
+                        <input type="text" id="search-input" oninput="renderTable()" placeholder="ค้นหากลุ่ม/หน่วย, โครงการ..." class="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition shadow-sm">
                     </div>
                     <select id="group-filter" onchange="renderTable()" class="px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 bg-white outline-none cursor-pointer shadow-sm hover:border-blue-400 transition max-w-[200px] truncate">
                         <option value="">กลุ่ม/หน่วย: ทั้งหมด</option>
@@ -184,8 +184,8 @@
                         <tr>
                             <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider w-16 text-center">ลำดับ</th>
                             <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">กลุ่ม/หน่วย</th>
+                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider w-1/4">ชื่อโครงการ</th>
                             <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">ผู้รับผิดชอบ</th>
-                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">วันที่นำส่ง</th>
                             <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">งบประมาณ</th>
                             <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider text-center">จัดการ</th>
                         </tr>
@@ -253,6 +253,13 @@
 
                 <div id="form-step-1" class="space-y-6 block">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+                        
+                        <!-- 🔴 เพิ่มช่องกรอกชื่อโครงการ (เต็มบรรทัด) 🔴 -->
+                        <div class="md:col-span-2">
+                            <label class="form-label">ชื่อโครงการ</label>
+                            <input type="text" class="form-input" name="projectName" id="project-name-input" placeholder="ระบุชื่อโครงการ" required>
+                        </div>
+
                         <div>
                             <label class="form-label">กลุ่ม/หน่วย</label>
                             <select class="form-input" name="groupName" id="input-group">
@@ -590,7 +597,8 @@
                 const finalPayload = {
                     action: document.getElementById('form-action').value,
                     row: document.getElementById('form-row').value,
-                    year: selectedYear, 
+                    year: selectedYear,
+                    projectName: document.getElementById('project-name-input').value, //  ดึงค่าจากช่องชื่อโครงการ 
                     groupName: document.getElementById('input-group').value,
                     responsibleName: responsibleName,
                     budgetType: document.getElementById('input-budget-type').value,
@@ -630,7 +638,7 @@
                     removeFile('1'); removeFile('2'); removeFile('3');
                     prevStep(); // รีเซ็ตฟอร์มกลับไปหน้าแรก
 
-                    //  กลับไปหน้าฐานข้อมูลอัตโนมัติ 
+                    // กลับไปหน้าฐานข้อมูลอัตโนมัติ 
                     setTimeout(() => { toggleView('dashboard'); }, 1500);
                 } else {
                     showCenterAlert('error', 'ข้อผิดพลาดจากเซิร์ฟเวอร์', result.message);
@@ -695,7 +703,7 @@
             const groupFilter = document.getElementById('group-filter').value;
 
             const filteredData = allProjectsData.filter(row => {
-                const matchSearch = row[1].toLowerCase().includes(searchText) || row[2].toLowerCase().includes(searchText);
+                const matchSearch = row[1].toLowerCase().includes(searchText) || row[2].toLowerCase().includes(searchText) || (row[3] && row[3].toLowerCase().includes(searchText));
                 const matchGroup = groupFilter === "" || row[1] === groupFilter;
                 return matchSearch && matchGroup;
             });
@@ -716,8 +724,8 @@
                 tr.innerHTML = `
                     <td class="py-3 px-4 text-center font-medium text-slate-400">${row[0]}</td>
                     <td class="py-3 px-4 font-medium text-slate-800">${row[1]}</td>
+                    <td class="py-3 px-4 text-slate-800 font-bold max-w-[200px] truncate" title="${row[3]}">${row[3] || '-'}</td>
                     <td class="py-3 px-4 text-slate-600">${row[2]}</td>
-                    <td class="py-3 px-4 text-slate-600">${row[3]}</td>
                     <td class="py-3 px-4 text-slate-600 font-bold">${row[4] ? row[4] + ' ฿' : '-'}</td>
                     <td class="py-3 px-4 text-center whitespace-nowrap">
                         ${manageBtn}
@@ -778,13 +786,13 @@
                     <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 space-y-4">
                         <h4 class="font-extrabold text-blue-900 border-b border-slate-200 pb-2 mb-3 flex items-center gap-2"><i data-lucide="clipboard-list" class="w-5 h-5"></i> ข้อมูลโครงการ</h4>
                         <div class="grid grid-cols-2 gap-y-4 gap-x-2">
-                            <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">วันที่นำส่งข้อมูล</p>
-                                <p class="font-bold text-slate-800 text-sm truncate" title="${data[3] || '-'}">${data[3] || '-'}</p>
-                            </div>
                             <div class="col-span-2">
                                 <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">กลุ่ม/หน่วย</p>
-                                <p class="font-bold text-slate-800 text-sm break-words">${data[1] || '<span class="text-amber-500 text-xs font-medium bg-amber-50 px-2 py-0.5 rounded">- ยังไม่ได้ระบุ -</span>'}</p>
+                                <p class="font-bold text-slate-800 text-base break-words">${data[1] || '<span class="text-amber-500 text-xs font-medium bg-amber-50 px-2 py-0.5 rounded">- ยังไม่ได้ระบุ -</span>'}</p>
+                            </div>
+                            <div class="col-span-2">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">ชื่อโครงการ</p>
+                                <p class="font-bold text-slate-800 text-sm break-words">${data[3] || '<span class="text-amber-500 text-xs font-medium bg-amber-50 px-2 py-0.5 rounded">- ยังไม่ได้ระบุ -</span>'}</p>
                             </div>
                             <div class="col-span-2">
                                 <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">ผู้รับผิดชอบ</p>
@@ -1029,6 +1037,7 @@
             const data = JSON.parse(decodeURIComponent(rowDataStr));
             document.getElementById('input-group').value = data[1] || "";
             document.getElementById('name-input').value = data[2] || "";
+            document.getElementById('project-name-input').value = data[3] || ""; // 🔴 ดึงชื่อโครงการมาแสดงในฟอร์มตอนแก้ไข
             document.getElementById('money-input').value = data[4] || "";
 
             document.getElementById('form-action').value = 'update';
