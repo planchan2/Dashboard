@@ -120,11 +120,10 @@
     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="handleIframeLoad()"></iframe>
 
 
- 
+    <!-- ==================== ส่วนติดต่อผู้ใช้งาน: หน้าฐานข้อมูล (Dashboard Section - หน้าหลัก) ==================== -->
     <div id="view-dashboard-container" class="flex flex-col items-center w-full max-w-7xl fade-in pb-10 mt-4">
   
         <div class="w-full mb-6 relative flex items-center justify-center">
-          
             <img src="https://planchan2.github.io/Dashboard/Poster2.png" alt="แบนเนอร์โครงการ" class="w-full max-h-[120px] md:max-h-[350px] object-contain drop-shadow-md">
     
             <div class="absolute right-4 md:right-8 z-10 flex items-center gap-3">
@@ -145,11 +144,6 @@
                         <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
                         <input type="text" id="search-input" oninput="renderTable()" placeholder="ค้นหากลุ่ม/หน่วย, ผู้รับผิดชอบ..." class="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition shadow-sm">
                     </div>
-                    <select id="status-filter" onchange="renderTable()" class="px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 bg-white outline-none cursor-pointer shadow-sm hover:border-blue-400 transition">
-                        <option value="">สถานะ: ทั้งหมด</option>
-                        <option value="สมบูรณ์">สมบูรณ์</option>
-                        <option value="ไม่สมบูรณ์">ไม่สมบูรณ์</option>
-                    </select>
                     <select id="group-filter" onchange="renderTable()" class="px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 bg-white outline-none cursor-pointer shadow-sm hover:border-blue-400 transition max-w-[200px] truncate">
                         <option value="">กลุ่ม/หน่วย: ทั้งหมด</option>
                         <option value="กลุ่มอำนวยการ">กลุ่มอำนวยการ</option>
@@ -193,13 +187,12 @@
                             <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">ผู้รับผิดชอบ</th>
                             <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">วันที่นำส่ง</th>
                             <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider">งบประมาณ</th>
-                            <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider text-center">สถานะ</th>
                             <th class="py-3 px-4 text-[11px] font-extrabold text-blue-900 uppercase tracking-wider text-center">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody id="table-body" class="text-sm text-slate-700 divide-y divide-slate-100">
                         <tr>
-                            <td colspan="7" class="py-12 text-center text-slate-400 bg-white">
+                            <td colspan="6" class="py-12 text-center text-slate-400 bg-white">
                                 <i data-lucide="loader-2" class="w-8 h-8 mx-auto mb-2 opacity-50 animate-spin"></i>
                                 กำลังดำเนินการเรียกข้อมูล...
                             </td>
@@ -378,7 +371,7 @@
                     </div>
 
                     <div>
-                        <h3 class="font-bold text-slate-800 mb-3 text-base">โครงการ <span class="text-slate-400 text-xs font-normal">(สามารถดำเนินการแนบภายหลังได้)</span></h3>
+                        <h3 class="font-bold text-slate-800 mb-3 text-base">โครงการ</h3>
                         <label id="upload-zone-3" class="upload-zone flex flex-col items-center justify-center py-12 px-6 rounded-xl cursor-pointer bg-white">
                             <i data-lucide="upload-cloud" class="w-10 h-10 text-slate-400 mb-3"></i>
                             <p class="font-bold text-slate-700">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์มาวางที่บริเวณนี้</p>
@@ -422,7 +415,7 @@
     <script>
         lucide.createIcons();
  
-        const API_URL = "https://script.google.com/macros/s/AKfycbxEyLr6S7Hkno9yD16wZ7K1Ut0S6Kby-LEwYp8VTZELk602_OoiAg6sq6mZOWKLLmPd/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbzAeulLfm_P9gZaNqHKzFskwSyLAQSbQpqGbGM1orDUvqgPG8NMuwEZOwdzgF_1dc_x/exec";
 
         let allProjectsData = [];
         let rowToDelete = null;
@@ -657,7 +650,7 @@
         async function fetchData() {
             const tableBody = document.getElementById('table-body');
             const dataCount = document.getElementById('data-count');
-            tableBody.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-slate-400 bg-white"><i data-lucide="loader-2" class="w-8 h-8 mx-auto mb-2 opacity-50 animate-spin"></i>กำลังดำเนินการเรียกข้อมูล...</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="6" class="py-12 text-center text-slate-400 bg-white"><i data-lucide="loader-2" class="w-8 h-8 mx-auto mb-2 opacity-50 animate-spin"></i>กำลังดำเนินการเรียกข้อมูล...</td></tr>`;
             lucide.createIcons();
 
             const selectedYear = document.getElementById('year-selector-dashboard').value;
@@ -674,13 +667,13 @@
                     renderTable();
                 } else {
                     allProjectsData = [];
-                    tableBody.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-slate-400 bg-white">ยังไม่มีรายการข้อมูลสำหรับปีงบประมาณ ${selectedYear}</td></tr>`;
+                    tableBody.innerHTML = `<tr><td colspan="6" class="py-12 text-center text-slate-400 bg-white">ยังไม่มีรายการข้อมูลสำหรับปีงบประมาณ ${selectedYear}</td></tr>`;
                     dataCount.innerHTML = "ไม่พบรายการข้อมูล";
                 }
             } catch (error) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="py-12 text-center bg-white">
+                        <td colspan="6" class="py-12 text-center bg-white">
                             <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-500 mb-4">
                                 <i data-lucide="alert-triangle" class="w-8 h-8"></i>
                             </div>
@@ -699,28 +692,22 @@
             const dataCount = document.getElementById('data-count');
 
             const searchText = document.getElementById('search-input').value.toLowerCase();
-            const statusFilter = document.getElementById('status-filter').value;
             const groupFilter = document.getElementById('group-filter').value;
 
             const filteredData = allProjectsData.filter(row => {
-                let currentStatus = (row[5] === "ตรวจสอบแล้ว" || row[5] === "สมบูรณ์") ? "สมบูรณ์" : "ไม่สมบูรณ์";
                 const matchSearch = row[1].toLowerCase().includes(searchText) || row[2].toLowerCase().includes(searchText);
-                const matchStatus = statusFilter === "" || currentStatus === statusFilter;
                 const matchGroup = groupFilter === "" || row[1] === groupFilter;
-                return matchSearch && matchStatus && matchGroup;
+                return matchSearch && matchGroup;
             });
 
             if (filteredData.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-slate-400 bg-white">ไม่พบรายการข้อมูลที่ตรงกับเงื่อนไขการค้นหา</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="6" class="py-12 text-center text-slate-400 bg-white">ไม่พบรายการข้อมูลที่ตรงกับเงื่อนไขการค้นหา</td></tr>`;
                 dataCount.innerHTML = "พบ 0 รายการ";
                 return;
             }
 
             tableBody.innerHTML = "";
             filteredData.forEach((row) => {
-                let statusDisplay = (row[5] === "ตรวจสอบแล้ว" || row[5] === "สมบูรณ์") ? "สมบูรณ์" : "ไม่สมบูรณ์";
-                let statusColor = statusDisplay === "สมบูรณ์" ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700";
-
                 const rowDataStr = encodeURIComponent(JSON.stringify(row));
                 const manageBtn = `<button onclick="openManageModal(${row.sheetRow}, '${rowDataStr}')" class="p-2 border border-slate-200 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-white shadow-sm transition transform hover:-translate-y-0.5"><i data-lucide="more-horizontal" class="w-4 h-4"></i></button>`;
 
@@ -732,9 +719,6 @@
                     <td class="py-3 px-4 text-slate-600">${row[2]}</td>
                     <td class="py-3 px-4 text-slate-600">${row[3]}</td>
                     <td class="py-3 px-4 text-slate-600 font-bold">${row[4] ? row[4] + ' ฿' : '-'}</td>
-                    <td class="py-3 px-4 text-center">
-                        <span class="inline-flex px-2 py-0.5 rounded text-[11px] font-bold ${statusColor}">${statusDisplay}</span>
-                    </td>
                     <td class="py-3 px-4 text-center whitespace-nowrap">
                         ${manageBtn}
                     </td>
@@ -778,9 +762,6 @@
             let file2Html = data[9] ? createDocCard(data[9], "เอกสารใบงวด") : createMissingCard("เอกสารใบงวด");
             let file3Html = data[10] ? createDocCard(data[10], "เอกสารโครงการ") : createMissingCard("เอกสารโครงการ");
 
-            let currentStatus = (data[5] === "ตรวจสอบแล้ว" || data[5] === "สมบูรณ์") ? "สมบูรณ์" : "ไม่สมบูรณ์";
-            let statusColor = currentStatus === "สมบูรณ์" ? "text-emerald-700 bg-emerald-100" : "text-amber-700 bg-amber-100";
-
             const budgetMap = {
                 "2": "งบดำเนินงาน (2)",
                 "5": "งบลงทุน (5)",
@@ -797,10 +778,6 @@
                     <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 space-y-4">
                         <h4 class="font-extrabold text-blue-900 border-b border-slate-200 pb-2 mb-3 flex items-center gap-2"><i data-lucide="clipboard-list" class="w-5 h-5"></i> ข้อมูลโครงการ</h4>
                         <div class="grid grid-cols-2 gap-y-4 gap-x-2">
-                            <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">สถานะ</p>
-                                <span class="inline-flex px-2 py-0.5 rounded text-[11px] font-bold ${statusColor}">${currentStatus}</span>
-                            </div>
                             <div>
                                 <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">วันที่นำส่งข้อมูล</p>
                                 <p class="font-bold text-slate-800 text-sm truncate" title="${data[3] || '-'}">${data[3] || '-'}</p>
